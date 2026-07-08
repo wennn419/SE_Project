@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -585,6 +586,54 @@
       .cal-day { min-height: 38px; }
       .cal-dot { width: 5px; height: 5px; }
     }
+
+    /* ===== ACHIEVEMENTS ===== */
+    .ach-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .ach-sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; text-align: center; }
+    .ach-sum-num { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.04em; }
+    .ach-sum-label { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+    .ach-section-title { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 10px; margin-top: 20px; }
+
+    .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 6px; }
+    .ach-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px; display: flex; gap: 14px; align-items: flex-start;
+      transition: border-color 0.15s;
+    }
+    .ach-card.unlocked { border-color: var(--border2); }
+    .ach-card.locked   { opacity: 0.45; filter: grayscale(0.6); }
+    .ach-card.unlocked:hover { border-color: var(--accent); }
+
+    .ach-icon-wrap {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .ach-card.unlocked .ach-icon-wrap { background: linear-gradient(135deg, rgba(124,106,247,0.2), rgba(52,201,122,0.15)); border: 1px solid rgba(124,106,247,0.3); }
+    .ach-card.locked   .ach-icon-wrap { background: var(--surface2); border: 1px solid var(--border); }
+
+    .ach-info { flex: 1; min-width: 0; }
+    .ach-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .ach-desc { font-size: 11px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+    .ach-badge {
+      font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 2px 7px; border-radius: 20px; margin-top: 6px; display: inline-block;
+    }
+    .ach-badge.unlocked { background: rgba(52,201,122,0.15); color: var(--green); }
+    .ach-badge.locked   { background: var(--surface2); color: var(--text3); }
+
+    .ach-progress-wrap { margin-top: 6px; }
+    .ach-progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ach-progress-label { font-size: 10px; color: var(--text3); }
+    .ach-progress-val   { font-size: 10px; color: var(--text2); font-weight: 600; }
+    .ach-progress-track { height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+    .ach-progress-fill  { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 2px; transition: width 0.6s ease; }
+
+    @media (max-width: 480px) {
+      .ach-grid { grid-template-columns: 1fr; }
+      .ach-summary { grid-template-columns: 1fr 1fr; }
+      .ach-summary .ach-sum-card:last-child { grid-column: span 2; }
+    }
   </style>
 </head>
 <body>
@@ -816,6 +865,18 @@
           <div class="cal-detail-title" id="cal-detail-title">Select a day</div>
           <div class="cal-detail-empty" id="cal-detail-body">Click on a day to see workouts.</div>
         </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="page" id="page-achievements">
+        <div class="page-header"><h2>Achievements</h2></div>
+        <div class="ach-summary" id="ach-summary"></div>
+        <div class="ach-section-title">🏆 Milestones</div>
+        <div class="ach-grid" id="ach-milestones"></div>
+        <div class="ach-section-title">🔥 Streak Awards</div>
+        <div class="ach-grid" id="ach-streaks"></div>
+        <div class="ach-section-title">💪 Fitness Goals</div>
+        <div class="ach-grid" id="ach-fitness"></div>
       </div>
 
     </div>
@@ -1231,6 +1292,7 @@
     { key: 'home',         label: 'Home',         icon: '🏠' },
     { key: 'schedule',     label: 'Schedule',     icon: '📅' },
     { key: 'calendar',     label: 'Calendar',     icon: '📆' },
+    { key: 'achievements', label: 'Achievements', icon: '🏆' },
     { key: 'report',       label: 'Report',       icon: '📊' },
   ];
 
@@ -1258,6 +1320,7 @@
     if (key === 'schedule')     renderSchedule();
     if (key === 'report')       renderReport();
     if (key === 'calendar')     renderCalendar();
+    if (key === 'achievements') renderAchievements();
     // Auto-close sidebar on mobile after nav
     if (isMobile()) closeSidebar();
   }
@@ -1628,9 +1691,13 @@
   }
 
   function getWorkoutsForDate(dateStr) {
+    // Match workouts by dayIndex against that date's weekday
     const d = new Date(dateStr.replace(/-/g, '/'));
     const jsDay = d.getDay(); // 0=Sun
     const dayIdx = jsDay === 0 ? 6 : jsDay - 1;
+    // Return workouts that were added that week and fall on that dayIndex
+    // Simple approach: show workouts where addedDate is that week & dayIndex matches
+    // For the calendar we show all workouts matching that day-of-week and the date's week
     const weekDates = getWeekForDate(d);
     const weekStart = weekDates[0];
     const weekEnd   = weekDates[6];
@@ -1665,11 +1732,13 @@
     const today = new Date();
     const firstDay = new Date(calYear, calMonth, 1);
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    // Monday-based offset
     let startDow = (firstDay.getDay() + 6) % 7;
 
     const container = document.getElementById('cal-days');
     container.innerHTML = '';
 
+    // Empty cells before first day
     for (let i = 0; i < startDow; i++) {
       const cell = document.createElement('div');
       cell.className = 'cal-day empty';
@@ -1717,6 +1786,7 @@
       container.appendChild(cell);
     }
 
+    // If a date was selected, re-render its detail
     if (calSelectedDate) {
       const ds = calSelectedDate;
       renderCalDetail(ds, getWorkoutsForDate(ds));
@@ -1746,6 +1816,100 @@
     newBody.id = 'cal-detail-body';
     newBody.innerHTML = items;
     document.getElementById('cal-detail-body').replaceWith(newBody);
+  }
+
+  // ===== ACHIEVEMENTS =====
+  const ACHIEVEMENTS = {
+    milestones: [
+      { id:'first_workout',  icon:'🎯', name:'First Step',       desc:'Complete your first workout',               check: (s) => s.totalDone >= 1,   max:1,  val:(s)=>Math.min(s.totalDone,1) },
+      { id:'ten_workouts',   icon:'💫', name:'On a Roll',        desc:'Complete 10 workouts total',                check: (s) => s.totalDone >= 10,  max:10, val:(s)=>Math.min(s.totalDone,10) },
+      { id:'fifty_workouts', icon:'🌟', name:'Fitness Fanatic',  desc:'Complete 50 workouts total',                check: (s) => s.totalDone >= 50,  max:50, val:(s)=>Math.min(s.totalDone,50) },
+      { id:'hundred',        icon:'💯', name:'Century Club',     desc:'Complete 100 workouts total',               check: (s) => s.totalDone >= 100, max:100,val:(s)=>Math.min(s.totalDone,100) },
+    ],
+    streaks: [
+      { id:'streak3',  icon:'🔥', name:'Warming Up',    desc:'Maintain a 3-day streak',   check:(s)=>s.streak>=3,   max:3,  val:(s)=>Math.min(s.streak,3) },
+      { id:'streak7',  icon:'⚡', name:'One Week',      desc:'Maintain a 7-day streak',   check:(s)=>s.streak>=7,   max:7,  val:(s)=>Math.min(s.streak,7) },
+      { id:'streak14', icon:'🚀', name:'Two Weeks',     desc:'Maintain a 14-day streak',  check:(s)=>s.streak>=14,  max:14, val:(s)=>Math.min(s.streak,14) },
+      { id:'streak30', icon:'👑', name:'Unstoppable',   desc:'Maintain a 30-day streak',  check:(s)=>s.streak>=30,  max:30, val:(s)=>Math.min(s.streak,30) },
+    ],
+    fitness: [
+      { id:'mins100',  icon:'⏱️', name:'Time Invested',  desc:'Log 100 total minutes',     check:(s)=>s.totalMins>=100,  max:100,  val:(s)=>Math.min(s.totalMins,100) },
+      { id:'mins500',  icon:'🏃', name:'Half-Marathon',  desc:'Log 500 total minutes',     check:(s)=>s.totalMins>=500,  max:500,  val:(s)=>Math.min(s.totalMins,500) },
+      { id:'allcats',  icon:'🎨', name:'Cross-Trainer',  desc:'Complete all 5 categories', check:(s)=>s.catsUsed>=5,     max:5,    val:(s)=>Math.min(s.catsUsed,5) },
+      { id:'pct80',    icon:'📈', name:'High Achiever',  desc:'Reach 80% completion rate', check:(s)=>s.completionPct>=80, max:100, val:(s)=>Math.min(s.completionPct,100) },
+    ],
+  };
+
+  function getAchievementStats() {
+    const done      = workouts.filter(w => w.done);
+    const total     = workouts.length;
+    const totalMins = done.reduce((s, w) => s + w.duration, 0);
+    const streak    = calcStreak();
+    const cats      = new Set(done.map(w => w.cat).filter(Boolean));
+    return {
+      totalDone:     done.length,
+      total,
+      totalMins,
+      streak,
+      catsUsed:      cats.size,
+      completionPct: total > 0 ? Math.round(done.length / total * 100) : 0,
+    };
+  }
+
+  function renderAchievements() {
+    const stats = getAchievementStats();
+    const all   = [...ACHIEVEMENTS.milestones, ...ACHIEVEMENTS.streaks, ...ACHIEVEMENTS.fitness];
+    const unlocked = all.filter(a => a.check(stats)).length;
+    const total    = all.length;
+
+    document.getElementById('ach-summary').innerHTML = `
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--accent)">${unlocked}</div>
+        <div class="ach-sum-label">Unlocked</div>
+      </div>
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--text2)">${total - unlocked}</div>
+        <div class="ach-sum-label">Locked</div>
+      </div>
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--green)">${Math.round(unlocked/total*100)}%</div>
+        <div class="ach-sum-label">Complete</div>
+      </div>
+    `;
+
+    renderAchGroup('ach-milestones', ACHIEVEMENTS.milestones, stats);
+    renderAchGroup('ach-streaks',    ACHIEVEMENTS.streaks,    stats);
+    renderAchGroup('ach-fitness',    ACHIEVEMENTS.fitness,    stats);
+  }
+
+  function renderAchGroup(elId, achievements, stats) {
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    achievements.forEach(a => {
+      const isUnlocked = a.check(stats);
+      const val = a.val(stats);
+      const pct = Math.round(val / a.max * 100);
+      const card = document.createElement('div');
+      card.className = 'ach-card ' + (isUnlocked ? 'unlocked' : 'locked');
+      card.innerHTML = `
+        <div class="ach-icon-wrap">${a.icon}</div>
+        <div class="ach-info">
+          <div class="ach-name">${a.name}</div>
+          <div class="ach-desc">${a.desc}</div>
+          ${!isUnlocked ? `
+            <div class="ach-progress-wrap">
+              <div class="ach-progress-row">
+                <span class="ach-progress-label">${val} / ${a.max}</span>
+                <span class="ach-progress-val">${pct}%</span>
+              </div>
+              <div class="ach-progress-track"><div class="ach-progress-fill" style="width:${pct}%"></div></div>
+            </div>
+          ` : ''}
+          <span class="ach-badge ${isUnlocked ? 'unlocked' : 'locked'}">${isUnlocked ? '✓ Unlocked' : 'Locked'}</span>
+        </div>
+      `;
+      el.appendChild(card);
+    });
   }
 
   document.getElementById('modal-cancel').addEventListener('click', closeModal);
@@ -1840,6 +2004,44 @@
       el.appendChild(item);
     });
   }
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
 </script>
 </body>
 </html>
