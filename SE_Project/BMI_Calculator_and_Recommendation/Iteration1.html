@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #140F1F;
+    --panel: #20172F;
+    --panel-raised: #2A1F3D;
+    --line: #46345F;
+    --chalk: #F8F6FF;
+    --muted: #B7A9D4;
+
+    /* BMI Gauge */
+    --zone-under: #B388FF;
+    --zone-normal: #9C6BFF;
+    --zone-over: #7E57C2;
+    --zone-obese: #5E35B1;
+
+    /* Main Accent */
+    --accent: #9C6BFF;
+
+    --radius: 18px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+  }
+
+  .card{
+    width: 100%;
+    max-width: 460px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 28px 32px;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.55);
+  }
+
+  h1{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    margin: 0 0 20px;
+  }
+
+  /* Gauge */
+  .gauge-wrap{
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 8px;
+  }
+
+  .gauge-value{
+    text-align:center;
+    width: 100%;
+    margin: -20px 0 20px;
+  }
+
+  .gauge-value .num{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--chalk);
+  }
+
+  .gauge-value .num .unit{
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  .gauge-value .category{
+    margin-top: 6px;
+    display:inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    transition: color 0.3s ease, background 0.3s ease;
+  }
+
+  .needle{
+    transform-origin: 160px 160px;
+    transition: transform 0.6s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .zone-labels{
+    display:flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    padding: 0 6px;
+    margin-top: -6px;
+  }
+
+  /* Form */
+  .fields{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 22px 0 8px;
+  }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+
+  .field label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .field .input-row{
+    display:flex;
+    align-items:center;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0 10px;
+    transition: border-color 0.2s ease;
+  }
+
+  .field .input-row:focus-within{
+    border-color: var(--accent);
+  }
+
+  .field input{
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--chalk);
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    padding: 10px 4px;
+  }
+
+  .field .suffix{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .calc-btn{
+    width: 100%;
+    margin-top: 14px;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #1A1400;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .calc-btn:hover{ filter: brightness(1.08); }
+  .calc-btn:active{ transform: scale(0.98); }
+
+  .hint{
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align:center;
+    min-height: 16px;
+  }
+
+  .hint.error{ color: var(--zone-obese); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>BMI Calculator</h1>
+
+  <div class="gauge-wrap">
+    <svg viewBox="0 0 320 190" width="100%" height="auto">
+      <!-- background track -->
+      <path id="trackArc" fill="none" stroke="#2C333B" stroke-width="18" stroke-linecap="round"/>
+      <!-- zone arcs: underweight, normal, overweight, obese (drawn by JS so every segment sits on the exact same circle) -->
+      <g id="zoneArcs"></g>
+
+      <g class="needle" id="needle">
+        <line x1="160" y1="160" x2="160" y2="42" stroke="var(--chalk)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="160" cy="160" r="8" fill="var(--chalk)"/>
+      </g>
+    </svg>
+
+    <div class="gauge-value">
+      <div class="num" id="bmiNum">--<span class="unit">kg/m²</span></div>
+      <div class="category" id="bmiCategory">Enter your details</div>
+    </div>
+  </div>
+  <div class="zone-labels">
+    <span>Under</span><span>Normal</span><span>Over</span><span>Obese</span>
+  </div>
+
+  <div class="fields">
+    <div class="field" id="heightCmField">
+      <label for="heightCm">Height</label>
+      <div class="input-row">
+        <input type="number" id="heightCm" placeholder="170" min="0">
+        <span class="suffix">cm</span>
+      </div>
+    </div>
+
+    <div class="field" id="weightKgField">
+      <label for="weightKg">Weight</label>
+      <div class="input-row">
+        <input type="number" id="weightKg" placeholder="65" min="0">
+        <span class="suffix">kg</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calcBtn">Calculate BMI</button>
+  <p class="hint" id="hint"></p>
+</div>
+
+<script>
+  const needle = document.getElementById('needle');
+  const bmiNum = document.getElementById('bmiNum');
+  const bmiCategory = document.getElementById('bmiCategory');
+  const hint = document.getElementById('hint');
+
+  // --- Gauge geometry -------------------------------------------------
+  // All arcs share this exact center/radius, so segments always meet
+  // cleanly with no gaps or misaligned bulges.
+  const GAUGE_CX = 160, GAUGE_CY = 160, GAUGE_R = 140;
+  const BMI_MIN = 15, BMI_MAX = 40; // gauge spans this BMI range, left to right
+
+  // angle convention: 180deg = far left (BMI_MIN), 0deg = far right (BMI_MAX)
+  function bmiToGaugeAngle(bmi){
+    const clamped = Math.min(BMI_MAX, Math.max(BMI_MIN, bmi));
+    const pct = (clamped - BMI_MIN) / (BMI_MAX - BMI_MIN);
+    return 180 - pct * 180;
+  }
+
+  function polarPoint(angleDeg){
+    const rad = angleDeg * Math.PI / 180;
+    return {
+      x: GAUGE_CX + GAUGE_R * Math.cos(rad),
+      y: GAUGE_CY - GAUGE_R * Math.sin(rad)
+    };
+  }
+
+  function arcPath(startAngle, endAngle){
+    const start = polarPoint(startAngle);
+    const end = polarPoint(endAngle);
+    const largeArc = Math.abs(startAngle - endAngle) > 180 ? 1 : 0;
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${GAUGE_R} ${GAUGE_R} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+
+  function drawGauge(){
+    document.getElementById('trackArc').setAttribute('d', arcPath(180, 0));
+
+    const zones = [
+      { from: BMI_MIN, to: 18.5, color: 'var(--zone-under)' },
+      { from: 18.5,    to: 25,   color: 'var(--zone-normal)' },
+      { from: 25,      to: 30,   color: 'var(--zone-over)' },
+      { from: 30,      to: BMI_MAX, color: 'var(--zone-obese)' }
+    ];
+
+    const g = document.getElementById('zoneArcs');
+    g.innerHTML = '';
+    zones.forEach(z => {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', arcPath(bmiToGaugeAngle(z.from), bmiToGaugeAngle(z.to)));
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', z.color);
+      path.setAttribute('stroke-width', '18');
+      path.setAttribute('stroke-linecap', 'round');
+      g.appendChild(path);
+    });
+  }
+  drawGauge();
+
+  // BMI category thresholds (WHO standard)
+  function getCategory(bmi){
+    if (bmi < 18.5) return { label: 'Underweight', color: 'var(--zone-under)' };
+    if (bmi < 25)   return { label: 'Normal', color: 'var(--zone-normal)' };
+    if (bmi < 30)   return { label: 'Overweight', color: 'var(--zone-over)' };
+    return { label: 'Obese', color: 'var(--zone-obese)' };
+  }
+
+  // Map bmi (clamped 15-40) to needle rotation (-90 to 90 deg)
+  function bmiToAngle(bmi){
+    const clamped = Math.min(BMI_MAX, Math.max(BMI_MIN, bmi));
+    const pct = (clamped - BMI_MIN) / (BMI_MAX - BMI_MIN);
+    return -90 + pct * 180;
+  }
+
+  function calculate(){
+    const cm = parseFloat(document.getElementById('heightCm').value);
+    const kg = parseFloat(document.getElementById('weightKg').value);
+
+    if (!cm || !kg || cm <= 0 || kg <= 0) {
+      hint.textContent = 'Please enter a valid height and weight.';
+      hint.classList.add('error');
+      return;
+    }
+
+    hint.classList.remove('error');
+    hint.textContent = '';
+
+    const heightM = cm / 100;
+    const bmi = kg / (heightM * heightM);
+    const cat = getCategory(bmi);
+
+    bmiNum.innerHTML = bmi.toFixed(1) + '<span class="unit">kg/m²</span>';
+    bmiCategory.textContent = cat.label;
+    bmiCategory.style.color = cat.color;
+    bmiCategory.style.background = 'color-mix(in srgb, ' + cat.color + ' 18%, transparent)';
+
+    needle.style.transform = 'rotate(' + bmiToAngle(bmi) + 'deg)';
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', calculate);
+  document.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') calculate(); });
+  });
+</script>
+
+</body>
+</html>
