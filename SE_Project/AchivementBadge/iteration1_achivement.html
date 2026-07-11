@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievements</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f4f4;
+    color: #111;
+    min-height: 100vh;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  /* ── Page header ── */
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .page-header h1 em { font-style: italic; }
+  .page-header p {
+    font-size: 13px;
+    color: #888;
+    margin-top: 5px;
+  }
+
+  /* ── Summary bar ── */
+  .summary-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .summary-pill {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .summary-pill span {
+    font-weight: 700;
+    color: #111;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #999;
+    margin-bottom: 12px;
+    margin-top: 2rem;
+  }
+
+  /* ── Badge grid ── */
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+  }
+
+  /* ── Badge card ── */
+  .badge-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 18px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .badge-card.unlocked {
+    border-color: #c8c8c8;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  .badge-card.unlocked:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.11);
+    border-color: #aaa;
+  }
+
+  .badge-card.locked {
+    opacity: 0.55;
+    background: #fafafa;
+  }
+
+  /* Unlocked shimmer strip at top */
+  .badge-card.unlocked::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--badge-color, #111);
+    border-radius: 14px 14px 0 0;
+  }
+
+  /* ── Badge icon shell ── */
+  .badge-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .badge-card.unlocked .badge-icon-wrap {
+    background: var(--badge-bg, #f0f0f0);
+    box-shadow: 0 0 0 4px var(--badge-ring, #e0e0e0);
+  }
+
+  .badge-card.locked .badge-icon-wrap {
+    background: #ececec;
+    box-shadow: none;
+    filter: grayscale(1);
+  }
+
+  .badge-card.unlocked:hover .badge-icon-wrap {
+    transform: scale(1.08);
+  }
+
+  /* Lock overlay */
+  .badge-card.locked .badge-icon-wrap::after {
+    content: '🔒';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    font-size: 14px;
+    background: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e0e0e0;
+    line-height: 1;
+  }
+
+  /* ── Badge text ── */
+  .badge-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    line-height: 1.2;
+  }
+
+  .badge-card.locked .badge-name { color: #999; }
+
+  .badge-desc {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  /* ── Progress ring (for in-progress badges) ── */
+  .badge-progress-wrap {
+    width: 100%;
+  }
+
+  .badge-progress-bar-bg {
+    height: 4px;
+    background: #ececec;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .badge-progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--badge-color, #bbb);
+    transition: width 0.5s ease;
+  }
+
+  .badge-progress-label {
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* ── Unlocked checkmark ── */
+  .badge-unlocked-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--badge-color, #555);
+    background: var(--badge-bg, #f0f0f0);
+    border-radius: 999px;
+    padding: 2px 9px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── NEW tag ── */
+  .badge-new-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #fff;
+    background: #111;
+    border-radius: 999px;
+    padding: 2px 7px;
+    text-transform: uppercase;
+  }
+
+  /* ── Popup toast ── */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #111;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 999px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 999;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1>Your <em>Achievements</em></h1>
+    <p>Badges unlock as you complete workouts on the Workout Plan page.</p>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-pill">🏅 Unlocked: <span id="count-unlocked">0</span></div>
+    <div class="summary-pill">🔒 Locked: <span id="count-locked">0</span></div>
+    <div class="summary-pill">💪 Workouts done: <span id="count-workouts">0</span></div>
+    <div class="summary-pill">⏱ Total minutes: <span id="count-minutes">0</span></div>
+  </div>
+
+  <div class="section-label">All Badges</div>
+  <div class="badge-grid" id="badge-grid"></div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────
+// Each badge has:
+//   id, name, desc, icon
+//   color (accent), bg (icon bg), ring (icon ring)
+//   condition(stats) → boolean
+//   progress(stats)  → { current, target } for locked badges
+// ─────────────────────────────────────────
+const BADGES = [
+  {
+    id: 'first_step',
+    name: 'First Step',
+    desc: 'Complete your very first workout.',
+    icon: '👟',
+    color: '#4A90D9',
+    bg: '#EBF4FF',
+    ring: '#C8E0F8',
+    condition: s => s.totalDone >= 1,
+    progress: s => ({ current: s.totalDone, target: 1 }),
+  },
+  {
+    id: 'hat_trick',
+    name: 'Hat Trick',
+    desc: 'Complete 3 workouts total.',
+    icon: '🎩',
+    color: '#9B59B6',
+    bg: '#F5EDFB',
+    ring: '#DEC8F2',
+    condition: s => s.totalDone >= 3,
+    progress: s => ({ current: s.totalDone, target: 3 }),
+  },
+  {
+    id: 'weekly_warrior',
+    name: 'Weekly Warrior',
+    desc: 'Complete 5 workouts in one week.',
+    icon: '⚔️',
+    color: '#E67E22',
+    bg: '#FEF3E7',
+    ring: '#F9D4A8',
+    condition: s => s.totalDone >= 5,
+    progress: s => ({ current: s.totalDone, target: 5 }),
+  },
+  {
+    id: 'ten_club',
+    name: 'Ten Club',
+    desc: 'Complete 10 workouts total.',
+    icon: '🔟',
+    color: '#27AE60',
+    bg: '#E9F7EF',
+    ring: '#B7E4CA',
+    condition: s => s.totalDone >= 10,
+    progress: s => ({ current: s.totalDone, target: 10 }),
+  },
+  {
+    id: 'cardio_king',
+    name: 'Cardio King',
+    desc: 'Complete 3 cardio workouts.',
+    icon: '🏃',
+    color: '#1ABC9C',
+    bg: '#E8FAF6',
+    ring: '#A8EADD',
+    condition: s => s.byCat.cardio >= 3,
+    progress: s => ({ current: s.byCat.cardio, target: 3 }),
+  },
+  {
+    id: 'iron_will',
+    name: 'Iron Will',
+    desc: 'Complete 3 strength workouts.',
+    icon: '🏋️',
+    color: '#E74C3C',
+    bg: '#FDEDEB',
+    ring: '#F5B8B1',
+    condition: s => s.byCat.strength >= 3,
+    progress: s => ({ current: s.byCat.strength, target: 3 }),
+  },
+  {
+    id: 'zen_master',
+    name: 'Zen Master',
+    desc: 'Complete 2 yoga or stretch workouts.',
+    icon: '🧘',
+    color: '#8E44AD',
+    bg: '#F4ECF9',
+    ring: '#D7B8EC',
+    condition: s => s.byCat.yoga >= 2,
+    progress: s => ({ current: s.byCat.yoga, target: 2 }),
+  },
+  {
+    id: 'on_fire',
+    name: 'On Fire',
+    desc: 'Complete 2 HIIT workouts.',
+    icon: '🔥',
+    color: '#F39C12',
+    bg: '#FEF9E7',
+    ring: '#FAD87C',
+    condition: s => s.byCat.hiit >= 2,
+    progress: s => ({ current: s.byCat.hiit, target: 2 }),
+  },
+  {
+    id: 'time_lord',
+    name: 'Time Lord',
+    desc: 'Log 120 total minutes of workouts.',
+    icon: '⏱️',
+    color: '#2980B9',
+    bg: '#EBF5FB',
+    ring: '#AED6F1',
+    condition: s => s.totalMins >= 120,
+    progress: s => ({ current: s.totalMins, target: 120 }),
+  },
+  {
+    id: 'marathon',
+    name: 'Marathon',
+    desc: 'Log 300 total minutes of workouts.',
+    icon: '🏅',
+    color: '#C0392B',
+    bg: '#FDEDEC',
+    ring: '#F1948A',
+    condition: s => s.totalMins >= 300,
+    progress: s => ({ current: s.totalMins, target: 300 }),
+  },
+  {
+    id: 'all_rounder',
+    name: 'All-Rounder',
+    desc: 'Complete a workout in every category.',
+    icon: '🌟',
+    color: '#F1C40F',
+    bg: '#FEFCE8',
+    ring: '#FAE97E',
+    condition: s => Object.values(s.byCat).every(v => v >= 1),
+    progress: s => ({ current: Object.values(s.byCat).filter(v => v >= 1).length, target: 5 }),
+  },
+  {
+    id: 'perfect_week',
+    name: 'Perfect Week',
+    desc: 'Complete workouts on 7 different days.',
+    icon: '📅',
+    color: '#16A085',
+    bg: '#E8F8F5',
+    ring: '#A2DED0',
+    condition: s => s.activeDays >= 7,
+    progress: s => ({ current: s.activeDays, target: 7 }),
+  },
+];
+
+// DEMO DATA — replace with real source when integrating
+const DEMO_WORKOUTS = [
+  // format: { name, cat, duration, done }
+  { name: 'Running',     cat: 'cardio',   duration: 30,  done: true  },
+  { name: 'Squats',      cat: 'strength', duration: 45,  done: true  },
+  { name: 'Burpees',     cat: 'hiit',     duration: 20,  done: true  },
+  { name: 'Stretching',  cat: 'yoga',     duration: 25,  done: false },
+  { name: 'Cycling',     cat: 'cardio',   duration: 40,  done: false },
+  { name: 'Deadlift',    cat: 'strength', duration: 50,  done: false },
+];
+
+// ─────────────────────────────────────────
+// COMPUTE STATS from workout list
+// ─────────────────────────────────────────
+function computeStats(workouts) {
+  const stats = {
+    totalDone: 0,
+    totalMins: 0,
+    activeDays: 0,
+    byCat: { strength: 0, cardio: 0, hiit: 0, yoga: 0, other: 0 },
+  };
+
+  const daysWithDone = new Set();
+
+  workouts.forEach((w, i) => {
+    if (w.done) {
+      stats.totalDone++;
+      stats.totalMins += (w.duration || 0);
+      stats.byCat[w.cat] = (stats.byCat[w.cat] || 0) + 1;
+      daysWithDone.add(w.dayIndex ?? i); 
+    }
+  });
+
+  stats.activeDays = daysWithDone.size;
+  return stats;
+}
+
+// ─────────────────────────────────────────
+// TRACK NEWLY UNLOCKED (for NEW tag + toast)
+// ─────────────────────────────────────────
+const prevUnlocked = JSON.parse(sessionStorage.getItem('unlockedBadges') || '[]');
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+function render(workouts) {
+  const stats = computeStats(workouts);
+  const grid = document.getElementById('badge-grid');
+  grid.innerHTML = '';
+
+  const nowUnlocked = BADGES.filter(b => b.condition(stats)).map(b => b.id);
+  const newlyUnlocked = nowUnlocked.filter(id => !prevUnlocked.includes(id));
+
+  // Update summary
+  document.getElementById('count-unlocked').textContent = nowUnlocked.length;
+  document.getElementById('count-locked').textContent = BADGES.length - nowUnlocked.length;
+  document.getElementById('count-workouts').textContent = stats.totalDone;
+  document.getElementById('count-minutes').textContent = stats.totalMins;
+
+  // Sort: unlocked first, then locked
+  const sorted = [
+    ...BADGES.filter(b => b.condition(stats)),
+    ...BADGES.filter(b => !b.condition(stats)),
+  ];
+
+  sorted.forEach(badge => {
+    const unlocked = badge.condition(stats);
+    const isNew = newlyUnlocked.includes(badge.id);
+    const prog = badge.progress(stats);
+
+    const card = document.createElement('div');
+    card.className = 'badge-card ' + (unlocked ? 'unlocked' : 'locked');
+    card.style.setProperty('--badge-color', badge.color);
+    card.style.setProperty('--badge-bg', badge.bg);
+    card.style.setProperty('--badge-ring', badge.ring);
+
+    const pct = Math.min(100, Math.round((prog.current / prog.target) * 100));
+
+    card.innerHTML = `
+      ${isNew ? '<div class="badge-new-tag">New!</div>' : ''}
+      <div class="badge-icon-wrap">${badge.icon}</div>
+      <div>
+        <div class="badge-name">${badge.name}</div>
+        <div class="badge-desc">${badge.desc}</div>
+      </div>
+      ${unlocked
+        ? `<div class="badge-unlocked-tag">✓ Unlocked</div>`
+        : `<div class="badge-progress-wrap">
+             <div class="badge-progress-bar-bg">
+               <div class="badge-progress-bar-fill" style="width:${pct}%"></div>
+             </div>
+             <div class="badge-progress-label">${prog.current} / ${prog.target}</div>
+           </div>`
+      }
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // Save current unlocked to session
+  sessionStorage.setItem('unlockedBadges', JSON.stringify(nowUnlocked));
+
+  // Toast for newly unlocked
+  if (newlyUnlocked.length > 0) {
+    const names = newlyUnlocked.map(id => BADGES.find(b => b.id === id)?.name).join(', ');
+    showToast(`🏅 Badge unlocked: ${names}!`);
+  }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+render(DEMO_WORKOUTS);
+</script>
+</body>
+</html>
