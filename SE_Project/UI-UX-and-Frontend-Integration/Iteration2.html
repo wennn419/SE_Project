@@ -872,6 +872,39 @@
                       transition: left 0.6s cubic-bezier(0.34,1.56,0.64,1); }
     .bmi-bar-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--text3); margin-top: 5px; }
 
+    /* ── BMI recommendation panel ── */
+    .bmi-reco-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 20px; margin-top: 14px; animation: bmiRecoIn 0.3s ease;
+    }
+    @keyframes bmiRecoIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .bmi-reco-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .bmi-reco-icon {
+      width: 38px; height: 38px; border-radius: 10px; background: var(--surface2);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .bmi-reco-head-text { min-width: 0; }
+    .bmi-reco-title { font-size: 13px; font-weight: 600; letter-spacing: -0.01em; }
+    .bmi-reco-range { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .bmi-reco-text { font-size: 12.5px; line-height: 1.55; color: var(--text2); margin-bottom: 12px; }
+    .bmi-reco-tips-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .bmi-reco-tips { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+    .bmi-reco-ex-chip {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 9px 11px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      color: var(--text); transition: border-color 0.15s, background 0.15s;
+    }
+    .bmi-reco-ex-chip:hover { border-color: var(--accent); background: var(--surface); }
+    .bmi-reco-ex-icon { font-size: 16px; flex-shrink: 0; line-height: 1; }
+    .bmi-reco-ex-name { font-size: 12.5px; font-weight: 600; flex: 1; }
+    .bmi-reco-ex-cat { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+    .bmi-reco-ex-plus {
+      width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: white;
+      display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .bmi-reco-disclaimer { font-size: 10.5px; color: var(--text3); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 10px; }
+
     @media (max-width: 768px) {
       .ach-grid { grid-template-columns: 1fr; }
       .ach-summary { grid-template-columns: repeat(3, 1fr); }
@@ -1108,6 +1141,20 @@
               <div class="bmi-bar-labels"><span>&lt; 18.5</span><span>18.5 – 25</span><span>25 – 30</span><span>&gt; 30</span></div>
             </div>
           </div>
+        </div>
+
+        <div class="bmi-reco-card" id="bmi-reco-card" style="display:none">
+          <div class="bmi-reco-header">
+            <div class="bmi-reco-icon" id="bmi-reco-icon">💡</div>
+            <div class="bmi-reco-head-text">
+              <div class="bmi-reco-title" id="bmi-reco-title">Recommendation</div>
+              <div class="bmi-reco-range" id="bmi-reco-range"></div>
+            </div>
+          </div>
+          <p class="bmi-reco-text" id="bmi-reco-text"></p>
+          <div class="bmi-reco-tips-label">Suggested exercises for you</div>
+          <div class="bmi-reco-tips" id="bmi-reco-tips"></div>
+          <div class="bmi-reco-disclaimer">Tap an exercise to add it to your schedule. BMI is a general screening measure, not a diagnosis — for personalized advice, consult a doctor or dietitian.</div>
         </div>
 
         <div class="section-label" style="margin-top:28px">Weight Log</div>
@@ -2140,6 +2187,76 @@
   }
 
   // ===== BMI CALCULATOR =====
+  const BMI_RECO = {
+    underweight: {
+      icon: '🍽️', title: "You're in the underweight range",
+      text: 'Your weight is below the typical healthy range for your height. Strength training helps build healthy muscle mass alongside weight gain.',
+      exercises: [ ['strength','Squats'], ['strength','Bench Press'], ['strength','Deadlift'] ],
+    },
+    healthy: {
+      icon: '✅', title: "You're in a healthy weight range",
+      text: 'Great work — your BMI falls within the healthy range. A balanced mix of cardio and strength helps you maintain it.',
+      exercises: [ ['cardio','Running'], ['strength','Squats'], ['strength','Pull-ups'] ],
+    },
+    overweight: {
+      icon: '🚶', title: "You're in the overweight range",
+      text: 'Your BMI is somewhat above the typical range. Regular cardio paired with some strength work is a solid, sustainable combo.',
+      exercises: [ ['cardio','Cycling'], ['cardio','Running'], ['hiit','Mountain Climbers'] ],
+    },
+    obese: {
+      icon: '🩺', title: "You're in the obese range",
+      text: 'Your BMI is notably above the typical range. Starting with low-impact activity is easier on the joints while building consistency.',
+      exercises: [ ['cardio','Swimming'], ['cardio','Elliptical'], ['yoga','Stretching'] ],
+    },
+  };
+
+  function quickAddExercise(cat, name) {
+    const ex = (EXERCISES[cat] || []).find(e => e.name === name);
+    if (!ex) return;
+    openAddModal();
+    selectedCat = cat;
+    selectedExercise = ex;
+    document.getElementById('custom-name').value = '';
+    renderCatTabs();
+    renderExercises();
+    checkAdd();
+  }
+
+  function renderBMIReco(bmi, h) {
+    const card = document.getElementById('bmi-reco-card');
+    if (bmi == null) { card.style.display = 'none'; return; }
+
+    let key;
+    if      (bmi < 18.5) key = 'underweight';
+    else if (bmi < 25)   key = 'healthy';
+    else if (bmi < 30)   key = 'overweight';
+    else                 key = 'obese';
+
+    const reco = BMI_RECO[key];
+    document.getElementById('bmi-reco-icon').textContent  = reco.icon;
+    document.getElementById('bmi-reco-title').textContent = reco.title;
+    document.getElementById('bmi-reco-text').textContent  = reco.text;
+
+    // Healthy weight range for this height (BMI 18.5–24.9)
+    const heightM = h / 100;
+    const lo = (18.5 * heightM * heightM).toFixed(1);
+    const hi = (24.9 * heightM * heightM).toFixed(1);
+    document.getElementById('bmi-reco-range').textContent = `Healthy weight for your height: ${lo}–${hi} kg`;
+
+    document.getElementById('bmi-reco-tips').innerHTML = reco.exercises.map(([cat, name]) => {
+      const ex = (EXERCISES[cat] || []).find(e => e.name === name);
+      if (!ex) return '';
+      return `<button class="bmi-reco-ex-chip" onclick="quickAddExercise('${cat}','${name.replace(/'/g,"\\'")}')">
+        <span class="bmi-reco-ex-icon">${ex.icon}</span>
+        <span class="bmi-reco-ex-name">${ex.name}</span>
+        <span class="bmi-reco-ex-cat">${CAT_LABELS[cat] || cat}</span>
+        <span class="bmi-reco-ex-plus">+</span>
+      </button>`;
+    }).join('');
+
+    card.style.display = 'block';
+  }
+
   function calcBMI() {
     const h = parseFloat(document.getElementById('bmi-height').value);
     const w = parseFloat(document.getElementById('bmi-weight').value);
@@ -2152,6 +2269,7 @@
       numEl.textContent = '—'; catEl.textContent = 'Enter details';
       if (ring)   ring.style.strokeDashoffset = 408;
       if (marker) marker.style.left = '0%';
+      renderBMIReco(null);
       return;
     }
 
@@ -2179,6 +2297,8 @@
       const barPct = Math.min(100, Math.max(0, (Math.min(bmi, 40) - 10) / 30 * 100));
       marker.style.left = barPct + '%';
     }
+
+    renderBMIReco(bmi, h);
   }
 
   // ===== ACHIEVEMENTS =====
