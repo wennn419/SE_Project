@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievements v3</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { font-family: 'DM Sans', sans-serif; background: #f4f4f4; color: #111; min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+  .container { max-width: 980px; margin: 0 auto; }
+
+  .page-header { margin-bottom: 1.5rem; }
+  .page-header h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.7rem,4vw,2.4rem); font-weight:400; letter-spacing:-0.02em; line-height:1.1; }
+  .page-header h1 em { font-style:italic; }
+  .page-header p { font-size:13px; color:#888; margin-top:5px; }
+
+  /* Overall card */
+  .overall-card { background:#111; color:#fff; border-radius:14px; padding:20px 24px; margin-bottom:1.5rem; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+  .overall-title { font-family:'DM Serif Display',serif; font-size:1.1rem; font-style:italic; margin-bottom:6px; }
+  .overall-bar-bg { height:6px; background:rgba(255,255,255,0.15); border-radius:99px; width:260px; max-width:100%; overflow:hidden; }
+  .overall-bar-fill { height:100%; background:#fff; border-radius:99px; transition:width 0.6s ease; }
+  .overall-sub { font-size:12px; color:rgba(255,255,255,0.55); margin-top:6px; }
+  .overall-stats { display:flex; gap:1.5rem; }
+  .ostat { text-align:center; }
+  .ostat-num { font-family:'DM Serif Display',serif; font-size:1.8rem; line-height:1; }
+  .ostat-label { font-size:11px; color:rgba(255,255,255,0.5); margin-top:2px; text-transform:uppercase; letter-spacing:0.07em; }
+
+  /* Filter */
+  .filter-row { display:flex; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .filter-pill { padding:4px 14px; border-radius:999px; font-size:12px; font-weight:500; border:1px solid #ddd; background:#fff; cursor:pointer; transition:all 0.15s; color:#555; }
+  .filter-pill:hover { border-color:#aaa; color:#111; }
+  .filter-pill.active { background:#111; border-color:#111; color:#fff; }
+
+  /* Category section */
+  .category-section { margin-bottom:2.5rem; }
+  .category-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #e0e0e0; }
+  .category-icon { font-size:18px; }
+  .category-title { font-size:14px; font-weight:600; color:#111; }
+  .category-desc { font-size:12px; color:#aaa; }
+  .category-count { font-size:12px; color:#aaa; margin-left:auto; }
+
+  /* Badge grid */
+  .badge-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; }
+
+  /* ── LEVEL COLORS ── */
+  :root {
+    --bronze: #CD7F32; --bronze-bg: #FBF2E8; --bronze-ring: #EDD5A8;
+    --silver: #888888; --silver-bg: #F4F4F4; --silver-ring: #D0D0D0;
+    --gold:   #C8960C; --gold-bg:   #FEF9E7; --gold-ring:   #F4D97A;
+  }
+
+  /* Badge card */
+  .badge-card { background:#fff; border:1px solid #e5e5e5; border-radius:14px; padding:16px 12px 14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:8px; position:relative; overflow:hidden; cursor:pointer; transition:transform 0.18s, box-shadow 0.18s, border-color 0.18s; }
+
+  .badge-card.unlocked { box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+  .badge-card.unlocked:hover { transform:translateY(-3px); box-shadow:0 8px 22px rgba(0,0,0,0.12); }
+  .badge-card.unlocked::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:14px 14px 0 0; background: var(--level-color, #111); }
+  .badge-card.locked { opacity:0.45; background:#fafafa; cursor:default; }
+  .badge-card.locked:hover { transform:none; }
+
+  /* level border tint */
+  .badge-card.unlocked.lv-bronze { border-color:#EDD5A8; }
+  .badge-card.unlocked.lv-silver { border-color:#C8C8C8; }
+  .badge-card.unlocked.lv-gold   { border-color:#F4D97A; }
+
+  /* Level badge in corner */
+  .level-ribbon {
+    position:absolute; top:9px; left:10px;
+    font-size:9px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    padding:2px 7px; border-radius:999px; border:1px solid;
+  }
+  .level-ribbon.bronze { color:var(--bronze); background:var(--bronze-bg); border-color:var(--bronze-ring); }
+  .level-ribbon.silver { color:var(--silver); background:var(--silver-bg); border-color:var(--silver-ring); }
+  .level-ribbon.gold   { color:var(--gold);   background:var(--gold-bg);   border-color:var(--gold-ring); }
+
+  .badge-new-tag { position:absolute; top:9px; right:9px; font-size:9px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#fff; background:#111; border-radius:999px; padding:2px 7px; }
+
+  /* SVG badge logo */
+  .badge-logo-wrap { position:relative; width:80px; height:86px; flex-shrink:0; transition:transform 0.2s; }
+  .badge-card.unlocked:hover .badge-logo-wrap { transform:scale(1.06); }
+  .badge-logo-wrap svg.badge-shape { width:80px; height:86px; display:block; }
+  .badge-emoji { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; padding-bottom:4px; pointer-events:none; }
+  .badge-card.locked .badge-logo-wrap { filter:grayscale(1); }
+  .badge-card.locked .badge-logo-wrap::after { content:'🔒'; position:absolute; bottom:2px; right:-2px; font-size:13px; background:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border:1px solid #e0e0e0; line-height:1; z-index:2; filter:none; }
+  .badge-ring-svg { position:absolute; inset:0; width:80px; height:86px; pointer-events:none; }
+
+  /* Badge text */
+  .badge-name { font-size:12.5px; font-weight:600; color:#111; line-height:1.2; }
+  .badge-card.locked .badge-name { color:#aaa; }
+  .badge-desc { font-size:11px; color:#888; line-height:1.4; }
+
+  /* Level dots row (shows B/S/G progress per badge group) */
+  .level-dots { display:flex; gap:5px; align-items:center; }
+  .level-dot { width:10px; height:10px; border-radius:50%; border:1.5px solid #ddd; background:#f0f0f0; }
+  .level-dot.bronze { background:var(--bronze); border-color:var(--bronze); }
+  .level-dot.silver { background:var(--silver); border-color:var(--silver); }
+  .level-dot.gold   { background:var(--gold);   border-color:var(--gold); }
+
+  /* Progress bar */
+  .badge-progress-wrap { width:100%; }
+  .badge-progress-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .badge-progress-count { font-size:10px; color:#aaa; }
+  .badge-progress-pct   { font-size:11px; font-weight:600; color:#555; }
+  .badge-progress-bg { height:5px; background:#ebebeb; border-radius:99px; overflow:hidden; }
+  .badge-progress-fill { height:100%; border-radius:99px; transition:width 0.5s ease; }
+  .badge-progress-fill.bronze { background:var(--bronze); }
+  .badge-progress-fill.silver { background:var(--silver); }
+  .badge-progress-fill.gold   { background:var(--gold); }
+  .badge-progress-fill.locked-fill { background:#bbb; }
+
+  .badge-unlocked-tag { font-size:10px; font-weight:600; color:#fff; border-radius:999px; padding:2px 10px; letter-spacing:0.04em; }
+  .badge-unlocked-tag.bronze { background:var(--bronze); }
+  .badge-unlocked-tag.silver { background:var(--silver); }
+  .badge-unlocked-tag.gold   { background:var(--gold); }
+
+  /* Detail modal */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.38); z-index:200; align-items:center; justify-content:center; padding:1rem; }
+  .modal-backdrop.open { display:flex; }
+  .detail-modal { background:#fff; border-radius:18px; border:1px solid #ddd; width:100%; max-width:360px; overflow:hidden; animation:modalIn 0.2s ease; }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.95) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+  .dm-header { padding:24px 20px 18px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; border-bottom:1px solid #efefef; position:relative; }
+  .dm-close { position:absolute; top:14px; right:14px; background:none; border:1px solid #e0e0e0; border-radius:6px; cursor:pointer; color:#aaa; font-size:15px; width:27px; height:27px; display:flex; align-items:center; justify-content:center; }
+  .dm-close:hover { background:#f5f5f5; }
+
+  .dm-badge-wrap { width:90px; height:96px; position:relative; }
+  .dm-badge-wrap svg.badge-shape { width:90px; height:96px; }
+  .dm-badge-emoji { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:34px; padding-bottom:4px; }
+
+  .dm-level-pill { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:2px 10px; border-radius:999px; border:1px solid; }
+  .dm-level-pill.bronze { color:var(--bronze); background:var(--bronze-bg); border-color:var(--bronze-ring); }
+  .dm-level-pill.silver { color:var(--silver); background:var(--silver-bg); border-color:var(--silver-ring); }
+  .dm-level-pill.gold   { color:var(--gold);   background:var(--gold-bg);   border-color:var(--gold-ring); }
+  .dm-level-pill.locked { color:#999; background:#f5f5f5; border-color:#e0e0e0; }
+
+  .dm-cat-label { font-size:11px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.07em; }
+  .dm-name { font-family:'DM Serif Display',serif; font-size:1.3rem; font-weight:400; }
+  .dm-desc { font-size:13px; color:#666; line-height:1.5; }
+
+  .dm-body { padding:18px 20px 22px; display:flex; flex-direction:column; gap:14px; }
+
+  /* Level progress steps in modal */
+  .dm-level-steps { display:flex; gap:6px; }
+  .dm-level-step { flex:1; border-radius:8px; padding:8px 6px; text-align:center; border:1px solid #e8e8e8; background:#f9f9f9; }
+  .dm-level-step.reached.bronze { background:var(--bronze-bg); border-color:var(--bronze-ring); }
+  .dm-level-step.reached.silver { background:var(--silver-bg); border-color:var(--silver-ring); }
+  .dm-level-step.reached.gold   { background:var(--gold-bg);   border-color:var(--gold-ring); }
+  .dm-level-step-icon { font-size:16px; }
+  .dm-level-step-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-top:3px; color:#aaa; }
+  .dm-level-step.reached.bronze .dm-level-step-lbl { color:var(--bronze); }
+  .dm-level-step.reached.silver .dm-level-step-lbl { color:var(--silver); }
+  .dm-level-step.reached.gold   .dm-level-step-lbl { color:var(--gold); }
+  .dm-level-step-val { font-size:10px; color:#aaa; margin-top:1px; }
+  .dm-level-step.reached .dm-level-step-val { color:#555; }
+
+  .dm-quote { background:#f7f7f7; border-left:3px solid #111; border-radius:0 10px 10px 0; padding:12px 14px; font-size:13px; font-style:italic; color:#333; line-height:1.6; }
+  .dm-progress-label { display:flex; justify-content:space-between; font-size:12px; color:#888; margin-bottom:6px; }
+  .dm-progress-bg { height:7px; background:#ececec; border-radius:99px; overflow:hidden; }
+  .dm-progress-fill { height:100%; border-radius:99px; transition:width 0.5s ease; }
+  .dm-progress-fill.bronze { background:var(--bronze); }
+  .dm-progress-fill.silver { background:var(--silver); }
+  .dm-progress-fill.gold   { background:var(--gold); }
+  .dm-progress-fill.locked { background:#bbb; }
+
+  .dm-unlocked-banner { background:#f7f7f7; border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:8px; font-size:12px; color:#555; }
+
+  /* Toast */
+  .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:#111; color:#fff; font-size:13px; font-weight:500; padding:10px 22px; border-radius:999px; opacity:0; transition:opacity 0.3s, transform 0.3s; pointer-events:none; white-space:nowrap; z-index:999; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .empty-state { text-align:center; padding:3rem 1rem; color:#bbb; font-size:14px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1>Your <em>Achievements</em></h1>
+    <p>Badges upgrade from Bronze → Silver → Gold as you hit higher milestones.</p>
+  </div>
+
+  <div class="overall-card">
+    <div>
+      <div class="overall-title">Overall Progress</div>
+      <div class="overall-bar-bg"><div class="overall-bar-fill" id="overall-fill" style="width:0%"></div></div>
+      <div class="overall-sub" id="overall-sub"></div>
+    </div>
+    <div class="overall-stats">
+      <div class="ostat"><div class="ostat-num" id="s-done">0</div><div class="ostat-label">Done</div></div>
+      <div class="ostat"><div class="ostat-num" id="s-mins">0</div><div class="ostat-label">Mins</div></div>
+      <div class="ostat"><div class="ostat-num" id="s-days">0</div><div class="ostat-label">Days</div></div>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <div class="filter-pill active" data-filter="all">All</div>
+    <div class="filter-pill" data-filter="unlocked">✓ Unlocked</div>
+    <div class="filter-pill" data-filter="in-progress">⏳ In Progress</div>
+    <div class="filter-pill" data-filter="gold">🥇 Gold</div>
+  </div>
+
+  <div id="categories-wrap"></div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="detail-modal">
+    <div class="dm-header">
+      <button class="dm-close" id="dm-close">✕</button>
+      <div class="dm-badge-wrap" id="dm-badge-wrap"></div>
+      <div class="dm-level-pill" id="dm-level-pill"></div>
+      <div class="dm-cat-label" id="dm-cat-label"></div>
+      <div class="dm-name" id="dm-name"></div>
+      <div class="dm-desc" id="dm-desc"></div>
+    </div>
+    <div class="dm-body">
+      <div class="dm-level-steps" id="dm-level-steps"></div>
+      <div class="dm-quote" id="dm-quote"></div>
+      <div id="dm-progress-wrap">
+        <div class="dm-progress-label"><span id="dm-prog-label"></span><span id="dm-prog-pct"></span></div>
+        <div class="dm-progress-bg"><div class="dm-progress-fill" id="dm-prog-fill"></div></div>
+      </div>
+      <div class="dm-unlocked-banner" id="dm-unlocked-banner" style="display:none">
+        <span>🏅</span><span id="dm-unlocked-text"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// ─────────────────────────────────────────
+// LEVEL CONFIG
+// ─────────────────────────────────────────
+const LEVELS = {
+  bronze: { label:'Bronze', icon:'🥉', color:'var(--bronze)' },
+  silver: { label:'Silver', icon:'🥈', color:'var(--silver)' },
+  gold:   { label:'Gold',   icon:'🥇', color:'var(--gold)' },
+};
+
+// ─────────────────────────────────────────
+// CATEGORIES
+// ─────────────────────────────────────────
+const CATEGORIES = {
+  milestones:  { label:'Total Workouts',    icon:'🎯', desc:'Based on total workouts completed' },
+  consistency: { label:'Days Active',       icon:'📅', desc:'Based on how many days you showed up' },
+  endurance:   { label:'Time & Endurance',  icon:'⏱️', desc:'Based on total minutes logged' },
+  strength:    { label:'Strength Training', icon:'🏋️', desc:'Based on strength workouts done' },
+  cardio:      { label:'Cardio',            icon:'🏃', desc:'Based on cardio workouts done' },
+  variety:     { label:'Variety',           icon:'🌟', desc:'Mixing different workout types' },
+  bmi:         { label:'BMI & Health',      icon:'⚖️', desc:'Based on BMI from your Health page · syncs automatically' },
+};
+
+// ─────────────────────────────────────────
+// BADGE GROUPS
+// Each group has: id, cat, shape, icon, name, shape
+// and THREE levels: bronze / silver / gold
+// Each level: { desc, quote, target, unit, condition(s), progress(s) }
+// ─────────────────────────────────────────
+const BADGE_GROUPS = [
+
+  // ── MILESTONES · shield ──
+  { id:'warrior',   cat:'milestones', shape:'shield', icon:'⚔️', name:'Warrior',
+    levels:{
+      bronze:{ desc:'Complete 5 workouts.',   quote:"Five down. The habit has already started forming.",              condition:s=>s.totalDone>=5,  progress:s=>({current:s.totalDone,target:5,  unit:'workouts'}) },
+      silver:{ desc:'Complete 20 workouts.',  quote:"20 workouts. That's not luck — that's discipline.",             condition:s=>s.totalDone>=20, progress:s=>({current:s.totalDone,target:20, unit:'workouts'}) },
+      gold:  { desc:'Complete 50 workouts.',  quote:"50 workouts. Most people never get here. You did.",             condition:s=>s.totalDone>=50, progress:s=>({current:s.totalDone,target:50, unit:'workouts'}) },
+    }},
+  { id:'centurion', cat:'milestones', shape:'shield', icon:'🛡️', name:'Centurion',
+    levels:{
+      bronze:{ desc:'Complete 10 workouts.',  quote:"Ten sessions in. You are building something real.",             condition:s=>s.totalDone>=10,  progress:s=>({current:s.totalDone,target:10,  unit:'workouts'}) },
+      silver:{ desc:'Complete 30 workouts.',  quote:"Thirty sessions. That's a month of consistency.",              condition:s=>s.totalDone>=30,  progress:s=>({current:s.totalDone,target:30,  unit:'workouts'}) },
+      gold:  { desc:'Complete 100 workouts.', quote:"100 workouts. You are in a category most people only dream of.",condition:s=>s.totalDone>=100, progress:s=>({current:s.totalDone,target:100, unit:'workouts'}) },
+    }},
+  { id:'legend',    cat:'milestones', shape:'shield', icon:'🏆', name:'Legend',
+    levels:{
+      bronze:{ desc:'Complete workouts across 3 weeks.',  quote:"Three weeks of effort. Your body is adapting.",     condition:s=>s.weekSpan>=3,  progress:s=>({current:s.weekSpan,target:3,  unit:'weeks'}) },
+      silver:{ desc:'Complete workouts across 8 weeks.',  quote:"Two months of showing up. That's legendary.",       condition:s=>s.weekSpan>=8,  progress:s=>({current:s.weekSpan,target:8,  unit:'weeks'}) },
+      gold:  { desc:'Complete workouts across 12 weeks.', quote:"Twelve weeks. A full quarter of the year. Remarkable.", condition:s=>s.weekSpan>=12, progress:s=>({current:s.weekSpan,target:12, unit:'weeks'}) },
+    }},
+
+  // ── CONSISTENCY · pentagon ──
+  { id:'showup',    cat:'consistency', shape:'pentagon', icon:'📅', name:'Show Up',
+    levels:{
+      bronze:{ desc:'Be active on 5 different days.',  quote:"Showing up is 80% of success. You've already won.",     condition:s=>s.activeDays>=5,  progress:s=>({current:s.activeDays,target:5,  unit:'days'}) },
+      silver:{ desc:'Be active on 10 different days.', quote:"Ten days of movement. Consistency is your superpower.", condition:s=>s.activeDays>=10, progress:s=>({current:s.activeDays,target:10, unit:'days'}) },
+      gold:  { desc:'Be active on 20 different days.', quote:"Twenty active days. You are the definition of committed.", condition:s=>s.activeDays>=20, progress:s=>({current:s.activeDays,target:20, unit:'days'}) },
+    }},
+  { id:'grind',     cat:'consistency', shape:'pentagon', icon:'⚡', name:'Daily Grind',
+    levels:{
+      bronze:{ desc:'Work out on 7 different days.',  quote:"Seven days in. Your routine is taking shape.",            condition:s=>s.activeDays>=7,  progress:s=>({current:s.activeDays,target:7,  unit:'days'}) },
+      silver:{ desc:'Work out on 14 different days.', quote:"Fourteen days of grinding. You've built something real.", condition:s=>s.activeDays>=14, progress:s=>({current:s.activeDays,target:14, unit:'days'}) },
+      gold:  { desc:'Work out on 30 different days.', quote:"Thirty days. That's a full month of pure dedication.",    condition:s=>s.activeDays>=30, progress:s=>({current:s.activeDays,target:30, unit:'days'}) },
+    }},
+  { id:'perfect',   cat:'consistency', shape:'pentagon', icon:'🗓️', name:'Perfect Week',
+    levels:{
+      bronze:{ desc:'Complete workouts on 5 days in one week.', quote:"Five days in a single week. Near perfect.",          condition:s=>s.bestWeek>=5, progress:s=>({current:s.bestWeek,target:5,unit:'days/week'}) },
+      silver:{ desc:'Complete workouts on 6 days in one week.', quote:"Six days straight. You're pushing limits.",          condition:s=>s.bestWeek>=6, progress:s=>({current:s.bestWeek,target:6,unit:'days/week'}) },
+      gold:  { desc:'Complete workouts every day of a week.',   quote:"All 7 days. A flawless week. Absolutely legendary.", condition:s=>s.bestWeek>=7, progress:s=>({current:s.bestWeek,target:7,unit:'days/week'}) },
+    }},
+
+  // ── ENDURANCE · hexagon ──
+  { id:'timelord',  cat:'endurance', shape:'hexagon', icon:'⏱️', name:'Time Lord',
+    levels:{
+      bronze:{ desc:'Log 120 minutes total.',  quote:"Two hours invested in yourself. Time well spent.",             condition:s=>s.totalMins>=120, progress:s=>({current:s.totalMins,target:120, unit:'mins'}) },
+      silver:{ desc:'Log 300 minutes total.',  quote:"300 minutes. That's five hours of choosing yourself.",         condition:s=>s.totalMins>=300, progress:s=>({current:s.totalMins,target:300, unit:'mins'}) },
+      gold:  { desc:'Log 600 minutes total.',  quote:"600 minutes. Iron discipline forges an iron body.",            condition:s=>s.totalMins>=600, progress:s=>({current:s.totalMins,target:600, unit:'mins'}) },
+    }},
+  { id:'marathon',  cat:'endurance', shape:'hexagon', icon:'🏅', name:'Marathon',
+    levels:{
+      bronze:{ desc:'Log 200 minutes total.',  quote:"200 minutes of pure dedication. You're built different.",      condition:s=>s.totalMins>=200,  progress:s=>({current:s.totalMins,target:200,  unit:'mins'}) },
+      silver:{ desc:'Log 500 minutes total.',  quote:"500 minutes in. You run on willpower.",                        condition:s=>s.totalMins>=500,  progress:s=>({current:s.totalMins,target:500,  unit:'mins'}) },
+      gold:  { desc:'Log 1000 minutes total.', quote:"1000 minutes. That's over 16 hours of sweat and grit.",        condition:s=>s.totalMins>=1000, progress:s=>({current:s.totalMins,target:1000, unit:'mins'}) },
+    }},
+  { id:'longhaul',  cat:'endurance', shape:'hexagon', icon:'🔋', name:'Long Haul',
+    levels:{
+      bronze:{ desc:'Complete a single workout of 45+ mins.',  quote:"Staying power. You didn't stop when it got hard.",  condition:s=>s.longestSession>=45,  progress:s=>({current:s.longestSession,target:45,  unit:'mins'}) },
+      silver:{ desc:'Complete a single workout of 60+ mins.',  quote:"An hour straight. That's a real training session.", condition:s=>s.longestSession>=60,  progress:s=>({current:s.longestSession,target:60,  unit:'mins'}) },
+      gold:  { desc:'Complete a single workout of 90+ mins.',  quote:"Ninety minutes. You are operating on another level.",condition:s=>s.longestSession>=90,  progress:s=>({current:s.longestSession,target:90,  unit:'mins'}) },
+    }},
+
+  // ── STRENGTH · diamond ──
+  { id:'lifter',    cat:'strength', shape:'diamond', icon:'🏋️', name:'Lifter',
+    levels:{
+      bronze:{ desc:'Complete 5 strength workouts.',  quote:"Five lifts in. The foundation is set.",                  condition:s=>s.byCat.strength>=5,  progress:s=>({current:s.byCat.strength,target:5,  unit:'sessions'}) },
+      silver:{ desc:'Complete 15 strength workouts.', quote:"Strength isn't given. It's earned rep by rep.",          condition:s=>s.byCat.strength>=15, progress:s=>({current:s.byCat.strength,target:15, unit:'sessions'}) },
+      gold:  { desc:'Complete 30 strength workouts.', quote:"30 strength sessions. Legends are made of exactly this.",condition:s=>s.byCat.strength>=30, progress:s=>({current:s.byCat.strength,target:30, unit:'sessions'}) },
+    }},
+  { id:'titan',     cat:'strength', shape:'diamond', icon:'👑', name:'Titan',
+    levels:{
+      bronze:{ desc:'Complete 8 strength workouts.',  quote:"Eight sessions of iron. Your body is becoming the machine.", condition:s=>s.byCat.strength>=8,  progress:s=>({current:s.byCat.strength,target:8,  unit:'sessions'}) },
+      silver:{ desc:'Complete 20 strength workouts.', quote:"Twenty lifts deep. You are immovable.",                     condition:s=>s.byCat.strength>=20, progress:s=>({current:s.byCat.strength,target:20, unit:'sessions'}) },
+      gold:  { desc:'Complete 40 strength workouts.', quote:"40 strength sessions. You are built differently — literally.", condition:s=>s.byCat.strength>=40, progress:s=>({current:s.byCat.strength,target:40, unit:'sessions'}) },
+    }},
+  { id:'powerblock',cat:'strength', shape:'diamond', icon:'⚙️', name:'Power Block',
+    levels:{
+      bronze:{ desc:'Log 60+ mins of strength training total.',   quote:"An hour under the bar. Foundations take time.",           condition:s=>s.minsByCat.strength>=60,  progress:s=>({current:s.minsByCat.strength,target:60,  unit:'mins'}) },
+      silver:{ desc:'Log 180+ mins of strength training total.',  quote:"Three hours of iron. Your muscles remember every minute.",condition:s=>s.minsByCat.strength>=180, progress:s=>({current:s.minsByCat.strength,target:180, unit:'mins'}) },
+      gold:  { desc:'Log 400+ mins of strength training total.',  quote:"400 minutes of strength training. You are forged.",       condition:s=>s.minsByCat.strength>=400, progress:s=>({current:s.minsByCat.strength,target:400, unit:'mins'}) },
+    }},
+
+  // ── CARDIO · circle ──
+  { id:'runner',    cat:'cardio', shape:'circle', icon:'🏃', name:'Runner',
+    levels:{
+      bronze:{ desc:'Complete 5 cardio workouts.',  quote:"Your lungs are getting stronger with every session.",      condition:s=>s.byCat.cardio>=5,  progress:s=>({current:s.byCat.cardio,target:5,  unit:'sessions'}) },
+      silver:{ desc:'Complete 15 cardio workouts.', quote:"Fifteen cardio sessions. You set the pace — nobody else.",condition:s=>s.byCat.cardio>=15, progress:s=>({current:s.byCat.cardio,target:15, unit:'sessions'}) },
+      gold:  { desc:'Complete 30 cardio workouts.', quote:"30 cardio sessions. Your endurance is now undeniable.",    condition:s=>s.byCat.cardio>=30, progress:s=>({current:s.byCat.cardio,target:30, unit:'sessions'}) },
+    }},
+  { id:'pacer',     cat:'cardio', shape:'circle', icon:'🚴', name:'Pacer',
+    levels:{
+      bronze:{ desc:'Log 60+ mins of cardio total.',  quote:"An hour of cardio banked. Your heart is thanking you.",  condition:s=>s.minsByCat.cardio>=60,  progress:s=>({current:s.minsByCat.cardio,target:60,  unit:'mins'}) },
+      silver:{ desc:'Log 200+ mins of cardio total.', quote:"200 minutes of cardio. You move like water — relentless.",condition:s=>s.minsByCat.cardio>=200, progress:s=>({current:s.minsByCat.cardio,target:200, unit:'mins'}) },
+      gold:  { desc:'Log 500+ mins of cardio total.', quote:"500 cardio minutes. That's elite endurance territory.",  condition:s=>s.minsByCat.cardio>=500, progress:s=>({current:s.minsByCat.cardio,target:500, unit:'mins'}) },
+    }},
+  { id:'zonesix',   cat:'cardio', shape:'circle', icon:'🌊', name:'Zone Six',
+    levels:{
+      bronze:{ desc:'Complete 8 cardio workouts.',  quote:"Eight sessions deep. Your cardiovascular base is building.", condition:s=>s.byCat.cardio>=8,  progress:s=>({current:s.byCat.cardio,target:8,  unit:'sessions'}) },
+      silver:{ desc:'Complete 20 cardio workouts.', quote:"Twenty sessions. You've crossed into consistent athlete territory.", condition:s=>s.byCat.cardio>=20, progress:s=>({current:s.byCat.cardio,target:20, unit:'sessions'}) },
+      gold:  { desc:'Complete 50 cardio workouts.', quote:"50 cardio sessions. You run on pure determination.",               condition:s=>s.byCat.cardio>=50, progress:s=>({current:s.byCat.cardio,target:50, unit:'sessions'}) },
+    }},
+
+  // ── VARIETY · star ──
+  { id:'allrounder',cat:'variety', shape:'star', icon:'🌟', name:'All-Rounder',
+    levels:{
+      bronze:{ desc:'Complete 3 workouts in 3 different categories.',  quote:"Variety is the spice of fitness. Keep exploring.",          condition:s=>Object.entries(s.byCat).filter(([,v])=>v>=3).length>=3, progress:s=>({current:Object.entries(s.byCat).filter(([,v])=>v>=3).length,target:3,unit:'categories'}) },
+      silver:{ desc:'Complete 5 workouts in 4 different categories.',  quote:"Four categories with real volume. Impressively versatile.", condition:s=>Object.entries(s.byCat).filter(([,v])=>v>=5).length>=4, progress:s=>({current:Object.entries(s.byCat).filter(([,v])=>v>=5).length,target:4,unit:'categories'}) },
+      gold:  { desc:'Complete 5 workouts in all 5 categories.',        quote:"All five categories at real volume. You are the complete athlete.", condition:s=>Object.values(s.byCat).every(v=>v>=5), progress:s=>({current:Object.values(s.byCat).filter(v=>v>=5).length,target:5,unit:'categories'}) },
+    }},
+  { id:'fire',      cat:'variety', shape:'star', icon:'🔥', name:'On Fire',
+    levels:{
+      bronze:{ desc:'Complete 5 HIIT workouts.',  quote:"Five HIIT sessions. You didn't just sweat — you burned.",    condition:s=>s.byCat.hiit>=5,  progress:s=>({current:s.byCat.hiit,target:5, unit:'sessions'}) },
+      silver:{ desc:'Complete 12 HIIT workouts.', quote:"Twelve HIIT sessions. You don't just train — you explode.", condition:s=>s.byCat.hiit>=12, progress:s=>({current:s.byCat.hiit,target:12,unit:'sessions'}) },
+      gold:  { desc:'Complete 25 HIIT workouts.', quote:"25 HIIT sessions. You've mastered intensity. Pure fire.",    condition:s=>s.byCat.hiit>=25, progress:s=>({current:s.byCat.hiit,target:25,unit:'sessions'}) },
+    }},
+  { id:'zenmaster', cat:'variety', shape:'star', icon:'🧘', name:'Zen Master',
+    levels:{
+      bronze:{ desc:'Complete 5 yoga or stretch sessions.',  quote:"Flexibility is strength in disguise. Well done.",            condition:s=>s.byCat.yoga>=5,  progress:s=>({current:s.byCat.yoga,target:5, unit:'sessions'}) },
+      silver:{ desc:'Complete 12 yoga or stretch sessions.', quote:"Twelve sessions of mindful movement. Your body is grateful.", condition:s=>s.byCat.yoga>=12, progress:s=>({current:s.byCat.yoga,target:12,unit:'sessions'}) },
+      gold:  { desc:'Complete 25 yoga or stretch sessions.', quote:"25 sessions. Stillness and strength, perfectly balanced.",    condition:s=>s.byCat.yoga>=25, progress:s=>({current:s.byCat.yoga,target:25,unit:'sessions'}) },
+    }},
+  { id:'sportlover',cat:'variety', shape:'star', icon:'⚽', name:'Sport Lover',
+    levels:{
+      bronze:{ desc:'Complete 5 sports or other workouts.',  quote:"Sport is joy in motion. You found yours.",                  condition:s=>s.byCat.other>=5,  progress:s=>({current:s.byCat.other,target:5, unit:'sessions'}) },
+      silver:{ desc:'Complete 12 sports or other workouts.', quote:"Twelve sport sessions. You play hard and train harder.",     condition:s=>s.byCat.other>=12, progress:s=>({current:s.byCat.other,target:12,unit:'sessions'}) },
+      gold:  { desc:'Complete 25 sports or other workouts.', quote:"25 sessions of sport. You were made to compete.",           condition:s=>s.byCat.other>=25, progress:s=>({current:s.byCat.other,target:25,unit:'sessions'}) },
+    }},
+
+  // ── BMI · octagon ──
+  { id:'bmi_aware',    cat:'bmi', shape:'octagon', icon:'⚖️', name:'Body Aware',
+    levels:{
+      bronze:{ desc:'Have your BMI recorded.',             quote:"Knowing where you stand is the first step to moving forward.",      condition:s=>s.bmi!==null,                            progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'check-in'}) },
+      silver:{ desc:'Reach a normal BMI (18.5–24.9).',    quote:"A healthy BMI means your body is in good balance. Well done.",     condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25,    progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'normal BMI'}) },
+      gold:  { desc:'Reach an optimal BMI (18.5–22.9).',  quote:"You are operating in the optimal zone. Your body thanks you.",     condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<23,    progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'optimal BMI'}) },
+    }},
+  { id:'bmi_maintain', cat:'bmi', shape:'octagon', icon:'📊', name:'Steady State',
+    levels:{
+      bronze:{ desc:'Maintain normal BMI for 2 check-ins.',  quote:"Two healthy check-ins. Consistency is everything.",              condition:s=>s.bmiMonths>=2, progress:s=>({current:s.bmiMonths,target:2,unit:'check-ins'}) },
+      silver:{ desc:'Maintain normal BMI for 4 check-ins.',  quote:"Four check-ins in the healthy zone. Your lifestyle is shifting.",condition:s=>s.bmiMonths>=4, progress:s=>({current:s.bmiMonths,target:4,unit:'check-ins'}) },
+      gold:  { desc:'Maintain normal BMI for 8 check-ins.',  quote:"Eight check-ins. Half a year of discipline. Remarkable.",       condition:s=>s.bmiMonths>=8, progress:s=>({current:s.bmiMonths,target:8,unit:'check-ins'}) },
+    }},
+  { id:'bmi_streak',   cat:'bmi', shape:'octagon', icon:'🔥', name:'BMI Streak',
+    levels:{
+      bronze:{ desc:'Stay in normal BMI range 2 times in a row.', quote:"Your first streak. Keep the momentum going.",             condition:s=>s.bmiStreak>=2, progress:s=>({current:s.bmiStreak,target:2,unit:'in a row'}) },
+      silver:{ desc:'Stay in normal BMI range 4 times in a row.', quote:"Four consecutive check-ins. Your body is locked in.",     condition:s=>s.bmiStreak>=4, progress:s=>({current:s.bmiStreak,target:4,unit:'in a row'}) },
+      gold:  { desc:'Stay in normal BMI range 8 times in a row.', quote:"Eight straight check-ins. That's not willpower — that's a lifestyle.", condition:s=>s.bmiStreak>=8, progress:s=>({current:s.bmiStreak,target:8,unit:'in a row'}) },
+    }},
+  { id:'bmi_active',   cat:'bmi', shape:'octagon', icon:'💪', name:'Fit & Active',
+    levels:{
+      bronze:{ desc:'Normal BMI + 10 workouts done.',  quote:"A healthy body in motion. You've got both sides covered.",              condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=10, progress:s=>({current:Math.min(s.totalDone,10),target:10,unit:'workouts'}) },
+      silver:{ desc:'Normal BMI + 25 workouts done.',  quote:"Fitness and health working together. That's the winning combination.",  condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=25, progress:s=>({current:Math.min(s.totalDone,25),target:25,unit:'workouts'}) },
+      gold:  { desc:'Normal BMI + 50 workouts done.',  quote:"50 workouts at a healthy BMI. You are the definition of fit.",          condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=50, progress:s=>({current:Math.min(s.totalDone,50),target:50,unit:'workouts'}) },
+    }},
+];
+
+// ─────────────────────────────────────────
+// SVG SHAPES
+// ─────────────────────────────────────────
+const LEVEL_FILLS = {
+  bronze: { f:'#CD7F32', hi:'rgba(255,235,180,0.4)', bd:'#A0622A' },
+  silver: { f:'#909090', hi:'rgba(255,255,255,0.25)', bd:'#666' },
+  gold:   { f:'#C8960C', hi:'rgba(255,240,150,0.4)', bd:'#9A7008' },
+  locked: { f:'#c8c8c8', hi:'rgba(255,255,255,0.3)', bd:'#aaa' },
+};
+
+function hexPts(cx,cy,r){return Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-90);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ')}
+function polyPts(cx,cy,r,n,sd){return Array.from({length:n},(_,i)=>{const a=Math.PI/180*(360/n*i+sd);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ')}
+function starPts(cx,cy,r1,r2,pts){return Array.from({length:pts*2},(_,i)=>{const r=i%2===0?r1:r2,a=Math.PI/180*(360/(pts*2)*i-90);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ')}
+
+function shieldSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><path d="M40 4 L74 18 L74 48 Q74 72 40 83 Q6 72 6 48 L6 18 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 11 L67 23 L67 47 Q67 67 40 76 Q13 67 13 47 L13 23 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/><line x1="24" y1="44" x2="56" y2="44" stroke="${hi}" stroke-width="1" stroke-linecap="round"/></svg>`}
+function hexagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=43,r=34,ri=26;return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${hexPts(cx,cy,r)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${hexPts(cx,cy,ri)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+function pentagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=45,r=34,ri=25;return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${polyPts(cx,cy,r,5,-90)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${polyPts(cx,cy,ri,5,-90)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+function diamondSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><path d="M40 5 L75 43 L40 81 L5 43 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 15 L65 43 L40 71 L15 43 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/><line x1="25" y1="43" x2="55" y2="43" stroke="${hi}" stroke-width="1" stroke-linecap="round"/><line x1="40" y1="28" x2="40" y2="58" stroke="${hi}" stroke-width="1" stroke-linecap="round"/></svg>`}
+function circleSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><circle cx="40" cy="43" r="34" fill="${f}" stroke="${bd}" stroke-width="2.5"/><circle cx="40" cy="43" r="26" fill="none" stroke="${hi}" stroke-width="1.5"/><circle cx="40" cy="43" r="4" fill="${hi}"/></svg>`}
+function starSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${starPts(40,43,34,14,8)}" fill="${f}" stroke="${bd}" stroke-width="2" stroke-linejoin="round"/><polygon points="${starPts(40,43,26,10,8)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+function octagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=43,outer=34,inner=26;return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${polyPts(cx,cy,outer,8,-22.5)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${polyPts(cx,cy,inner,8,-22.5)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;}
+
+const SHAPE_FNS = { shield:shieldSVG, hexagon:hexagonSVG, pentagon:pentagonSVG, diamond:diamondSVG, circle:circleSVG, star:starSVG, octagon:octagonSVG };
+function buildSVG(shape, levelKey, w=80){ return (SHAPE_FNS[shape]||shieldSVG)(LEVEL_FILLS[levelKey]||LEVEL_FILLS.locked, w); }
+
+// progress ring
+function buildRing(pct, w=80){
+  const h=Math.round(w*86/80),cx=w/2,cy=h/2,r=(w/2)-4,c=2*Math.PI*r,off=c-(pct/100)*c;
+  return `<svg class="badge-ring-svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="transform:rotate(-90deg)"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e0e0e0" stroke-width="3.5"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#bbb" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/></svg>`;
+}
+
+// ─────────────────────────────────────────
+// DEMO WORKOUTS + BMI STATE
+// ─────────────────────────────────────────
+const DEMO_WORKOUTS = [
+  { cat:'cardio',   duration:30, done:true,  dayIndex:0 },
+  { cat:'strength', duration:45, done:true,  dayIndex:1 },
+  { cat:'hiit',     duration:20, done:true,  dayIndex:2 },
+  { cat:'yoga',     duration:25, done:true,  dayIndex:3 },
+  { cat:'cardio',   duration:40, done:true,  dayIndex:4 },
+  { cat:'strength', duration:50, done:false, dayIndex:5 },
+  { cat:'other',    duration:35, done:true,  dayIndex:6 },
+];
+
+// ─────────────────────────────────────────
+// BMI DATA — synced from BMI Calculator page
+// ─────────────────────────────────────────
+function readBMIData(){
+  try {
+    const raw = localStorage.getItem('bmiHistory');
+    if (!raw) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+
+    const history = JSON.parse(raw);
+    if (!history.length) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+
+    // latest BMI value
+    const latest = history[history.length - 1];
+    const bmi = parseFloat(latest.bmi);
+
+    // total months (entries) where BMI was in normal range
+    const bmiMonths = history.filter(e => e.category === 'Normal').length;
+
+    // current streak — count backwards from latest while category is Normal
+    let bmiStreak = 0;
+    for (let i = history.length - 1; i >= 0; i--) {
+      if (history[i].category === 'Normal') bmiStreak++;
+      else break;
+    }
+
+    return { bmi, bmiMonths, bmiStreak };
+  } catch(e) {
+    return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+  }
+}
+
+// ─────────────────────────────────────────
+// COMPUTE STATS
+// ─────────────────────────────────────────
+function computeStats(workouts){
+  const { bmi, bmiMonths, bmiStreak } = readBMIData();
+  const stats={
+    totalDone:0, totalMins:0, activeDays:0,
+    byCat:{strength:0,cardio:0,hiit:0,yoga:0,other:0},
+    minsByCat:{strength:0,cardio:0,hiit:0,yoga:0,other:0},
+    longestSession:0, weekSpan:0, bestWeek:0,
+    bmi, bmiMonths, bmiStreak,
+  };
+  const days=new Set();
+  const weekSet=new Set();
+  const weekDayMap={};
+
+  workouts.forEach((w,i)=>{
+    if(w.done){
+      stats.totalDone++;
+      stats.totalMins+=(w.duration||0);
+      const cat=w.cat||'other';
+      stats.byCat[cat]=(stats.byCat[cat]||0)+1;
+      stats.minsByCat[cat]=(stats.minsByCat[cat]||0)+(w.duration||0);
+      if((w.duration||0)>stats.longestSession) stats.longestSession=w.duration||0;
+      days.add(w.dayIndex??i);
+      // week tracking: use dayIndex div 7 as week number
+      const week=Math.floor((w.dayIndex??i)/7);
+      weekSet.add(week);
+      weekDayMap[week]=(weekDayMap[week]||new Set()).add(w.dayIndex??i);
+    }
+  });
+
+  stats.activeDays=days.size;
+  stats.weekSpan=weekSet.size;
+  stats.bestWeek=Math.max(0,...Object.values(weekDayMap).map(s=>s.size));
+  return stats;
+}
+
+// ─────────────────────────────────────────
+// GET CURRENT LEVEL for a group
+// Returns 'gold' | 'silver' | 'bronze' | null
+// ─────────────────────────────────────────
+function getCurrentLevel(group, stats){
+  if(group.levels.gold.condition(stats))   return 'gold';
+  if(group.levels.silver.condition(stats)) return 'silver';
+  if(group.levels.bronze.condition(stats)) return 'bronze';
+  return null;
+}
+
+// next locked level
+function getNextLevel(currentLevel){
+  if(!currentLevel) return 'bronze';
+  if(currentLevel==='bronze') return 'silver';
+  if(currentLevel==='silver') return 'gold';
+  return null;
+}
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let activeFilter='all';
+let stats=computeStats(DEMO_WORKOUTS);
+const prevLevels=JSON.parse(sessionStorage.getItem('ach_v3_levels')||'{}'); 
+const unlockedDates=JSON.parse(sessionStorage.getItem('ach_v3_dates')||'{}');
+
+// ─────────────────────────────────────────
+// BUILD BADGE CARD
+// ─────────────────────────────────────────
+function buildCard(group, stats, newlyUpgraded){
+  const lvl    = getCurrentLevel(group, stats);
+  const nextLv = getNextLevel(lvl);
+  const isNew  = newlyUpgraded.includes(group.id);
+  const unlocked = lvl !== null;
+
+  // for the card show the current level's progress toward NEXT level
+  const displayLvl   = nextLv || 'gold'; 
+  const levelData    = group.levels[displayLvl];
+  const prog         = levelData.progress(stats);
+  const pct          = Math.min(100, Math.round((prog.current/prog.target)*100));
+
+  const card = document.createElement('div');
+  card.className = `badge-card ${unlocked?'unlocked lv-'+lvl:'locked'}`;
+  if(unlocked) card.style.setProperty('--level-color', `var(--${lvl})`);
+
+  // level dots
+  const dotHTML = ['bronze','silver','gold'].map(l=>`<div class="level-dot ${l&&lvl&&(l===lvl||(l==='silver'&&(lvl==='silver'||lvl==='gold'))||(l==='gold'&&lvl==='gold'))?l:''}"></div>`).join('');
+
+  card.innerHTML = `
+    ${unlocked ? `<div class="level-ribbon ${lvl}">${LEVELS[lvl].icon} ${LEVELS[lvl].label}</div>` : '<div class="level-ribbon bronze" style="opacity:0.4">🥉 Bronze</div>'}
+    ${isNew ? '<div class="badge-new-tag">New!</div>' : ''}
+    <div class="badge-logo-wrap">
+      ${buildSVG(group.shape, unlocked?lvl:'locked')}
+      ${(!unlocked && pct>0) ? buildRing(pct) : ''}
+      <div class="badge-emoji">${group.icon}</div>
+    </div>
+    <div class="badge-name">${group.name}</div>
+    <div class="badge-desc">${unlocked ? group.levels[lvl].desc : group.levels.bronze.desc}</div>
+    <div class="level-dots">${dotHTML}</div>
+    ${unlocked && !nextLv
+      ? `<div class="badge-unlocked-tag gold">🥇 Max Level</div>`
+      : `<div class="badge-progress-wrap">
+           <div class="badge-progress-top">
+             <span class="badge-progress-count">${prog.current} / ${prog.target} ${prog.unit}</span>
+             <span class="badge-progress-pct">${pct}%</span>
+           </div>
+           <div class="badge-progress-bg">
+             <div class="badge-progress-fill ${unlocked?displayLvl:'locked-fill'}" style="width:${pct}%"></div>
+           </div>
+         </div>`
+    }
+  `;
+
+  card.addEventListener('click', ()=>openDetail(group, stats, lvl));
+  return card;
+}
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+function render(){
+  stats = computeStats(DEMO_WORKOUTS);
+  const wrap = document.getElementById('categories-wrap');
+  wrap.innerHTML='';
+
+  // detect upgrades
+  const newlyUpgraded=[];
+  BADGE_GROUPS.forEach(g=>{
+    const lvl=getCurrentLevel(g,stats);
+    if(lvl && lvl!==prevLevels[g.id]) newlyUpgraded.push(g.id);
+  });
+
+  // overall: count gold badges
+  const goldCount   = BADGE_GROUPS.filter(g=>getCurrentLevel(g,stats)==='gold').length;
+  const unlockedCount = BADGE_GROUPS.filter(g=>getCurrentLevel(g,stats)!==null).length;
+  const pctOverall  = Math.round((goldCount/BADGE_GROUPS.length)*100);
+  document.getElementById('overall-fill').style.width = pctOverall+'%';
+  document.getElementById('overall-sub').textContent  = `${unlockedCount} unlocked · ${goldCount} at Gold level`;
+  document.getElementById('s-done').textContent = stats.totalDone;
+  document.getElementById('s-mins').textContent = stats.totalMins;
+  document.getElementById('s-days').textContent = stats.activeDays;
+
+  // filter
+  let visible = BADGE_GROUPS;
+  if(activeFilter==='unlocked')    visible = BADGE_GROUPS.filter(g=>getCurrentLevel(g,stats)!==null);
+  if(activeFilter==='in-progress') visible = BADGE_GROUPS.filter(g=>getCurrentLevel(g,stats)!=='gold');
+  if(activeFilter==='gold')        visible = BADGE_GROUPS.filter(g=>getCurrentLevel(g,stats)==='gold');
+
+  if(!visible.length){ wrap.innerHTML='<div class="empty-state">No badges match this filter.</div>'; return; }
+
+  // group by category
+  Object.entries(CATEGORIES).forEach(([catKey, catMeta])=>{
+    const catGroups = visible.filter(g=>g.cat===catKey);
+    if(!catGroups.length) return;
+
+    const sorted=[
+      ...catGroups.filter(g=>getCurrentLevel(g,stats)!==null),
+      ...catGroups.filter(g=>getCurrentLevel(g,stats)===null),
+    ];
+
+    const unlockedInCat = catGroups.filter(g=>getCurrentLevel(g,stats)!==null).length;
+
+    const section=document.createElement('div');
+    section.className='category-section';
+
+    // BMI category shows a sync note instead of an input
+    const bmiPanelHTML = catKey==='bmi' ? (() => {
+      let detail = '';
+      try {
+        const raw = localStorage.getItem('bmiHistory');
+        const history = raw ? JSON.parse(raw) : [];
+        if (history.length > 0) {
+          const latest = history[history.length - 1];
+          detail = `Current BMI: <strong style="color:#111">${parseFloat(latest.bmi).toFixed(1)}</strong>
+            &nbsp;·&nbsp; Category: <strong style="color:#111">${latest.category}</strong>
+            &nbsp;·&nbsp; ${history.length} check-in(s)
+            &nbsp;|&nbsp; Normal streak: <strong style="color:#111">${stats.bmiStreak}</strong> entry(s)
+            &nbsp;|&nbsp; Total normal entries: <strong style="color:#111">${stats.bmiMonths}</strong>`;
+        } else {
+          detail = 'No BMI data yet — calculate your BMI on the BMI Calculator page first.';
+        }
+      } catch(e) {
+        detail = 'Could not read BMI data. Make sure both pages share the same origin.';
+      }
+      return `<div style="background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#666;">
+        <span style="font-size:18px;margin-top:1px">⚖️</span>
+        <div><strong style="color:#111;display:block;margin-bottom:4px;">Synced from BMI Calculator</strong>${detail}</div>
+      </div>`;
+    })() : '';
+
+    section.innerHTML=`
+      <div class="category-header">
+        <span class="category-icon">${catMeta.icon}</span>
+        <div><div class="category-title">${catMeta.label}</div><div class="category-desc">${catMeta.desc}</div></div>
+        <span class="category-count">${unlockedInCat} / ${catGroups.length} unlocked</span>
+      </div>
+      ${bmiPanelHTML}
+      <div class="badge-grid"></div>
+    `;
+
+    const grid=section.querySelector('.badge-grid');
+    sorted.forEach(g=>grid.appendChild(buildCard(g,stats,newlyUpgraded)));
+    wrap.appendChild(section);
+  });
+
+  // persist
+  const nowLevels={};
+  BADGE_GROUPS.forEach(g=>{ nowLevels[g.id]=getCurrentLevel(g,stats); });
+  newlyUpgraded.forEach(id=>{
+    const lvl=nowLevels[id];
+    unlockedDates[id+'_'+lvl]=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  });
+  sessionStorage.setItem('ach_v3_levels', JSON.stringify(nowLevels));
+  sessionStorage.setItem('ach_v3_dates',  JSON.stringify(unlockedDates));
+
+  if(newlyUpgraded.length){
+    const msg=newlyUpgraded.map(id=>{const g=BADGE_GROUPS.find(b=>b.id===id);const l=nowLevels[id];return`${g.name} → ${LEVELS[l].icon}${LEVELS[l].label}`;}).join(', ');
+    showToast(`🏅 ${msg}`);
+  }
+}
+
+function bmiLabel(bmi){
+  if(bmi<18.5) return 'Underweight';
+  if(bmi<25)   return '✅ Normal';
+  if(bmi<30)   return 'Overweight';
+  return 'Obese';
+}
+
+// ─────────────────────────────────────────
+// DETAIL MODAL
+// ─────────────────────────────────────────
+function openDetail(group, stats, lvl){
+  const nextLv   = getNextLevel(lvl);
+  const showLv   = lvl || 'bronze'; 
+  const levelData= group.levels[showLv];
+  const prog     = levelData.progress(stats);
+  const pct      = Math.min(100, Math.round((prog.current/prog.target)*100));
+  const cat      = CATEGORIES[group.cat];
+
+  // badge shape
+  document.getElementById('dm-badge-wrap').innerHTML =
+    buildSVG(group.shape, lvl||'locked', 90) +
+    `<div class="dm-badge-emoji">${group.icon}</div>`;
+
+  // level pill
+  const pill=document.getElementById('dm-level-pill');
+  if(lvl){ pill.textContent=`${LEVELS[lvl].icon} ${LEVELS[lvl].label}`; pill.className='dm-level-pill '+lvl; }
+  else   { pill.textContent='Locked'; pill.className='dm-level-pill locked'; }
+
+  document.getElementById('dm-cat-label').textContent = cat?.label||'';
+  document.getElementById('dm-name').textContent      = group.name;
+  document.getElementById('dm-desc').textContent      = levelData.desc;
+  document.getElementById('dm-quote').textContent     = `"${levelData.quote}"`;
+
+  // level steps
+  const steps=document.getElementById('dm-level-steps');
+  steps.innerHTML=['bronze','silver','gold'].map(l=>{
+    const reached = lvl==='gold'||(lvl==='silver'&&(l==='bronze'||l==='silver'))||(lvl==='bronze'&&l==='bronze');
+    const ld=group.levels[l];
+    const p=ld.progress(stats);
+    return `<div class="dm-level-step ${reached?'reached '+l:''}">
+      <div class="dm-level-step-icon">${LEVELS[l].icon}</div>
+      <div class="dm-level-step-lbl">${LEVELS[l].label}</div>
+      <div class="dm-level-step-val">${p.target} ${p.unit}</div>
+    </div>`;
+  }).join('');
+
+  const progWrap=document.getElementById('dm-progress-wrap');
+  const banner=document.getElementById('dm-unlocked-banner');
+
+  if(lvl==='gold'){
+    progWrap.style.display='none';
+    banner.style.display='flex';
+    document.getElementById('dm-unlocked-text').textContent=
+      `Gold unlocked ${unlockedDates[group.id+'_gold']||'this session'} · Max level reached!`;
+  } else {
+    const targetLv=nextLv||'bronze';
+    progWrap.style.display='block';
+    banner.style.display='none';
+    const tp=group.levels[targetLv].progress(stats);
+    const tpct=Math.min(100,Math.round((tp.current/tp.target)*100));
+    document.getElementById('dm-prog-label').textContent=`${tp.current} / ${tp.target} ${tp.unit} to ${LEVELS[targetLv].label}`;
+    document.getElementById('dm-prog-pct').textContent=tpct+'%';
+    const fill=document.getElementById('dm-prog-fill');
+    fill.style.width=tpct+'%';
+    fill.className='dm-progress-fill '+(lvl?targetLv:'locked');
+  }
+
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+document.getElementById('dm-close').addEventListener('click',()=>document.getElementById('modal-backdrop').classList.remove('open'));
+document.getElementById('modal-backdrop').addEventListener('click',e=>{ if(e.target===document.getElementById('modal-backdrop')) document.getElementById('modal-backdrop').classList.remove('open'); });
+
+// Filter
+document.getElementById('filter-row').addEventListener('click',e=>{
+  const pill=e.target.closest('.filter-pill');
+  if(!pill) return;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  activeFilter=pill.dataset.filter;
+  render();
+});
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+render();
+</script>
+</body>
+</html>
