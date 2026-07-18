@@ -920,11 +920,12 @@
     /* BMI sync panel in achievements */
     .ach-bmi-panel {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 12px 16px; margin-bottom: 14px;
-      display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--text2);
+      border-radius: var(--radius); padding: 10px 16px; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2);
+      flex-wrap: wrap;
     }
-    .ach-bmi-panel-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
-    .ach-bmi-panel strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 12px; }
+    .ach-bmi-panel-icon { font-size: 18px; flex-shrink: 0; }
+    .ach-bmi-panel strong { color: var(--text); font-size: 12px; }
 
     @media (max-width: 768px) {
       .badge-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
@@ -2818,7 +2819,9 @@
   // ── BMI data from localStorage ──
   function readAchBMIData() {
     try {
-      const raw = localStorage.getItem('bmiHistory');
+      const key = currentUser ? 'ft_bmi_hist_' + currentUser.email : null;
+      if (!key) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+      const raw = localStorage.getItem(key);
       if (!raw) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
       const history = JSON.parse(raw);
       if (!history.length) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
@@ -2971,9 +2974,9 @@
       if (catKey === 'bmi') {
         const { bmi, bmiMonths, bmiStreak } = readAchBMIData();
         if (bmi !== null) {
-          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><div><strong>Synced from BMI Calculator</strong>Current BMI: <strong style="color:var(--text)">${parseFloat(bmi).toFixed(1)}</strong> &nbsp;·&nbsp; Normal check-ins: <strong style="color:var(--text)">${bmiMonths}</strong> &nbsp;·&nbsp; Current streak: <strong style="color:var(--text)">${bmiStreak}</strong></div></div>`;
+          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><strong>Synced from BMI Calculator</strong><span style="color:var(--text3)">·</span> Current BMI: <strong>${parseFloat(bmi).toFixed(1)}</strong> <span style="color:var(--text3)">·</span> Normal check-ins: <strong>${bmiMonths}</strong> <span style="color:var(--text3)">·</span> Current streak: <strong>${bmiStreak}</strong></div>`;
         } else {
-          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><div><strong>Synced from BMI Calculator</strong>No BMI data yet — calculate your BMI on the Report page to unlock these badges.</div></div>`;
+          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><strong>Synced from BMI Calculator</strong><span style="color:var(--text3)">·</span> No BMI data yet — calculate your BMI on the Report page to unlock these badges.</div>`;
         }
       }
 
