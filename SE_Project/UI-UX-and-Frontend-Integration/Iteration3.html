@@ -163,14 +163,18 @@
     .pw-wrapper input { padding-right: 38px !important; }
     .pw-eye {
       position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; padding: 0; line-height: 1;
       cursor: pointer; font-size: 15px; user-select: none; color: var(--text3);
       transition: color 0.15s;
     }
     .pw-eye:hover { color: var(--text2); }
 
     .forgot-link { text-align: right; margin-top: -6px; margin-bottom: 12px; font-size: 12px; }
-    .forgot-link span { color: var(--text2); cursor: pointer; text-decoration: underline; transition: color 0.15s; }
-    .forgot-link span:hover { color: var(--accent); }
+    .forgot-link-btn {
+      background: none; border: none; padding: 0; font: inherit;
+      color: var(--text2); cursor: pointer; text-decoration: underline; transition: color 0.15s;
+    }
+    .forgot-link-btn:hover { color: var(--accent); }
 
     .fp-overlay {
       display: none; position: fixed; inset: 0;
@@ -186,7 +190,10 @@
     }
     .fp-modal h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
     .fp-modal .fp-sub { font-size: 12px; color: var(--text2); margin-bottom: 18px; }
-    .fp-close { position: absolute; top: 14px; right: 16px; font-size: 18px; cursor: pointer; color: var(--text3); line-height: 1; }
+    .fp-close {
+      position: absolute; top: 14px; right: 16px; font-size: 18px; cursor: pointer;
+      color: var(--text3); line-height: 1; background: none; border: none; padding: 0;
+    }
     .fp-close:hover { color: var(--text); }
 
     /* ===== HOME PAGE ===== */
@@ -341,7 +348,7 @@
 
     .modal-body { padding: 16px 20px 18px; display: flex; flex-direction: column; gap: 14px; }
 
-    .modal-field label {
+    .modal-field label, .modal-field .modal-field-label {
       display: block; font-size: 11px; font-weight: 600; color: var(--text3);
       text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 7px;
     }
@@ -367,6 +374,7 @@
       border: 1px solid var(--border); background: var(--surface2);
       cursor: pointer; font-size: 12px; font-weight: 500; color: var(--text2);
       transition: all 0.12s; display: flex; align-items: center;
+      text-align: left; font-family: 'DM Sans', sans-serif;
     }
     .exercise-option:hover { border-color: var(--accent); color: var(--text); }
     .exercise-option.selected { border-color: var(--accent); background: rgba(124,106,247,0.15); color: var(--text); }
@@ -1268,22 +1276,55 @@
       .bmi-reco-ex-name { font-size: 12px; }
       .bmi-ring-svg { width: 136px; height: 136px; }
     }
+
+    /* ===== ACCESSIBILITY ===== */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .skip-link {
+      position: fixed; top: -48px; left: 12px; z-index: 200;
+      background: var(--accent); color: #fff; padding: 10px 16px;
+      border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: top 0.15s;
+    }
+    .skip-link:focus { top: 12px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important; scroll-behavior: auto !important;
+      }
+    }
+
+    /* Visible keyboard focus indicator on every interactive element, without
+       adding an outline on mouse/touch interaction. Placed last so it wins
+       the cascade over component-level `outline: none` rules. */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    textarea:focus-visible, select:focus-visible,
+    [tabindex]:focus-visible, [role="button"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
   </style>
 </head>
 <body>
 
-<button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode" onclick="toggleTheme()">🌙</button>
-<button class="sidebar-toggle" id="sidebar-toggle" title="Toggle menu" onclick="toggleSidebar()">☰</button>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle light and dark mode" onclick="toggleTheme()">🌙</button>
+<button class="sidebar-toggle" id="sidebar-toggle" title="Toggle menu" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="sidebar" onclick="toggleSidebar()">☰</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()" aria-hidden="true"></div>
 
 <div class="app-layout">
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">🏋️</div>
+      <div class="logo-icon" aria-hidden="true">🏋️</div>
       <span class="logo-text">FitTrack</span>
     </div>
-    <nav class="sidebar-nav" id="nav-links"></nav>
+    <nav class="sidebar-nav" id="nav-links" aria-label="Main navigation"></nav>
     <div class="sidebar-bottom">
       <div class="user-chip" id="user-chip" style="display:none">
         <div class="user-avatar" id="user-avatar">?</div>
@@ -1295,7 +1336,7 @@
     </div>
   </aside>
 
-  <div class="main-content" id="main-content">
+  <div class="main-content" id="main-content" tabindex="-1">
     <div class="container">
 
       <!-- AUTH -->
@@ -1312,36 +1353,36 @@
               <button onclick="switchTab('register')">Register</button>
             </div>
             <div id="login-form">
-              <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
+              <div class="form-group"><label for="loginEmail">Email</label><input type="email" id="loginEmail" autocomplete="username" placeholder="you@example.com"></div>
               <div class="form-group">
-                <label>Password</label>
+                <label for="loginPassword">Password</label>
                 <div class="pw-wrapper">
-                  <input type="password" id="loginPassword" placeholder="Password">
-                  <span class="pw-eye" onclick="togglePassword('loginPassword', this)">👁️</span>
+                  <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Password">
+                  <button type="button" class="pw-eye" aria-label="Show password" aria-pressed="false" onclick="togglePassword('loginPassword', this)">👁️</button>
                 </div>
               </div>
-              <div class="forgot-link"><span onclick="openForgotPassword()">Forgot Password?</span></div>
-              <div class="error-msg" id="login-error"></div>
+              <div class="forgot-link"><button type="button" class="forgot-link-btn" onclick="openForgotPassword()">Forgot Password?</button></div>
+              <div class="error-msg" id="login-error" role="alert"></div>
               <button class="btn-block" onclick="login()">Login</button>
             </div>
             <div id="register-form" style="display:none">
-              <div class="form-group"><label>Full Name</label><input type="text" id="registerUsername" placeholder="Your Name"></div>
-              <div class="form-group"><label>Email</label><input type="email" id="registerEmail" placeholder="you@example.com"></div>
+              <div class="form-group"><label for="registerUsername">Full Name</label><input type="text" id="registerUsername" autocomplete="name" placeholder="Your Name"></div>
+              <div class="form-group"><label for="registerEmail">Email</label><input type="email" id="registerEmail" autocomplete="username" placeholder="you@example.com"></div>
               <div class="form-group">
-                <label>Password</label>
+                <label for="registerPassword">Password</label>
                 <div class="pw-wrapper">
-                  <input type="password" id="registerPassword" placeholder="Password">
-                  <span class="pw-eye" onclick="togglePassword('registerPassword', this)">👁️</span>
+                  <input type="password" id="registerPassword" autocomplete="new-password" placeholder="Password">
+                  <button type="button" class="pw-eye" aria-label="Show password" aria-pressed="false" onclick="togglePassword('registerPassword', this)">👁️</button>
                 </div>
               </div>
               <div class="form-group">
-                <label>Confirm Password</label>
+                <label for="confirmPassword">Confirm Password</label>
                 <div class="pw-wrapper">
-                  <input type="password" id="confirmPassword" placeholder="Re-enter password">
-                  <span class="pw-eye" onclick="togglePassword('confirmPassword', this)">👁️</span>
+                  <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Re-enter password">
+                  <button type="button" class="pw-eye" aria-label="Show password" aria-pressed="false" onclick="togglePassword('confirmPassword', this)">👁️</button>
                 </div>
               </div>
-              <div class="error-msg" id="reg-error"></div>
+              <div class="error-msg" id="reg-error" role="alert"></div>
               <button class="btn-block" onclick="register()">Create Account</button>
             </div>
           </div>
@@ -1473,11 +1514,11 @@
         <div class="bmi-card">
           <div class="bmi-inputs">
             <div class="bmi-input-group">
-              <label>Height (cm)</label>
+              <label for="bmi-height">Height (cm)</label>
               <input type="number" id="bmi-height" placeholder="e.g. 170" min="100" max="250" oninput="calcBMI()">
             </div>
             <div class="bmi-input-group">
-              <label>Weight (kg)</label>
+              <label for="bmi-weight">Weight (kg)</label>
               <input type="number" id="bmi-weight" placeholder="e.g. 65" min="20" max="300" step="0.1" oninput="calcBMI()">
             </div>
           </div>
@@ -1530,10 +1571,11 @@
         <div class="section-label" style="margin-top:28px">BMI Goal</div>
         <div class="bmi-card">
           <div class="weight-input-row" style="align-items:flex-end">
+            <label for="bmi-goal-input" class="sr-only">Target BMI</label>
             <input type="number" id="bmi-goal-input" placeholder="Target BMI (e.g. 24.9)" step="0.1" min="0" style="flex:1">
             <button class="btn-log" onclick="setBMIGoal()">Set Goal</button>
           </div>
-          <div class="weight-error" id="bmi-goal-error"></div>
+          <div class="weight-error" id="bmi-goal-error" role="alert"></div>
           <div id="bmi-goal-card" style="display:none; margin-top:12px">
             <div style="display:flex; gap:10px; margin-bottom:12px">
               <div class="report-card" style="flex:1; padding:12px 14px">
@@ -1567,10 +1609,11 @@
 
         <div class="section-label" style="margin-top:28px">Weight Log</div>
         <div class="weight-input-row">
+          <label for="weight-input" class="sr-only">Weight in kilograms</label>
           <input type="number" id="weight-input" placeholder="Enter weight (kg)" step="0.1">
           <button class="btn-log" onclick="logWeight()">Log</button>
         </div>
-        <div class="weight-error" id="weight-error"></div>
+        <div class="weight-error" id="weight-error" role="alert"></div>
         <div id="weight-log"></div>
         <div class="section-label" style="margin-top:28px">Session History</div>
         <div id="history-log"></div>
@@ -1663,13 +1706,13 @@
 
       <!-- Day-click modal (week view) -->
       <div class="modal-backdrop" id="cal-day-modal-backdrop">
-        <div class="cal-day-modal">
+        <div class="cal-day-modal" role="dialog" aria-modal="true" aria-labelledby="cal-day-modal-title" tabindex="-1">
           <div class="cal-day-modal-header">
             <div>
               <div class="cal-day-modal-title" id="cal-day-modal-title">Workouts</div>
               <div class="cal-day-modal-sub" id="cal-day-modal-sub"></div>
             </div>
-            <button class="modal-close-x" id="cal-day-modal-close">✕</button>
+            <button class="modal-close-x" id="cal-day-modal-close" aria-label="Close">✕</button>
           </div>
           <div class="cal-day-modal-body" id="cal-day-modal-body"></div>
         </div>
@@ -1683,11 +1726,11 @@
         <div class="ach-summary" id="ach-summary"></div>
 
         <!-- Filter pills -->
-        <div class="ach-filter-row" id="ach-filter-row">
-          <div class="ach-filter-pill active" data-filter="all">All</div>
-          <div class="ach-filter-pill" data-filter="unlocked">✓ Unlocked</div>
-          <div class="ach-filter-pill" data-filter="in-progress">⏳ In Progress</div>
-          <div class="ach-filter-pill" data-filter="gold">🥇 Gold</div>
+        <div class="ach-filter-row" id="ach-filter-row" role="group" aria-label="Filter achievements">
+          <button type="button" class="ach-filter-pill active" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="ach-filter-pill" data-filter="unlocked" aria-pressed="false">✓ Unlocked</button>
+          <button type="button" class="ach-filter-pill" data-filter="in-progress" aria-pressed="false">⏳ In Progress</button>
+          <button type="button" class="ach-filter-pill" data-filter="gold" aria-pressed="false">🥇 Gold</button>
         </div>
 
         <!-- Badge categories rendered by JS -->
@@ -1696,9 +1739,9 @@
 
       <!-- Achievement Detail Modal -->
       <div class="fp-overlay" id="ach-modal-backdrop">
-        <div class="ach-detail-modal">
+        <div class="ach-detail-modal" role="dialog" aria-modal="true" aria-labelledby="ach-dm-name" tabindex="-1">
           <div class="ach-dm-header">
-            <button class="ach-dm-close" id="ach-dm-close">✕</button>
+            <button class="ach-dm-close" id="ach-dm-close" aria-label="Close">✕</button>
             <div class="ach-dm-badge-wrap" id="ach-dm-badge-wrap"></div>
             <div class="ach-dm-level-pill" id="ach-dm-level-pill"></div>
             <div class="ach-dm-cat-label" id="ach-dm-cat-label"></div>
@@ -1716,12 +1759,12 @@
               <div class="ach-dm-progress-bg"><div class="ach-dm-progress-fill" id="ach-dm-prog-fill"></div></div>
             </div>
             <div class="ach-dm-unlocked-banner" id="ach-dm-unlocked-banner" style="display:none">
-              <span>🏅</span><span id="ach-dm-unlocked-text"></span>
+              <span aria-hidden="true">🏅</span><span id="ach-dm-unlocked-text"></span>
             </div>
           </div>
         </div>
       </div>
-      <div id="ach-toast-container"></div>
+      <div id="ach-toast-container" aria-live="polite" aria-atomic="true"></div>
 
     </div>
   </div>
@@ -1729,33 +1772,33 @@
 
 <!-- Forgot Password Modal -->
 <div class="fp-overlay" id="forgotModal">
-  <div class="fp-modal">
-    <span class="fp-close" onclick="closeForgotPassword()">&#x2715;</span>
+  <div class="fp-modal" role="dialog" aria-modal="true" aria-labelledby="forgot-modal-heading" tabindex="-1">
+    <button type="button" class="fp-close" aria-label="Close" onclick="closeForgotPassword()">&#x2715;</button>
     <div id="emailStep">
-      <h3>Forgot Password</h3>
+      <h3 id="forgot-modal-heading">Forgot Password</h3>
       <p class="fp-sub">Enter your registered email to reset your password.</p>
-      <div class="form-group"><label>Email</label><input type="email" id="forgotEmail" placeholder="Enter your registered email"></div>
-      <div class="error-msg" id="forgot-email-error"></div>
+      <div class="form-group"><label for="forgotEmail">Email</label><input type="email" id="forgotEmail" autocomplete="username" placeholder="Enter your registered email"></div>
+      <div class="error-msg" id="forgot-email-error" role="alert"></div>
       <button class="btn-block" onclick="verifyForgotEmail()">Continue</button>
     </div>
     <div id="resetStep" style="display:none">
       <h3>Reset Password</h3>
       <p class="fp-sub">Enter and confirm your new password.</p>
       <div class="form-group">
-        <label>New Password</label>
+        <label for="newPassword">New Password</label>
         <div class="pw-wrapper">
-          <input type="password" id="newPassword" placeholder="Enter new password">
-          <span class="pw-eye" onclick="togglePassword('newPassword', this)">👁️</span>
+          <input type="password" id="newPassword" autocomplete="new-password" placeholder="Enter new password">
+          <button type="button" class="pw-eye" aria-label="Show password" aria-pressed="false" onclick="togglePassword('newPassword', this)">👁️</button>
         </div>
       </div>
       <div class="form-group">
-        <label>Confirm New Password</label>
+        <label for="confirmNewPassword">Confirm New Password</label>
         <div class="pw-wrapper">
-          <input type="password" id="confirmNewPassword" placeholder="Re-enter new password">
-          <span class="pw-eye" onclick="togglePassword('confirmNewPassword', this)">👁️</span>
+          <input type="password" id="confirmNewPassword" autocomplete="new-password" placeholder="Re-enter new password">
+          <button type="button" class="pw-eye" aria-label="Show password" aria-pressed="false" onclick="togglePassword('confirmNewPassword', this)">👁️</button>
         </div>
       </div>
-      <div class="error-msg" id="forgot-reset-error"></div>
+      <div class="error-msg" id="forgot-reset-error" role="alert"></div>
       <button class="btn-block" onclick="resetPassword()">Reset Password</button>
     </div>
   </div>
@@ -1763,7 +1806,7 @@
 
 <!-- Add/Edit Workout Modal (Iteration2 rich UI) -->
 <div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal" role="dialog" aria-modal="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
     <div class="modal-header">
       <div>
         <div class="modal-title" id="modal-title">Add Workout</div>
@@ -1773,29 +1816,29 @@
     </div>
     <div class="modal-body">
       <div class="modal-field">
-        <label>Category</label>
-        <div class="category-tabs" id="cat-tabs"></div>
+        <span class="modal-field-label" id="cat-tabs-label">Category</span>
+        <div class="category-tabs" id="cat-tabs" role="group" aria-labelledby="cat-tabs-label"></div>
       </div>
       <div class="modal-field">
-        <label>Exercise</label>
-        <div class="exercise-grid" id="exercise-grid"></div>
+        <span class="modal-field-label" id="exercise-grid-label">Exercise</span>
+        <div class="exercise-grid" id="exercise-grid" role="group" aria-labelledby="exercise-grid-label"></div>
       </div>
       <div class="modal-field">
-        <label>Custom name (optional)</label>
+        <label for="custom-name">Custom name (optional)</label>
         <input type="text" class="modal-custom-input" id="custom-name" placeholder="e.g. Jump rope, Cycling…">
       </div>
       <!-- CHANGED: date picker instead of Mon-Sun dropdown -->
       <div class="modal-field">
-        <label>Date</label>
+        <label for="modal-date-input">Date</label>
         <input type="date" class="modal-date-input" id="modal-date-input">
       </div>
       <div class="modal-field">
-        <label>Duration</label>
+        <label for="duration-input">Duration</label>
         <div class="duration-row">
           <input type="number" class="duration-input" id="duration-input" min="1" max="300" value="30">
           <span class="duration-unit">minutes (1–300)</span>
         </div>
-        <div class="duration-hint" id="duration-hint"></div>
+        <div class="duration-hint" id="duration-hint" role="alert"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -2048,8 +2091,13 @@
 
   function togglePassword(id, eye) {
     const input = document.getElementById(id);
-    if (input.type === 'password') { input.type = 'text'; eye.textContent = '🙈'; }
-    else                           { input.type = 'password'; eye.textContent = '👁️'; }
+    if (input.type === 'password') {
+      input.type = 'text'; eye.textContent = '🙈';
+      eye.setAttribute('aria-label', 'Hide password'); eye.setAttribute('aria-pressed', 'true');
+    } else {
+      input.type = 'password'; eye.textContent = '👁️';
+      eye.setAttribute('aria-label', 'Show password'); eye.setAttribute('aria-pressed', 'false');
+    }
   }
 
   // Forgot Password
@@ -2105,11 +2153,13 @@
       overlay.classList.remove('open');
       toggleBtn.classList.remove('active');
       toggleBtn.textContent = '☰';
+      toggleBtn.setAttribute('aria-expanded', 'false');
     } else {
       sidebar.classList.add('open');
       overlay.classList.add('open');
       toggleBtn.classList.add('active');
       toggleBtn.textContent = '✕';
+      toggleBtn.setAttribute('aria-expanded', 'true');
     }
   }
 
@@ -2119,6 +2169,7 @@
     const toggleBtn = document.getElementById('sidebar-toggle');
     toggleBtn.classList.remove('active');
     toggleBtn.textContent = '☰';
+    toggleBtn.setAttribute('aria-expanded', 'false');
   }
 
   // ===== NAVIGATION =====
@@ -2137,7 +2188,7 @@
       const btn = document.createElement('button');
       btn.className = 'nav-btn';
       btn.dataset.page = item.key;
-      btn.innerHTML = `<span class="nav-icon">${item.icon}</span>${item.label}`;
+      btn.innerHTML = `<span class="nav-icon" aria-hidden="true">${item.icon}</span>${item.label}`;
       btn.addEventListener('click', () => showPage(item.key));
       nav.appendChild(btn);
     });
@@ -2145,11 +2196,11 @@
 
   function showPage(key) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
     const page = document.getElementById('page-' + key);
     if (page) page.classList.add('active');
     const navBtn = document.querySelector(`.nav-btn[data-page="${key}"]`);
-    if (navBtn) navBtn.classList.add('active');
+    if (navBtn) { navBtn.classList.add('active'); navBtn.setAttribute('aria-current', 'page'); }
     if (key === 'home')         renderHome();
     if (key === 'schedule')     renderSchedule();
     if (key === 'report')       renderReport();
@@ -2432,8 +2483,10 @@
     wrap.innerHTML = '';
     Object.keys(CAT_LABELS).forEach(cat => {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'cat-tab' + (cat === selectedCat ? ' active' : '');
       btn.textContent = CAT_LABELS[cat];
+      btn.setAttribute('aria-pressed', cat === selectedCat ? 'true' : 'false');
       btn.addEventListener('click', () => {
         selectedCat = cat; selectedExercise = null;
         renderCatTabs(); renderExercises(); checkAdd();
@@ -2446,9 +2499,12 @@
     const g = document.getElementById('exercise-grid');
     g.innerHTML = '';
     EXERCISES[selectedCat].forEach(ex => {
-      const opt = document.createElement('div');
-      opt.className = 'exercise-option' + (selectedExercise && selectedExercise.name === ex.name ? ' selected' : '');
-      opt.innerHTML = `<span style="font-size:15px;margin-right:6px;line-height:1">${ex.icon}</span>${ex.name}`;
+      const selected = !!(selectedExercise && selectedExercise.name === ex.name);
+      const opt = document.createElement('button');
+      opt.type = 'button';
+      opt.className = 'exercise-option' + (selected ? ' selected' : '');
+      opt.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      opt.innerHTML = `<span aria-hidden="true" style="font-size:15px;margin-right:6px;line-height:1">${ex.icon}</span>${ex.name}`;
       opt.addEventListener('click', () => {
         selectedExercise = ex;
         document.getElementById('custom-name').value = '';
@@ -3784,8 +3840,9 @@
   document.getElementById('ach-filter-row').addEventListener('click', e => {
     const pill = e.target.closest('.ach-filter-pill');
     if (!pill) return;
-    document.querySelectorAll('.ach-filter-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ach-filter-pill').forEach(p => { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
     pill.classList.add('active');
+    pill.setAttribute('aria-pressed', 'true');
     achActiveFilter = pill.dataset.filter;
     renderAchievements();
   });
@@ -3887,6 +3944,75 @@
       el.appendChild(item);
     });
   }
+  // ===== ACCESSIBILITY: modal focus management + Escape-to-close =====
+  (function () {
+    const OVERLAY_IDS = ['modal-backdrop', 'forgotModal', 'ach-modal-backdrop', 'cal-day-modal-backdrop'];
+    const CLOSE_FNS = {
+      'modal-backdrop':        () => closeModal(),
+      'forgotModal':           () => closeForgotPassword(),
+      'ach-modal-backdrop':    () => document.getElementById('ach-modal-backdrop').classList.remove('open'),
+      'cal-day-modal-backdrop':() => document.getElementById('cal-day-modal-backdrop').classList.remove('open'),
+    };
+    let lastFocused = null;
+
+    function getFocusable(container) {
+      return Array.from(container.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter(el => el.offsetParent !== null);
+    }
+
+    function dialogOf(overlay) {
+      return overlay.querySelector('[role="dialog"]') || overlay.firstElementChild || overlay;
+    }
+
+    OVERLAY_IDS.forEach(id => {
+      const overlay = document.getElementById(id);
+      if (!overlay) return;
+      let wasOpen = overlay.classList.contains('open');
+      new MutationObserver(() => {
+        const isOpen = overlay.classList.contains('open');
+        if (isOpen && !wasOpen) {
+          lastFocused = document.activeElement;
+          const dialog = dialogOf(overlay);
+          const focusables = getFocusable(dialog);
+          (focusables[0] || dialog).focus({ preventScroll: true });
+        } else if (!isOpen && wasOpen) {
+          if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus({ preventScroll: true });
+          lastFocused = null;
+        }
+        wasOpen = isOpen;
+      }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    function topOpenOverlayId() {
+      for (let i = OVERLAY_IDS.length - 1; i >= 0; i--) {
+        const el = document.getElementById(OVERLAY_IDS[i]);
+        if (el && el.classList.contains('open')) return OVERLAY_IDS[i];
+      }
+      return null;
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      const id = topOpenOverlayId();
+      if (id) { CLOSE_FNS[id](); return; }
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar && sidebar.classList.contains('open')) closeSidebar();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Tab') return;
+      const id = topOpenOverlayId();
+      if (!id) return;
+      const dialog = dialogOf(document.getElementById(id));
+      const focusables = getFocusable(dialog);
+      if (focusables.length === 0) return;
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+  })();
+
 </script>
 
 </body>
