@@ -635,6 +635,236 @@
       .cal-today-btn { padding: 5px 9px; font-size: 11px; }
     }
 
+    /* ===== CALENDAR ENHANCEMENTS (Iteration3) ===== */
+
+    /* ── View toggle ── */
+    .cal-view-toggle {
+      display: flex;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+      gap: 2px;
+    }
+    .cal-view-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text2);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .cal-view-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+    .cal-view-btn:not(.active):hover { background: var(--surface); }
+
+    /* ── Filter dropdown ── */
+    .cal-filter-dropdown { position: relative; }
+    .cal-filter-btn {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      padding: 7px 11px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: var(--surface); color: var(--text);
+      cursor: pointer; transition: background 0.12s;
+    }
+    .cal-filter-btn:hover { background: var(--surface2); }
+    .cal-filter-btn.open  { background: var(--surface2); border-color: var(--accent); }
+    .cal-filter-count {
+      font-size: 10px; font-weight: 600; color: white;
+      background: var(--accent); border-radius: 999px;
+      padding: 1px 6px; min-width: 14px; text-align: center;
+    }
+    .cal-filter-caret { font-size: 9px; color: var(--text3); transition: transform 0.12s; }
+    .cal-filter-btn.open .cal-filter-caret { transform: rotate(180deg); }
+    .cal-filter-menu {
+      display: none; position: absolute; top: calc(100% + 6px); right: 0;
+      min-width: 210px; background: var(--surface);
+      border: 1px solid var(--border2); border-radius: var(--radius);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      padding: 5px; z-index: 20; max-height: 280px; overflow-y: auto;
+    }
+    .cal-filter-menu.open { display: block; }
+    .cal-filter-menu-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--text3); padding: 7px 9px 4px;
+    }
+    .cal-filter-item {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; padding: 8px 9px; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 12.5px; color: var(--text);
+      transition: background 0.1s;
+    }
+    .cal-filter-item:hover { background: var(--surface2); }
+    .cal-filter-item.selected { background: var(--accent); color: white; }
+    .cal-filter-item.selected .cal-filter-item-count { color: rgba(255,255,255,0.7); }
+    .cal-filter-item-name { display: flex; align-items: center; gap: 7px; }
+    .cal-filter-item-count { font-size: 11px; color: var(--text3); font-variant-numeric: tabular-nums; }
+    .cal-filter-divider { height: 1px; background: var(--border); margin: 4px 2px; }
+
+    /* ── Toolbar row ── */
+    .cal-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+    }
+
+    /* ── Week view ── */
+    .cal-week-wrap {
+      display: none;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 18px;
+    }
+    .cal-week-wrap.active { display: grid; grid-template-columns: repeat(7, 1fr); }
+    .cal-week-col {
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; min-height: 200px;
+    }
+    .cal-week-col:last-child { border-right: none; }
+    .cal-week-col-head {
+      padding: 8px 6px 6px; text-align: center;
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+    }
+    .cal-week-col.today .cal-week-col-head { background: rgba(124,106,247,0.12); }
+    .cal-week-col.all-done .cal-week-col-head { box-shadow: inset 0 -3px 0 var(--green); }
+    .cal-week-dow { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
+    .cal-week-daynum {
+      font-size: 14px; font-weight: 600;
+      width: 26px; height: 26px; margin: 3px auto 0;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text2);
+    }
+    .cal-week-col.today .cal-week-daynum { background: var(--accent); color: white; }
+    .cal-week-col-body {
+      padding: 6px; display: flex; flex-direction: column; gap: 5px; flex: 1; cursor: pointer;
+    }
+    .cal-week-col-body:hover { background: var(--surface2); }
+    .cal-week-workout {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 500; padding: 4px 7px;
+      border-radius: var(--radius-sm);
+    }
+    .cal-week-workout.done     { background: rgba(52,201,122,0.15); color: var(--green); border: 1px solid rgba(52,201,122,0.3); }
+    .cal-week-workout.undone   { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+    .cal-week-empty { font-size: 10px; color: var(--text3); font-style: italic; padding: 3px 2px; }
+
+    /* ── Calendar day pill overlays (Iteration3 style pills on month grid) ── */
+    .cal-day-pill {
+      font-size: 9.5px; font-weight: 500; padding: 1px 6px;
+      border-radius: 999px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+    }
+    .cal-day-pill.done   { background: rgba(52,201,122,0.2); color: var(--green); border: 1px solid rgba(52,201,122,0.4); }
+    .cal-day-pill.undone { background: rgba(124,106,247,0.15); color: var(--accent); border: 1px solid rgba(124,106,247,0.3); }
+    .cal-day-more { font-size: 9px; color: var(--text3); padding: 1px 3px; }
+    .cal-day-pills { display: flex; flex-direction: column; gap: 2px; }
+
+    /* ── Calendar day all-done highlight ── */
+    .cal-day.all-done { box-shadow: inset 3px 0 0 var(--green); }
+    .cal-day.no-match .cal-day-num { opacity: 0.35; }
+
+    /* ── Monthly Summary card ── */
+    .cal-insights-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 720px) { .cal-insights-grid { grid-template-columns: 1fr; } }
+
+    .cal-summary-card, .cal-reco-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px 20px;
+    }
+    .cal-card-title {
+      font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+    .cal-card-sub { font-size: 11px; color: var(--text2); margin-bottom: 14px; }
+
+    .cal-summary-stats { display: flex; gap: 8px; margin-bottom: 14px; }
+    .cal-stat-tile {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 9px 11px;
+    }
+    .cal-stat-tile .st-num { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
+    .cal-stat-tile .st-lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
+
+    .cal-chart-legend { display: flex; gap: 12px; font-size: 11px; color: var(--text2); margin-bottom: 10px; }
+    .cal-chart-legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .cal-chart-legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+    .cal-summary-chart { width: 100%; height: 120px; display: block; overflow: visible; }
+    .cal-summary-chart-empty { font-size: 12px; color: var(--text3); font-style: italic; text-align: center; padding: 28px 0; }
+
+    .cal-breakdown-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin: 12px 0 8px; }
+    .cal-breakdown-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; margin-top: 6px; }
+    .cal-breakdown-name { width: 80px; flex-shrink: 0; display: flex; align-items: center; gap: 5px; color: var(--text2); }
+    .cal-breakdown-track { flex: 1; height: 5px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
+    .cal-breakdown-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+    .cal-breakdown-count { width: 16px; text-align: right; color: var(--text3); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+    /* ── Recommend card ── */
+    .cal-reco-chips { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+    .cal-reco-chip {
+      display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 9px 10px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      color: var(--text); transition: border-color 0.15s, background 0.15s;
+    }
+    .cal-reco-chip:hover { border-color: var(--accent); background: var(--surface); }
+    .cal-reco-chip-icon { font-size: 15px; flex-shrink: 0; line-height: 1; }
+    .cal-reco-chip-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .cal-reco-chip-name { font-size: 12px; font-weight: 600; }
+    .cal-reco-chip-cat  { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+    .cal-reco-chip-pills { display: flex; gap: 4px; flex-shrink: 0; align-items: center; }
+    .cal-reco-chip-pill {
+      font-size: 9.5px; color: var(--accent);
+      background: rgba(124,106,247,0.14); padding: 2px 7px;
+      border-radius: 999px; white-space: nowrap; font-family: 'DM Mono', monospace;
+    }
+    .cal-reco-chip-plus {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: white;
+      display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
+    .cal-reco-empty { font-size: 12px; color: var(--text3); font-style: italic; padding: 10px 0 4px; }
+    .cal-reco-disclaimer { font-size: 10px; color: var(--text3); line-height: 1.5; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
+
+    /* ── Day modal (week view click) ── */
+    .cal-day-modal {
+      background: var(--surface); border: 1px solid var(--border2); border-radius: 14px;
+      width: 100%; max-width: 380px; overflow: hidden;
+      animation: modalIn 0.18s ease;
+    }
+    .cal-day-modal-header {
+      padding: 17px 19px 13px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .cal-day-modal-title { font-size: 1.1rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .cal-day-modal-sub   { font-size: 11px; color: var(--text3); margin-top: 3px; }
+    .cal-day-modal-body  { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 9px; max-height: 55vh; overflow-y: auto; }
+    .cal-day-modal-empty { font-size: 13px; color: var(--text3); font-style: italic; padding: 6px 0; }
+    .cal-day-modal-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 11px;
+      border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border);
+    }
+    .cal-day-modal-icon { font-size: 17px; flex-shrink: 0; }
+    .cal-day-modal-info { flex: 1; min-width: 0; }
+    .cal-day-modal-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .cal-day-modal-dur  { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .cal-day-modal-status { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; flex-shrink: 0; }
+    .cal-day-modal-status.done    { background: rgba(52,201,122,0.15); color: var(--green); border: 1px solid rgba(52,201,122,0.3); }
+    .cal-day-modal-status.undone  { background: rgba(124,106,247,0.12); color: var(--accent); border: 1px solid rgba(124,106,247,0.3); }
+
+    /* ── Calendar pill mode (month view with pills instead of dots) ── */
+    #cal-days .cal-day-num { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 3px; }
+
+    @media (max-width: 768px) {
+      .cal-toolbar { flex-direction: column; align-items: flex-start; }
+      .cal-week-wrap.active { grid-template-columns: repeat(4, 1fr); }
+      .cal-week-col:nth-child(n+5) { display: none; }
+      .cal-insights-grid { grid-template-columns: 1fr; }
+    }
+
     /* ===== ACHIEVEMENTS ===== */
     .ach-summary {
       display: grid;
@@ -824,18 +1054,30 @@
     }
 
     /* ── Toast ── */
-    .ach-toast {
-      position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--accent); color: white;
-      font-size: 13px; font-weight: 500; padding: 10px 22px;
-      border-radius: 999px; opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      pointer-events: none; white-space: nowrap; z-index: 999;
-      font-family: 'DM Sans', sans-serif;
-      max-width: calc(100vw - 32px); overflow: hidden; text-overflow: ellipsis;
+    #ach-toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.25rem;
+      display: flex; flex-direction: column; gap: 8px;
+      align-items: flex-end; z-index: 999; pointer-events: none;
     }
-    .ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .ach-toast-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border: 1px solid var(--border2);
+      color: var(--text); font-size: 13px; font-weight: 500;
+      padding: 10px 14px; border-radius: var(--radius);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+      font-family: 'DM Sans', sans-serif;
+      max-width: 280px;
+      opacity: 0; transform: translateX(20px);
+      transition: opacity 0.28s, transform 0.28s;
+      pointer-events: none;
+      border-left: 3px solid var(--accent);
+    }
+    .ach-toast-item.show { opacity: 1; transform: translateX(0); }
+    .ach-toast-item.hide { opacity: 0; transform: translateX(20px); }
+    .ach-toast-icon { font-size: 18px; flex-shrink: 0; }
+    .ach-toast-text { line-height: 1.35; }
+    .ach-toast-title { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .ach-toast-body { font-size: 13px; color: var(--text); font-weight: 500; }
 
     .ach-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
 
@@ -1316,18 +1558,37 @@
         <div class="calendar-header">
           <h2>Calendar</h2>
           <div class="cal-nav">
-            <button class="cal-nav-btn" onclick="calPrevMonth()">‹</button>
+            <button class="cal-nav-btn" onclick="calPrev()">‹</button>
             <div class="cal-month-label" id="cal-month-label"></div>
-            <button class="cal-nav-btn" onclick="calNextMonth()">›</button>
+            <button class="cal-nav-btn" onclick="calNext()">›</button>
             <button class="cal-today-btn" onclick="calGoToday()">Today</button>
           </div>
         </div>
+
         <div class="cal-legend">
           <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green)"></div>Completed</div>
           <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--border2)"></div>Scheduled</div>
           <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--accent); opacity:0.5; width:14px; height:14px; border-radius:3px"></div>Today</div>
         </div>
-        <div class="calendar-grid-wrap">
+
+        <!-- Toolbar: view toggle + filter -->
+        <div class="cal-toolbar">
+          <div class="cal-view-toggle" id="cal-view-toggle">
+            <button class="cal-view-btn active" data-view="month">Month</button>
+            <button class="cal-view-btn" data-view="week">Week</button>
+          </div>
+          <div class="cal-filter-dropdown" id="cal-filter-dropdown">
+            <button class="cal-filter-btn" id="cal-filter-btn">
+              <span id="cal-filter-btn-label">All workouts</span>
+              <span class="cal-filter-count" id="cal-filter-btn-count">0</span>
+              <span class="cal-filter-caret">▾</span>
+            </button>
+            <div class="cal-filter-menu" id="cal-filter-menu"></div>
+          </div>
+        </div>
+
+        <!-- Month view -->
+        <div class="calendar-grid-wrap" id="cal-month-view-wrap">
           <div class="cal-weekdays">
             <div class="cal-weekday">Mon</div>
             <div class="cal-weekday">Tue</div>
@@ -1339,6 +1600,11 @@
           </div>
           <div class="cal-days" id="cal-days"></div>
         </div>
+
+        <!-- Week view -->
+        <div class="cal-week-wrap" id="cal-week-wrap"></div>
+
+        <!-- Day detail panel (month view click) -->
         <div class="cal-detail" id="cal-detail">
           <div class="cal-detail-header">
             <div class="cal-detail-title" id="cal-detail-title">Select a day</div>
@@ -1347,6 +1613,42 @@
             </div>
           </div>
           <div class="cal-detail-empty" id="cal-detail-body">Click on a day to see workouts.</div>
+        </div>
+
+        <!-- Insights grid: Monthly Summary + Recommended For You -->
+        <div class="cal-insights-grid">
+          <div class="cal-summary-card">
+            <div class="cal-card-title">Monthly Summary</div>
+            <div class="cal-card-sub" id="cal-summary-period"></div>
+            <div class="cal-summary-stats" id="cal-summary-stats"></div>
+            <div class="cal-chart-legend">
+              <span><i style="background:var(--green)"></i>Completed</span>
+              <span><i style="background:var(--accent)"></i>Scheduled</span>
+            </div>
+            <svg class="cal-summary-chart" id="cal-summary-chart" viewBox="0 0 400 120" preserveAspectRatio="none"></svg>
+            <div class="cal-breakdown-title">By type</div>
+            <div id="cal-summary-breakdown"></div>
+          </div>
+
+          <div class="cal-reco-card">
+            <div class="cal-card-title">Recommended For You</div>
+            <div class="cal-card-sub" id="cal-reco-sub">Based on your BMI</div>
+            <div id="cal-reco-body"><div class="cal-reco-empty">Calculate your BMI on the Report page to get personalised workout recommendations.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Day-click modal (week view) -->
+      <div class="modal-backdrop" id="cal-day-modal-backdrop">
+        <div class="cal-day-modal">
+          <div class="cal-day-modal-header">
+            <div>
+              <div class="cal-day-modal-title" id="cal-day-modal-title">Workouts</div>
+              <div class="cal-day-modal-sub" id="cal-day-modal-sub"></div>
+            </div>
+            <button class="modal-close-x" id="cal-day-modal-close">✕</button>
+          </div>
+          <div class="cal-day-modal-body" id="cal-day-modal-body"></div>
         </div>
       </div>
 
@@ -1396,7 +1698,7 @@
           </div>
         </div>
       </div>
-      <div class="ach-toast" id="ach-toast"></div>
+      <div id="ach-toast-container"></div>
 
     </div>
   </div>
@@ -1828,7 +2130,7 @@
     if (key === 'home')         renderHome();
     if (key === 'schedule')     renderSchedule();
     if (key === 'report')       renderReport();
-    if (key === 'calendar')     renderCalendar();
+    if (key === 'calendar')     { if (calView === 'week') renderCalWeek(); else renderCalendar(); }
     if (key === 'achievements') renderAchievements();
     // Auto-close sidebar on mobile after nav
     if (isMobile()) closeSidebar();
@@ -2178,142 +2480,317 @@
       workouts.push({ id: Date.now().toString(), date, name, icon, duration, cat: selectedCat, done: false });
     }
     saveWorkouts(); closeModal(); renderSchedule();
-    if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
+    if (document.getElementById('page-calendar').classList.contains('active')) { if (calView === 'week') renderCalWeek(); else renderCalendar(); }
   });
 
-  // ===== CALENDAR =====
-  let calYear  = new Date().getFullYear();
-  let calMonth = new Date().getMonth();
+  // ===== CALENDAR (Iteration3-enhanced) =====
+  let calYear   = new Date().getFullYear();
+  let calMonth  = new Date().getMonth();
   let calSelectedDate = null;
+  let calView   = 'month'; // 'month' | 'week'
+  let calActiveFilter = null; // null = all, or category key
 
-  function calPrevMonth() {
-    calMonth--;
-    if (calMonth < 0) { calMonth = 11; calYear--; }
-    renderCalendar();
-  }
-  function calNextMonth() {
-    calMonth++;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    renderCalendar();
-  }
-  function calGoToday() {
-    const t = new Date();
-    calYear = t.getFullYear(); calMonth = t.getMonth();
-    calSelectedDate = getTodayDateStr();
-    renderCalendar();
-    renderCalDetail(calSelectedDate, getWorkoutsForDate(calSelectedDate));
-  }
+  // Week start (Monday) for week view
+  let calWeekStart = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+    d.setHours(0,0,0,0);
+    return d;
+  })();
 
-  function getWorkoutsForDate(dateStr) {
-    return workouts.filter(w => w.date === dateStr);
-  }
+  const CAL_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const CAL_DAY_NAMES   = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const CAL_DAY_SHORT   = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const CAL_CATS = [
+    { key:'strength', label:'Strength', icon:'🏋️' },
+    { key:'cardio',   label:'Cardio',   icon:'🏃' },
+    { key:'hiit',     label:'HIIT',     icon:'🔥' },
+    { key:'yoga',     label:'Yoga',     icon:'🧘' },
+    { key:'other',    label:'Other',    icon:'⚡' },
+  ];
+
+  // Day popup stores (event delegation)
+  const calDayStore  = new Map();
+  const calWeekStore = new Map();
+
+  function calDayKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+  function getWorkoutsForDate(ds) { return workouts.filter(w => w.date === ds); }
+  function calFilterWks(list) { return calActiveFilter === null ? list : list.filter(w => w.cat === calActiveFilter); }
 
   function dateStr(y, m, d) {
     return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
 
-  function renderCalendar() {
-    const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    document.getElementById('cal-month-label').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+  // ── Navigation ──
+  function calPrev() {
+    if (calView === 'week') {
+      calWeekStart = new Date(calWeekStart);
+      calWeekStart.setDate(calWeekStart.getDate() - 7);
+      renderCalWeek();
+    } else {
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    }
+  }
+  function calNext() {
+    if (calView === 'week') {
+      calWeekStart = new Date(calWeekStart);
+      calWeekStart.setDate(calWeekStart.getDate() + 7);
+      renderCalWeek();
+    } else {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    }
+  }
+  function calGoToday() {
+    const t = new Date();
+    calYear = t.getFullYear(); calMonth = t.getMonth();
+    calWeekStart = new Date(t);
+    calWeekStart.setDate(t.getDate() - (t.getDay() + 6) % 7);
+    calWeekStart.setHours(0,0,0,0);
+    calSelectedDate = getTodayDateStr();
+    if (calView === 'week') { renderCalWeek(); }
+    else { renderCalendar(); renderCalDetail(calSelectedDate, getWorkoutsForDate(calSelectedDate)); }
+  }
 
+  // ── View toggle ──
+  document.getElementById('cal-view-toggle').addEventListener('click', e => {
+    const btn = e.target.closest('.cal-view-btn');
+    if (!btn) return;
+    const view = btn.dataset.view;
+    if (view === calView) return;
+    calView = view;
+    document.querySelectorAll('.cal-view-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('cal-month-view-wrap').style.display = view === 'month' ? '' : 'none';
+    document.getElementById('cal-detail').style.display = view === 'month' ? '' : 'none';
+    const weekWrap = document.getElementById('cal-week-wrap');
+    weekWrap.classList.toggle('active', view === 'week');
+    if (view === 'week') renderCalWeek();
+    else renderCalendar();
+  });
+
+  // ── Filter dropdown ──
+  function calGetPeriodCounts() {
+    let start, end;
+    if (calView === 'week') {
+      start = new Date(calWeekStart);
+      end = new Date(calWeekStart); end.setDate(end.getDate() + 6); end.setHours(23,59,59,999);
+    } else {
+      start = new Date(calYear, calMonth, 1);
+      end = new Date(calYear, calMonth + 1, 0); end.setHours(23,59,59,999);
+    }
+    const counts = {}; CAL_CATS.forEach(c => counts[c.key] = 0); let total = 0;
+    workouts.forEach(w => {
+      const d = new Date(w.date.replace(/-/g,'/'));
+      if (d >= start && d <= end) {
+        if (counts.hasOwnProperty(w.cat)) { counts[w.cat]++; total++; }
+      }
+    });
+    return { counts, total };
+  }
+
+  function calRenderFilterMenu() {
+    const { counts, total } = calGetPeriodCounts();
+    const label = document.getElementById('cal-filter-btn-label');
+    const count = document.getElementById('cal-filter-btn-count');
+    if (calActiveFilter === null) { label.textContent = 'All workouts'; count.textContent = total; }
+    else {
+      const c = CAL_CATS.find(x => x.key === calActiveFilter);
+      label.textContent = `${c.icon} ${c.label}`; count.textContent = counts[c.key];
+    }
+    const menu = document.getElementById('cal-filter-menu');
+    menu.innerHTML = '';
+    const lbl = document.createElement('div'); lbl.className = 'cal-filter-menu-label';
+    lbl.textContent = calView === 'week' ? 'Workouts this week' : 'Workouts this month'; menu.appendChild(lbl);
+    const allItem = document.createElement('div');
+    allItem.className = 'cal-filter-item' + (calActiveFilter === null ? ' selected' : '');
+    allItem.innerHTML = `<span class="cal-filter-item-name">All workouts</span><span class="cal-filter-item-count">${total}</span>`;
+    allItem.addEventListener('click', () => { calActiveFilter = null; calCloseFilter(); calView === 'week' ? renderCalWeek() : renderCalendar(); });
+    menu.appendChild(allItem);
+    const div = document.createElement('div'); div.className = 'cal-filter-divider'; menu.appendChild(div);
+    CAL_CATS.forEach(cat => {
+      const item = document.createElement('div');
+      item.className = 'cal-filter-item' + (calActiveFilter === cat.key ? ' selected' : '');
+      item.innerHTML = `<span class="cal-filter-item-name">${cat.icon} ${cat.label}</span><span class="cal-filter-item-count">${counts[cat.key]}</span>`;
+      item.addEventListener('click', () => { calActiveFilter = cat.key; calCloseFilter(); calView === 'week' ? renderCalWeek() : renderCalendar(); });
+      menu.appendChild(item);
+    });
+  }
+
+  function calToggleFilter() {
+    const menu = document.getElementById('cal-filter-menu');
+    const btn  = document.getElementById('cal-filter-btn');
+    const open = menu.classList.contains('open');
+    if (open) { calCloseFilter(); } else { calRenderFilterMenu(); menu.classList.add('open'); btn.classList.add('open'); }
+  }
+  function calCloseFilter() {
+    document.getElementById('cal-filter-menu').classList.remove('open');
+    document.getElementById('cal-filter-btn').classList.remove('open');
+  }
+  document.getElementById('cal-filter-btn').addEventListener('click', e => { e.stopPropagation(); calToggleFilter(); });
+  document.getElementById('cal-filter-menu').addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('click', calCloseFilter);
+
+  // ── Month view ──
+  function renderCalendar() {
+    document.getElementById('cal-month-label').textContent = CAL_MONTH_NAMES[calMonth] + ' ' + calYear;
     const today = new Date();
     const firstDay = new Date(calYear, calMonth, 1);
     const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    // Monday-based offset
-    let startDow = (firstDay.getDay() + 6) % 7;
-
+    const startDow = (firstDay.getDay() + 6) % 7;
     const container = document.getElementById('cal-days');
     container.innerHTML = '';
+    calDayStore.clear();
 
-    // Empty cells before first day
+    // Empty cells
     for (let i = 0; i < startDow; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'cal-day empty';
-      container.appendChild(cell);
+      const cell = document.createElement('div'); cell.className = 'cal-day empty'; container.appendChild(cell);
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
       const ds = dateStr(calYear, calMonth, d);
       const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
-      const dws = getWorkoutsForDate(ds);
+      const rawDws = getWorkoutsForDate(ds);
+      const dws = calFilterWks(rawDws);
+      const allDone = dws.length > 0 && dws.every(w => w.done);
+      const noMatch = rawDws.length > 0 && dws.length === 0;
 
       const cell = document.createElement('div');
-      cell.className = 'cal-day' + (isToday ? ' today' : '') + (calSelectedDate === ds ? ' selected' : '');
-      if (calSelectedDate === ds) cell.style.background = 'rgba(124,106,247,0.12)';
+      cell.className = 'cal-day'
+        + (isToday ? ' today' : '')
+        + (calSelectedDate === ds ? ' selected' : '')
+        + (allDone ? ' all-done' : '')
+        + (noMatch ? ' no-match' : '');
 
-      const numEl = document.createElement('div');
-      numEl.className = 'cal-day-num';
-      numEl.textContent = d;
-      cell.appendChild(numEl);
+      const numEl = document.createElement('div'); numEl.className = 'cal-day-num'; numEl.textContent = d; cell.appendChild(numEl);
 
-      if (dws.length > 0) {
-        const dotsEl = document.createElement('div');
-        dotsEl.className = 'cal-day-dots';
-        dws.slice(0, 6).forEach(w => {
-          const dot = document.createElement('div');
-          dot.className = 'cal-dot ' + (w.done ? 'done' : 'undone');
-          dotsEl.appendChild(dot);
-        });
-        cell.appendChild(dotsEl);
-
-        if (dws.length > 0 && dws.every(w => w.done)) {
-          const tick = document.createElement('div');
-          tick.className = 'cal-day-all-done';
-          tick.textContent = '✓';
-          tick.style.color = 'var(--green)';
-          cell.appendChild(tick);
-        }
+      if (allDone) {
+        const tick = document.createElement('div'); tick.className = 'cal-day-all-done'; tick.textContent = '✓'; tick.style.color = 'var(--green)'; cell.appendChild(tick);
       }
 
-      cell.addEventListener('click', () => {
-        calSelectedDate = ds;
-        renderCalendar();
-        renderCalDetail(ds, dws);
-      });
+      if (dws.length > 0) {
+        const pillsWrap = document.createElement('div'); pillsWrap.className = 'cal-day-pills';
+        dws.slice(0, 2).forEach(w => {
+          const pill = document.createElement('div');
+          pill.className = 'cal-day-pill ' + (w.done ? 'done' : 'undone');
+          pill.textContent = (w.icon ? w.icon + ' ' : '') + w.name;
+          pillsWrap.appendChild(pill);
+        });
+        if (dws.length > 2) {
+          const more = document.createElement('div'); more.className = 'cal-day-more'; more.textContent = `+${dws.length - 2} more`; pillsWrap.appendChild(more);
+        }
+        cell.appendChild(pillsWrap);
+        cell.dataset.daykey = ds;
+        calDayStore.set(ds, { ds, rawDws });
+      }
+
       container.appendChild(cell);
     }
 
-    // If a date was selected, re-render its detail
-    if (calSelectedDate) {
-      const ds = calSelectedDate;
-      renderCalDetail(ds, getWorkoutsForDate(ds));
-    }
+    // Re-render detail if selected
+    if (calSelectedDate) renderCalDetail(calSelectedDate, getWorkoutsForDate(calSelectedDate));
+
+    calRenderFilterMenu();
+    calRenderSummary();
+    calRenderReco();
   }
 
+  // ── Week view ──
+  function renderCalWeek() {
+    const weekEnd = new Date(calWeekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+    const sameMonth = calWeekStart.getMonth() === weekEnd.getMonth();
+    const lbl = sameMonth
+      ? `${CAL_MONTH_NAMES[calWeekStart.getMonth()]} ${calWeekStart.getDate()}–${weekEnd.getDate()}, ${weekEnd.getFullYear()}`
+      : `${CAL_MONTH_NAMES[calWeekStart.getMonth()]} ${calWeekStart.getDate()} – ${CAL_MONTH_NAMES[weekEnd.getMonth()]} ${weekEnd.getDate()}, ${weekEnd.getFullYear()}`;
+    document.getElementById('cal-month-label').textContent = lbl;
+
+    const wrap = document.getElementById('cal-week-wrap');
+    wrap.innerHTML = ''; calWeekStore.clear();
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(calWeekStart); date.setDate(date.getDate() + i);
+      const ds = calDayKey(date);
+      const isToday = date.toDateString() === today.toDateString();
+      const rawDws = getWorkoutsForDate(ds);
+      const dws = calFilterWks(rawDws);
+      const allDone = dws.length > 0 && dws.every(w => w.done);
+
+      const col = document.createElement('div');
+      col.className = 'cal-week-col' + (isToday ? ' today' : '') + (allDone ? ' all-done' : '');
+
+      const head = document.createElement('div'); head.className = 'cal-week-col-head';
+      head.innerHTML = `<div class="cal-week-dow">${CAL_DAY_SHORT[i]}</div><div class="cal-week-daynum">${date.getDate()}</div>`;
+      col.appendChild(head);
+
+      const body = document.createElement('div'); body.className = 'cal-week-col-body';
+      body.dataset.daykey = ds;
+      calWeekStore.set(ds, { date, ds, dws: rawDws });
+
+      if (dws.length) {
+        dws.forEach(w => {
+          const item = document.createElement('div');
+          item.className = 'cal-week-workout ' + (w.done ? 'done' : 'undone');
+          item.textContent = (w.icon ? w.icon + ' ' : '') + w.name;
+          body.appendChild(item);
+        });
+      } else {
+        const empty = document.createElement('div'); empty.className = 'cal-week-empty'; empty.textContent = 'Rest day'; body.appendChild(empty);
+      }
+      col.appendChild(body);
+      wrap.appendChild(col);
+    }
+
+    calRenderFilterMenu();
+    calRenderSummary();
+    calRenderReco();
+  }
+
+  // Delegated click on month day cells
+  document.getElementById('cal-days').addEventListener('click', e => {
+    const cell = e.target.closest('[data-daykey]');
+    if (!cell) return;
+    const entry = calDayStore.get(cell.dataset.daykey);
+    if (!entry) return;
+    calSelectedDate = entry.ds;
+    renderCalendar();
+    renderCalDetail(entry.ds, entry.rawDws);
+  });
+
+  // Delegated click on week day columns → open mini modal
+  document.getElementById('cal-week-wrap').addEventListener('click', e => {
+    const col = e.target.closest('[data-daykey]');
+    if (!col) return;
+    const entry = calWeekStore.get(col.dataset.daykey);
+    if (entry) openCalDayModal(entry.date, entry.ds, entry.dws);
+  });
+
+  // ── Calendar day detail panel ──
   function renderCalDetail(ds, dws) {
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const d = new Date(ds.replace(/-/g, '/'));
     document.getElementById('cal-detail-title').textContent =
       DAYS[(d.getDay() + 6) % 7] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
 
-    // Rebuild actions area (summary + add button)
     const actionsEl = document.querySelector('.cal-detail-actions');
     actionsEl.innerHTML = '';
     const sumSpan = document.createElement('span');
-    sumSpan.className = 'cal-detail-summary';
-    sumSpan.id = 'cal-detail-summary';
+    sumSpan.className = 'cal-detail-summary'; sumSpan.id = 'cal-detail-summary';
     if (dws.length > 0) sumSpan.textContent = `${dws.filter(w=>w.done).length} / ${dws.length} done`;
     actionsEl.appendChild(sumSpan);
-
-    // "+ Add" button always shown when a date is selected
-    const addBtn = document.createElement('button');
-    addBtn.className = 'cal-add-btn';
-    addBtn.textContent = '+ Add Workout';
-    addBtn.addEventListener('click', () => openAddModal(ds));
-    actionsEl.appendChild(addBtn);
+    const addBtn = document.createElement('button'); addBtn.className = 'cal-add-btn'; addBtn.textContent = '+ Add Workout';
+    addBtn.addEventListener('click', () => openAddModal(ds)); actionsEl.appendChild(addBtn);
 
     const body = document.getElementById('cal-detail-body');
-
     if (dws.length === 0) {
       body.outerHTML = '<div class="cal-detail-empty" id="cal-detail-body">No workouts on this day. Click "+ Add Workout" to schedule one.</div>';
       return;
     }
-
-    const newBody = document.createElement('div');
-    newBody.id = 'cal-detail-body';
+    const newBody = document.createElement('div'); newBody.id = 'cal-detail-body';
     dws.forEach(w => {
-      const item = document.createElement('div');
-      item.className = 'cal-detail-item';
+      const item = document.createElement('div'); item.className = 'cal-detail-item';
       item.innerHTML = `
         <div class="cal-detail-dot" style="background:${w.done ? 'var(--green)' : 'var(--border2)'}"></div>
         <div class="cal-detail-name${w.done ? ' done' : ''}">${w.icon ? w.icon + ' ' : ''}${w.name}</div>
@@ -2321,15 +2798,193 @@
         <button class="cal-toggle-btn${w.done ? ' done' : ''}" title="${w.done ? 'Mark undone' : 'Mark done'}">${w.done ? '✓ Done' : 'Mark Done'}</button>
       `;
       item.querySelector('.cal-toggle-btn').addEventListener('click', () => {
-        w.done = !w.done;
-        saveWorkouts();
-        renderCalendar();
-        renderCalDetail(ds, getWorkoutsForDate(ds));
-        renderHome();
+        w.done = !w.done; saveWorkouts();
+        renderCalendar(); renderCalDetail(ds, getWorkoutsForDate(ds)); renderHome();
       });
       newBody.appendChild(item);
     });
     document.getElementById('cal-detail-body').replaceWith(newBody);
+  }
+
+  // ── Week-view day modal ──
+  function openCalDayModal(date, ds, dws) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dow = DAYS[(date.getDay() + 6) % 7];
+    document.getElementById('cal-day-modal-title').textContent = `${dow}'s Workouts`;
+    document.getElementById('cal-day-modal-sub').textContent = `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    const body = document.getElementById('cal-day-modal-body');
+    body.innerHTML = '';
+    if (!dws.length) {
+      body.innerHTML = '<div class="cal-day-modal-empty">No workouts scheduled for this day.</div>';
+    } else {
+      dws.forEach(w => {
+        const item = document.createElement('div'); item.className = 'cal-day-modal-item';
+        item.innerHTML = `
+          <div class="cal-day-modal-icon">${w.icon || '🏃'}</div>
+          <div class="cal-day-modal-info">
+            <div class="cal-day-modal-name">${w.name}</div>
+            <div class="cal-day-modal-dur">${w.duration} min</div>
+          </div>
+          <div class="cal-day-modal-status ${w.done ? 'done' : 'undone'}">${w.done ? 'Done' : 'Scheduled'}</div>
+        `;
+        body.appendChild(item);
+      });
+    }
+    document.getElementById('cal-day-modal-backdrop').classList.add('open');
+  }
+  document.getElementById('cal-day-modal-close').addEventListener('click', () => document.getElementById('cal-day-modal-backdrop').classList.remove('open'));
+  document.getElementById('cal-day-modal-backdrop').addEventListener('click', e => { if (e.target === document.getElementById('cal-day-modal-backdrop')) document.getElementById('cal-day-modal-backdrop').classList.remove('open'); });
+
+  // ── Monthly Summary ──
+  function calGetSummaryMonthYear() {
+    if (calView === 'week') return { year: calWeekStart.getFullYear(), month: calWeekStart.getMonth() };
+    return { year: calYear, month: calMonth };
+  }
+  function calRenderSummary() {
+    const { year, month } = calGetSummaryMonthYear();
+    document.getElementById('cal-summary-period').textContent = `${CAL_MONTH_NAMES[month]} ${year}`;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let total = 0, completed = 0;
+    const weekBuckets = [];
+    const catCounts = {}; CAL_CATS.forEach(c => catCounts[c.key] = 0);
+
+    workouts.forEach(w => {
+      const parts = w.date.split('-'); const y = +parts[0], m = +parts[1] - 1, d = +parts[2];
+      if (y !== year || m !== month) return;
+      const wi = Math.floor((d - 1) / 7);
+      if (!weekBuckets[wi]) weekBuckets[wi] = { completed: 0, scheduled: 0 };
+      total++;
+      if (w.done) { completed++; weekBuckets[wi].completed++; } else { weekBuckets[wi].scheduled++; }
+      if (catCounts.hasOwnProperty(w.cat)) catCounts[w.cat]++;
+    });
+
+    const rate = total ? Math.round(completed / total * 100) : 0;
+    document.getElementById('cal-summary-stats').innerHTML = `
+      <div class="cal-stat-tile"><div class="st-num">${total}</div><div class="st-lbl">Total</div></div>
+      <div class="cal-stat-tile"><div class="st-num" style="color:var(--green)">${completed}</div><div class="st-lbl">Done</div></div>
+      <div class="cal-stat-tile"><div class="st-num" style="color:var(--accent)">${rate}%</div><div class="st-lbl">Rate</div></div>
+    `;
+
+    // SVG chart
+    const weekCount = Math.ceil(daysInMonth / 7);
+    const svg = document.getElementById('cal-summary-chart');
+    const W = 400, H = 120, padB = 20, padT = 8;
+    if (!weekBuckets.some(Boolean)) {
+      svg.innerHTML = `<text x="200" y="60" text-anchor="middle" font-size="11" fill="#555" font-family="DM Sans, sans-serif">No workouts logged this month yet.</text>`;
+    } else {
+      const maxVal = Math.max(1, ...Array.from({ length: weekCount }, (_, i) => (weekBuckets[i]?.completed || 0) + (weekBuckets[i]?.scheduled || 0)));
+      const slot = W / weekCount, bw = Math.min(44, slot * 0.5), usH = H - padT - padB;
+      let bars = '';
+      for (let i = 0; i < weekCount; i++) {
+        const b = weekBuckets[i] || { completed: 0, scheduled: 0 };
+        const cx = slot * i + slot / 2, baseY = H - padB;
+        const cH = (b.completed / maxVal) * usH, sH = (b.scheduled / maxVal) * usH;
+        if (b.scheduled > 0) bars += `<rect x="${cx - bw/2}" y="${baseY - sH}" width="${bw}" height="${sH}" rx="3" fill="rgba(124,106,247,0.35)"></rect>`;
+        if (b.completed > 0) bars += `<rect x="${cx - bw/2}" y="${baseY - sH - cH}" width="${bw}" height="${cH}" rx="3" fill="var(--green)"></rect>`;
+        bars += `<text x="${cx}" y="${H - 4}" text-anchor="middle" font-size="10" fill="var(--text3)" font-family="DM Sans,sans-serif">W${i+1}</text>`;
+      }
+      svg.innerHTML = bars;
+    }
+
+    // Breakdown by type
+    const max = Math.max(1, ...CAL_CATS.map(c => catCounts[c.key]));
+    document.getElementById('cal-summary-breakdown').innerHTML = CAL_CATS.map(cat => {
+      const pct = Math.round((catCounts[cat.key] / max) * 100);
+      return `<div class="cal-breakdown-row">
+        <div class="cal-breakdown-name">${cat.icon} ${cat.label}</div>
+        <div class="cal-breakdown-track"><div class="cal-breakdown-fill" style="width:${pct}%"></div></div>
+        <div class="cal-breakdown-count">${catCounts[cat.key]}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Recommended For You (BMI-based, no BMI inputs here — calculated on Report page) ──
+  const CAL_BMI_RECO = {
+    underweight: {
+      label: 'Underweight', sub: 'BMI < 18.5',
+      exercises: [
+        { cat:'strength', name:'Squats',      frequency:'3× / week', duration:'25 min' },
+        { cat:'strength', name:'Bench Press', frequency:'2× / week', duration:'20 min' },
+        { cat:'strength', name:'Deadlift',    frequency:'2× / week', duration:'20 min' },
+      ],
+    },
+    healthy: {
+      label: 'Healthy weight', sub: 'BMI 18.5 – 24.9',
+      exercises: [
+        { cat:'cardio',   name:'Running',  frequency:'3× / week', duration:'30 min' },
+        { cat:'strength', name:'Squats',   frequency:'2× / week', duration:'20 min' },
+        { cat:'strength', name:'Pull-ups', frequency:'2× / week', duration:'15 min' },
+      ],
+    },
+    overweight: {
+      label: 'Overweight', sub: 'BMI 25 – 29.9',
+      exercises: [
+        { cat:'cardio', name:'Cycling',          frequency:'3× / week', duration:'30 min' },
+        { cat:'cardio', name:'Running',           frequency:'4× / week', duration:'35 min' },
+        { cat:'hiit',   name:'Mountain Climbers', frequency:'2× / week', duration:'15 min' },
+      ],
+    },
+    obese: {
+      label: 'Obese', sub: 'BMI ≥ 30',
+      exercises: [
+        { cat:'cardio', name:'Swimming',   frequency:'3× / week', duration:'15 min' },
+        { cat:'cardio', name:'Elliptical', frequency:'3× / week', duration:'15 min' },
+        { cat:'yoga',   name:'Stretching', frequency:'3× / week', duration:'10 min' },
+      ],
+    },
+  };
+
+  function calRenderReco() {
+    const body = document.getElementById('cal-reco-body');
+    const sub  = document.getElementById('cal-reco-sub');
+
+    // Read latest BMI from history
+    const bmiKey = currentUser ? 'ft_bmi_hist_' + currentUser.email : null;
+    let bmi = null, bmiCat = null;
+    if (bmiKey) {
+      try {
+        const hist = JSON.parse(localStorage.getItem(bmiKey) || '[]');
+        if (hist.length) {
+          const last = hist[hist.length - 1];
+          bmi = parseFloat(last.bmi); bmiCat = last.category;
+        }
+      } catch(e) {}
+    }
+
+    if (bmi === null) {
+      sub.textContent = 'Based on your BMI';
+      body.innerHTML = '<div class="cal-reco-empty">Calculate your BMI on the Report page to get personalised workout recommendations.</div>';
+      return;
+    }
+
+    let key;
+    if      (bmi < 18.5) key = 'underweight';
+    else if (bmi < 25)   key = 'healthy';
+    else if (bmi < 30)   key = 'overweight';
+    else                 key = 'obese';
+
+    const reco = CAL_BMI_RECO[key];
+    sub.textContent = `BMI ${bmi.toFixed(1)} · ${reco.label}`;
+
+    const chips = reco.exercises.map(({ cat, name, frequency, duration }) => {
+      const ex = (EXERCISES[cat] || []).find(e => e.name === name);
+      if (!ex) return '';
+      return `<button class="cal-reco-chip" onclick="quickAddExercise('${cat}','${name.replace(/'/g,"\\'")}',${parseInt(duration)})">
+        <span class="cal-reco-chip-icon">${ex.icon}</span>
+        <span class="cal-reco-chip-info">
+          <span class="cal-reco-chip-name">${ex.name}</span>
+          <span class="cal-reco-chip-cat">${CAT_LABELS[cat] || cat}</span>
+        </span>
+        <span class="cal-reco-chip-pills">
+          <span class="cal-reco-chip-pill">${frequency}</span>
+          <span class="cal-reco-chip-pill">${duration}</span>
+        </span>
+        <span class="cal-reco-chip-plus">+</span>
+      </button>`;
+    }).join('');
+
+    body.innerHTML = `<div class="cal-reco-chips">${chips}</div>
+      <div class="cal-reco-disclaimer">Tap an exercise to add it to your schedule. BMI is a general screening measure — consult a doctor for personalised advice.</div>`;
   }
 
   // ===== BMI CALCULATOR =====
@@ -2372,13 +3027,14 @@
     },
   };
 
-  function quickAddExercise(cat, name) {
+  function quickAddExercise(cat, name, duration) {
     const ex = (EXERCISES[cat] || []).find(e => e.name === name);
     if (!ex) return;
     openAddModal();
     selectedCat = cat;
     selectedExercise = ex;
     document.getElementById('custom-name').value = '';
+    if (duration) document.getElementById('duration-input').value = duration;
     renderCatTabs();
     renderExercises();
     checkAdd();
@@ -2408,7 +3064,7 @@
     document.getElementById('bmi-reco-tips').innerHTML = reco.exercises.map(({ cat, name, frequency, duration }) => {
       const ex = (EXERCISES[cat] || []).find(e => e.name === name);
       if (!ex) return '';
-      return `<button class="bmi-reco-ex-chip" onclick="quickAddExercise('${cat}','${name.replace(/'/g,"\\'")}')">
+      return `<button class="bmi-reco-ex-chip" onclick="quickAddExercise('${cat}','${name.replace(/'/g,"\\'")}',${parseInt(duration)})">
         <span class="bmi-reco-ex-icon">${ex.icon}</span>
         <span class="bmi-reco-ex-info">
           <span class="bmi-reco-ex-name">${ex.name}</span>
@@ -2869,8 +3525,12 @@
   }
 
   let achActiveFilter = 'all';
-  const achPrevLevels = JSON.parse(sessionStorage.getItem('ft_ach_v3_levels') || '{}');
-  const achUnlockedDates = JSON.parse(sessionStorage.getItem('ft_ach_dates') || '{}');
+  function getAchPrevLevels() {
+    return JSON.parse(localStorage.getItem('ft_ach_v3_levels_' + (currentUser?.email || '')) || '{}');
+  }
+  function getAchUnlockedDates() {
+    return JSON.parse(localStorage.getItem('ft_ach_dates_' + (currentUser?.email || '')) || '{}');
+  }
 
   function buildAchCard(group, stats, newlyUpgraded) {
     const lvl    = getAchCurrentLevel(group, stats);
@@ -2922,6 +3582,7 @@
 
   function renderAchievements() {
     const stats = getAchStats();
+    const achPrevLevels = getAchPrevLevels();
     const newlyUpgraded = [];
     BADGE_GROUPS.forEach(g => {
       const lvl = getAchCurrentLevel(g, stats);
@@ -3000,20 +3661,20 @@
     // Persist
     const nowLevels = {};
     BADGE_GROUPS.forEach(g => { nowLevels[g.id] = getAchCurrentLevel(g, stats); });
+    const achUnlockedDates = getAchUnlockedDates();
     newlyUpgraded.forEach(id => {
       const lvl = nowLevels[id];
       achUnlockedDates[id+'_'+lvl] = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
     });
-    sessionStorage.setItem('ft_ach_v3_levels', JSON.stringify(nowLevels));
-    sessionStorage.setItem('ft_ach_dates', JSON.stringify(achUnlockedDates));
+    localStorage.setItem('ft_ach_v3_levels_' + (currentUser?.email || ''), JSON.stringify(nowLevels));
+    localStorage.setItem('ft_ach_dates_' + (currentUser?.email || ''), JSON.stringify(achUnlockedDates));
 
     if (newlyUpgraded.length) {
-      const msg = newlyUpgraded.map(id => {
+      newlyUpgraded.forEach((id, i) => {
         const g = BADGE_GROUPS.find(b => b.id===id);
         const l = nowLevels[id];
-        return `${g.name} → ${ACH_LEVELS[l].icon}${ACH_LEVELS[l].label}`;
-      }).join(', ');
-      showAchToast('🏅 ' + msg);
+        setTimeout(() => showAchToast(g.icon, g.name, ACH_LEVELS[l].icon + ' ' + ACH_LEVELS[l].label), i * 200);
+      });
     }
   }
 
@@ -3057,7 +3718,7 @@
       progWrap.style.display = 'none';
       banner.style.display   = 'flex';
       document.getElementById('ach-dm-unlocked-text').textContent =
-        'Gold unlocked ' + (achUnlockedDates[group.id+'_gold'] || 'this session') + ' · Max level reached!';
+        'Gold unlocked ' + (getAchUnlockedDates()[group.id+'_gold'] || 'this session') + ' · Max level reached!';
     } else {
       const targetLv = nextLv || 'bronze';
       progWrap.style.display = 'block';
@@ -3072,10 +3733,23 @@
     document.getElementById('ach-modal-backdrop').classList.add('open');
   }
 
-  function showAchToast(msg) {
-    const t = document.getElementById('ach-toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
+  function showAchToast(badgeIcon, badgeName, levelText) {
+    const container = document.getElementById('ach-toast-container');
+    const item = document.createElement('div');
+    item.className = 'ach-toast-item';
+    item.innerHTML = `
+      <span class="ach-toast-icon">${badgeIcon}</span>
+      <div class="ach-toast-text">
+        <div class="ach-toast-title">Badge Unlocked</div>
+        <div class="ach-toast-body">${badgeName} · ${levelText}</div>
+      </div>`;
+    container.appendChild(item);
+    requestAnimationFrame(() => { requestAnimationFrame(() => { item.classList.add('show'); }); });
+    setTimeout(() => {
+      item.classList.remove('show');
+      item.classList.add('hide');
+      setTimeout(() => item.remove(), 300);
+    }, 4000);
   }
 
   document.getElementById('ach-dm-close').addEventListener('click', () =>
