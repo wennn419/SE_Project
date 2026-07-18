@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievements</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f4f4;
+    color: #111;
+    min-height: 100vh;
+    padding: 2.5rem 1rem 5rem;
+  }
+
+  .container { max-width: 980px; margin: 0 auto; }
+
+  .page-header { margin-bottom: 1.5rem; }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 400; letter-spacing: -0.02em; line-height: 1.1;
+  }
+  .page-header h1 em { font-style: italic; }
+  .page-header p { font-size: 13px; color: #888; margin-top: 5px; }
+
+  /* ── Overall card ── */
+  .overall-card {
+    background: #111; color: #fff;
+    border-radius: 14px; padding: 20px 24px;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+  }
+  .overall-title { font-family: 'DM Serif Display', serif; font-size: 1.1rem; font-style: italic; margin-bottom: 6px; }
+  .overall-bar-bg { height: 6px; background: rgba(255,255,255,0.15); border-radius: 99px; width: 260px; max-width: 100%; overflow: hidden; }
+  .overall-bar-fill { height: 100%; background: #fff; border-radius: 99px; transition: width 0.6s ease; }
+  .overall-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 6px; }
+  .overall-stats { display: flex; gap: 1.5rem; }
+  .ostat { text-align: center; }
+  .ostat-num { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1; }
+  .ostat-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+  /* ── Filter row ── */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .filter-pill {
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+    border: 1px solid #ddd; background: #fff;
+    cursor: pointer; transition: all 0.15s; color: #555;
+  }
+  .filter-pill:hover { border-color: #aaa; color: #111; }
+  .filter-pill.active { background: #111; border-color: #111; color: #fff; }
+
+  /* ── Category section ── */
+  .category-section { margin-bottom: 2.5rem; }
+  .category-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px; padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .category-icon { font-size: 18px; }
+  .category-title { font-size: 14px; font-weight: 600; color: #111; }
+  .category-desc { font-size: 12px; color: #aaa; }
+  .category-count { font-size: 12px; color: #aaa; margin-left: auto; }
+
+  /* ── Badge grid ── */
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 12px;
+  }
+
+  /* ── Badge card ── */
+  .badge-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 16px 12px 14px;
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center; gap: 8px;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  }
+  .badge-card.unlocked { border-color: #ccc; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .badge-card.unlocked:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,0.11); border-color: #999; }
+  .badge-card.unlocked::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px; background: #111; border-radius: 14px 14px 0 0;
+  }
+  .badge-card.locked { opacity: 0.48; background: #fafafa; cursor: default; }
+  .badge-card.locked:hover { transform: none; }
+
+  .badge-new-tag {
+    position: absolute; top: 9px; right: 9px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #fff; background: #111; border-radius: 999px; padding: 2px 7px;
+  }
+
+  /* ── SVG badge logo ── */
+  .badge-logo-wrap {
+    position: relative;
+    width: 80px; height: 86px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .badge-card.unlocked:hover .badge-logo-wrap { transform: scale(1.06); }
+
+  .badge-logo-wrap svg.badge-shape {
+    width: 80px; height: 86px;
+    display: block;
+  }
+
+  /* emoji overlaid on top of SVG shape */
+  .badge-emoji {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    padding-bottom: 4px;
+    pointer-events: none;
+  }
+
+  .badge-card.locked .badge-logo-wrap { filter: grayscale(1); }
+
+  /* lock dot */
+  .badge-card.locked .badge-logo-wrap::after {
+    content: '🔒';
+    position: absolute; bottom: 2px; right: -2px;
+    font-size: 13px; background: #fff; border-radius: 50%;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #e0e0e0; line-height: 1; z-index: 2;
+    filter: none;
+  }
+
+  /* progress ring sits around the badge shape */
+  .badge-ring-svg {
+    position: absolute; inset: 0;
+    width: 80px; height: 86px;
+    pointer-events: none;
+  }
+
+  /* ── Badge text ── */
+  .badge-name { font-size: 12.5px; font-weight: 600; color: #111; line-height: 1.2; }
+  .badge-card.locked .badge-name { color: #aaa; }
+  .badge-desc { font-size: 11px; color: #888; line-height: 1.4; }
+
+  /* ── Progress bar ── */
+  .badge-progress-wrap { width: 100%; }
+  .badge-progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .badge-progress-count { font-size: 10px; color: #aaa; }
+  .badge-progress-pct   { font-size: 11px; font-weight: 600; color: #555; }
+  .badge-progress-bg { height: 5px; background: #ebebeb; border-radius: 99px; overflow: hidden; }
+  .badge-progress-fill { height: 100%; background: #111; border-radius: 99px; transition: width 0.5s ease; }
+
+  .badge-unlocked-tag {
+    font-size: 10px; font-weight: 600;
+    color: #fff; background: #111;
+    border-radius: 999px; padding: 2px 10px; letter-spacing: 0.04em;
+  }
+
+  /* ── Detail modal ── */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.38); z-index: 200;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .detail-modal {
+    background: #fff; border-radius: 18px; border: 1px solid #ddd;
+    width: 100%; max-width: 360px; overflow: hidden;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .dm-header {
+    padding: 24px 20px 18px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center; border-bottom: 1px solid #efefef; position: relative;
+  }
+  .dm-close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: 1px solid #e0e0e0; border-radius: 6px;
+    cursor: pointer; color: #aaa; font-size: 15px;
+    width: 27px; height: 27px; display: flex; align-items: center; justify-content: center;
+  }
+  .dm-close:hover { background: #f5f5f5; }
+
+  .dm-badge-wrap { width: 90px; height: 96px; position: relative; }
+  .dm-badge-wrap svg.badge-shape { width: 90px; height: 96px; }
+  .dm-badge-emoji {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px; padding-bottom: 4px;
+  }
+
+  .dm-cat-label {
+    font-size: 11px; font-weight: 600; color: #888;
+    text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .dm-name { font-family: 'DM Serif Display', serif; font-size: 1.3rem; font-weight: 400; }
+  .dm-desc { font-size: 13px; color: #666; line-height: 1.5; }
+
+  .dm-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+
+  .dm-quote {
+    background: #f7f7f7;
+    border-left: 3px solid #111;
+    border-radius: 0 10px 10px 0;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-style: italic;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .dm-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 6px; }
+  .dm-progress-bg { height: 7px; background: #ececec; border-radius: 99px; overflow: hidden; }
+  .dm-progress-fill { height: 100%; border-radius: 99px; background: #111; transition: width 0.5s ease; }
+
+  .dm-unlocked-banner {
+    background: #f7f7f7; border-radius: 10px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: #555;
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #111; color: #fff;
+    font-size: 13px; font-weight: 500; padding: 10px 22px;
+    border-radius: 999px; opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none; white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <h1>Your <em>Achievements</em></h1>
+    <p>Badges unlock as you complete workouts. Click any badge to see details.</p>
+  </div>
+
+  <div class="overall-card">
+    <div>
+      <div class="overall-title">Overall Progress</div>
+      <div class="overall-bar-bg"><div class="overall-bar-fill" id="overall-fill" style="width:0%"></div></div>
+      <div class="overall-sub" id="overall-sub">0 of 0 badges unlocked</div>
+    </div>
+    <div class="overall-stats">
+      <div class="ostat"><div class="ostat-num" id="s-done">0</div><div class="ostat-label">Done</div></div>
+      <div class="ostat"><div class="ostat-num" id="s-mins">0</div><div class="ostat-label">Mins</div></div>
+      <div class="ostat"><div class="ostat-num" id="s-days">0</div><div class="ostat-label">Days</div></div>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <div class="filter-pill active" data-filter="all">All</div>
+    <div class="filter-pill" data-filter="unlocked">✓ Unlocked</div>
+    <div class="filter-pill" data-filter="in-progress">⏳ In Progress</div>
+  </div>
+
+  <div id="categories-wrap"></div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="detail-modal">
+    <div class="dm-header">
+      <button class="dm-close" id="dm-close">✕</button>
+      <div class="dm-badge-wrap" id="dm-badge-wrap"></div>
+      <div class="dm-cat-label" id="dm-cat-label"></div>
+      <div class="dm-name" id="dm-name"></div>
+      <div class="dm-desc" id="dm-desc"></div>
+    </div>
+    <div class="dm-body">
+      <div class="dm-quote" id="dm-quote"></div>
+      <div id="dm-progress-wrap">
+        <div class="dm-progress-label">
+          <span id="dm-prog-label"></span>
+          <span id="dm-prog-pct"></span>
+        </div>
+        <div class="dm-progress-bg"><div class="dm-progress-fill" id="dm-prog-fill"></div></div>
+      </div>
+      <div class="dm-unlocked-banner" id="dm-unlocked-banner" style="display:none">
+        <span>🏅</span><span id="dm-unlocked-text"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ─────────────────────────────────────────
+// BADGE CATEGORIES
+// ─────────────────────────────────────────
+const CATEGORIES = {
+  milestones:  { label: 'Total Workouts',     icon: '🎯', desc: 'Based on total workouts completed' },
+  consistency: { label: 'Days Active',        icon: '📅', desc: 'Based on how many days you showed up' },
+  endurance:   { label: 'Time & Endurance',   icon: '⏱️', desc: 'Based on total minutes logged' },
+  strength:    { label: 'Strength Training',  icon: '🏋️', desc: 'Based on strength workouts done' },
+  cardio:      { label: 'Cardio',             icon: '🏃', desc: 'Based on cardio workouts done' },
+  variety:     { label: 'Variety',            icon: '🌟', desc: 'Mixing different workout types' },
+};
+
+// ─────────────────────────────────────────
+// SVG BADGE SHAPE BUILDERS
+// ─────────────────────────────────────────
+
+function shieldSVG(unlocked, w = 80) {
+  const h = 86;
+  const f = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <!-- outer shield -->
+    <path d="M40 4 L74 18 L74 48 Q74 72 40 83 Q6 72 6 48 L6 18 Z"
+      fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- inner highlight border -->
+    <path d="M40 11 L67 23 L67 47 Q67 67 40 76 Q13 67 13 47 L13 23 Z"
+      fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- horizontal centre line -->
+    <line x1="24" y1="44" x2="56" y2="44" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function hexagonSVG(unlocked, w = 80) {
+  const cx = 40, cy = 43, r = 34, ri = 26;
+  const pts  = hexPts(cx, cy, r);
+  const ptsi = hexPts(cx, cy, ri);
+  const f  = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <polygon points="${pts}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="${ptsi}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function pentagonSVG(unlocked, w = 80) {
+  const cx = 40, cy = 45, r = 34, ri = 25;
+  const pts  = polyPts(cx, cy, r,  5, -90);
+  const ptsi = polyPts(cx, cy, ri, 5, -90);
+  const f  = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <polygon points="${pts}"  fill="${f}"    stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="${ptsi}" fill="none"   stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function diamondSVG(unlocked, w = 80) {
+  const f  = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <path d="M40 5 L75 43 L40 81 L5 43 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M40 15 L65 43 L40 71 L15 43 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
+    <line x1="25" y1="43" x2="55" y2="43" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
+    <line x1="40" y1="28" x2="40" y2="58" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function starSVG(unlocked, w = 80) {
+  const pts  = starPts(40, 43, 34, 14, 8);
+  const ptsi = starPts(40, 43, 26, 10, 8);
+  const f  = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <polygon points="${pts}"  fill="${f}"  stroke="${bd}" stroke-width="2"   stroke-linejoin="round"/>
+    <polygon points="${ptsi}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function circleSVG(unlocked, w = 80) {
+  const f  = unlocked ? '#1a1a1a' : '#c8c8c8';
+  const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.3)';
+  const bd = unlocked ? '#444' : '#aaa';
+  return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
+    <circle cx="40" cy="43" r="34" fill="${f}" stroke="${bd}" stroke-width="2.5"/>
+    <circle cx="40" cy="43" r="26" fill="none" stroke="${hi}" stroke-width="1.5"/>
+    <circle cx="40" cy="43" r="4"  fill="${hi}"/>
+  </svg>`;
+}
+
+function hexPts(cx, cy, r) {
+  return Array.from({length:6}, (_,i) => {
+    const a = Math.PI/180 * (60*i - 90);
+    return `${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`;
+  }).join(' ');
+}
+
+function polyPts(cx, cy, r, n, startDeg) {
+  return Array.from({length:n}, (_,i) => {
+    const a = Math.PI/180 * (360/n*i + startDeg);
+    return `${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`;
+  }).join(' ');
+}
+
+function starPts(cx, cy, r1, r2, points) {
+  return Array.from({length:points*2}, (_,i) => {
+    const r = i%2===0 ? r1 : r2;
+    const a = Math.PI/180 * (360/(points*2)*i - 90);
+    return `${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`;
+  }).join(' ');
+}
+
+const SHAPE_BUILDERS = {
+  shield:   shieldSVG,
+  hexagon:  hexagonSVG,
+  pentagon: pentagonSVG,
+  diamond:  diamondSVG,
+  star:     starSVG,
+  circle:   circleSVG,
+};
+
+function buildBadgeSVG(shape, unlocked, w = 80) {
+  return (SHAPE_BUILDERS[shape] || shieldSVG)(unlocked, w);
+}
+
+// Progress ring (circular, sits around badge shape)
+function buildProgressRing(pct, w = 80) {
+  const h  = Math.round(w * 86 / 80);
+  const cx = w / 2, cy = h / 2;
+  const r  = (w / 2) - 4;
+  const c  = 2 * Math.PI * r;
+  const offset = c - (pct / 100) * c;
+  return `<svg class="badge-ring-svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="transform:rotate(-90deg)">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e0e0e0" stroke-width="3.5"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#111" stroke-width="3.5"
+      stroke-linecap="round"
+      stroke-dasharray="${c.toFixed(2)}"
+      stroke-dashoffset="${offset.toFixed(2)}"/>
+  </svg>`;
+}
+
+// ─────────────────────────────────────────
+// BADGE DEFINITIONS — 28 badges, 6 categories
+// ─────────────────────────────────────────
+const BADGES = [
+
+  // ── MILESTONES — Total Workouts · shield · 7 badges ──
+  { id:'first_step',     cat:'milestones', shape:'shield', icon:'👟', name:'First Step',
+    desc:'Complete your very first workout.',
+    quote: "Every expert was once a beginner. You just took yours.",
+    condition: s => s.totalDone >= 1,
+    progress:  s => ({ current:s.totalDone, target:1,  unit:'workouts' }) },
+  { id:'hat_trick',      cat:'milestones', shape:'shield', icon:'🎩', name:'Hat Trick',
+    desc:'Complete 3 workouts total.',
+    quote: "Three down. The habit has already started forming.",
+    condition: s => s.totalDone >= 3,
+    progress:  s => ({ current:s.totalDone, target:3,  unit:'workouts' }) },
+  { id:'weekly_warrior', cat:'milestones', shape:'shield', icon:'⚔️', name:'Weekly Warrior',
+    desc:'Complete 5 workouts.',
+    quote: "Five sessions in. You're not just trying anymore — you're doing.",
+    condition: s => s.totalDone >= 5,
+    progress:  s => ({ current:s.totalDone, target:5,  unit:'workouts' }) },
+  { id:'ten_club',       cat:'milestones', shape:'shield', icon:'🔟', name:'Ten Club',
+    desc:'Complete 10 workouts total.',
+    quote: "10 workouts. That's not luck — that's discipline.",
+    condition: s => s.totalDone >= 10,
+    progress:  s => ({ current:s.totalDone, target:10, unit:'workouts' }) },
+  { id:'score_twenty',   cat:'milestones', shape:'shield', icon:'💪', name:'Score Twenty',
+    desc:'Complete 20 workouts total.',
+    quote: "Twenty sessions strong. Your future self is already thanking you.",
+    condition: s => s.totalDone >= 20,
+    progress:  s => ({ current:s.totalDone, target:20, unit:'workouts' }) },
+  { id:'elite_thirty',   cat:'milestones', shape:'shield', icon:'🥇', name:'Elite Thirty',
+    desc:'Complete 30 workouts total.',
+    quote: "30 workouts. Most people never get here. You did.",
+    condition: s => s.totalDone >= 30,
+    progress:  s => ({ current:s.totalDone, target:30, unit:'workouts' }) },
+  { id:'unstoppable',    cat:'milestones', shape:'shield', icon:'🚀', name:'Unstoppable',
+    desc:'Complete 50 workouts total.',
+    quote: "50 workouts. At this point, nothing can stop you.",
+    condition: s => s.totalDone >= 50,
+    progress:  s => ({ current:s.totalDone, target:50, unit:'workouts' }) },
+
+  // ── CONSISTENCY — Days Active · pentagon · 5 badges ──
+  { id:'first_day',    cat:'consistency', shape:'pentagon', icon:'🌅', name:'Day One',
+    desc:'Work out on your very first day.',
+    quote: "Day one is the hardest. You showed up anyway.",
+    condition: s => s.activeDays >= 1,
+    progress:  s => ({ current:s.activeDays, target:1,  unit:'days' }) },
+  { id:'showing_up',   cat:'consistency', shape:'pentagon', icon:'📆', name:'Showing Up',
+    desc:'Be active on 3 different days.',
+    quote: "Showing up is 80% of success. You've already won.",
+    condition: s => s.activeDays >= 3,
+    progress:  s => ({ current:s.activeDays, target:3,  unit:'days' }) },
+  { id:'five_days',    cat:'consistency', shape:'pentagon', icon:'🗓️', name:'Five Days Strong',
+    desc:'Be active on 5 different days.',
+    quote: "Five days of movement. Consistency is your superpower.",
+    condition: s => s.activeDays >= 5,
+    progress:  s => ({ current:s.activeDays, target:5,  unit:'days' }) },
+  { id:'perfect_week', cat:'consistency', shape:'pentagon', icon:'🏆', name:'Perfect Week',
+    desc:'Complete workouts on all 7 days.',
+    quote: "A full week, zero days skipped. Absolutely flawless.",
+    condition: s => s.activeDays >= 7,
+    progress:  s => ({ current:s.activeDays, target:7,  unit:'days' }) },
+  { id:'daily_grind',  cat:'consistency', shape:'pentagon', icon:'⚡', name:'Daily Grind',
+    desc:'Stay active across 14 different days.',
+    quote: "14 days of grinding. You've built something real here.",
+    condition: s => s.activeDays >= 14,
+    progress:  s => ({ current:s.activeDays, target:14, unit:'days' }) },
+
+  // ── ENDURANCE — Time Logged · hexagon · 5 badges ──
+  { id:'warm_up',    cat:'endurance', shape:'hexagon', icon:'🔥', name:'Warm Up',
+    desc:'Log your first 30 minutes of exercise.',
+    quote: "30 minutes in. The hardest part is always starting.",
+    condition: s => s.totalMins >= 30,
+    progress:  s => ({ current:s.totalMins, target:30,  unit:'mins' }) },
+  { id:'time_lord',  cat:'endurance', shape:'hexagon', icon:'⏱️', name:'Time Lord',
+    desc:'Log 120 total minutes of exercise.',
+    quote: "Two hours of effort invested in yourself. Time well spent.",
+    condition: s => s.totalMins >= 120,
+    progress:  s => ({ current:s.totalMins, target:120, unit:'mins' }) },
+  { id:'half_day',   cat:'endurance', shape:'hexagon', icon:'🕛', name:'Half Day',
+    desc:'Log 200 total minutes of exercise.',
+    quote: "200 minutes of pure dedication. You're built different.",
+    condition: s => s.totalMins >= 200,
+    progress:  s => ({ current:s.totalMins, target:200, unit:'mins' }) },
+  { id:'marathon',   cat:'endurance', shape:'hexagon', icon:'🏅', name:'Marathon',
+    desc:'Log 300 total minutes of exercise.',
+    quote: "300 minutes. That's five hours of choosing yourself.",
+    condition: s => s.totalMins >= 300,
+    progress:  s => ({ current:s.totalMins, target:300, unit:'mins' }) },
+  { id:'iron_month', cat:'endurance', shape:'hexagon', icon:'🛡️', name:'Iron Month',
+    desc:'Log 600 total minutes of exercise.',
+    quote: "600 minutes. Iron discipline forges an iron body.",
+    condition: s => s.totalMins >= 600,
+    progress:  s => ({ current:s.totalMins, target:600, unit:'mins' }) },
+
+  // ── STRENGTH — Strength Workouts · diamond · 5 badges ──
+  { id:'first_lift',      cat:'strength', shape:'diamond', icon:'🏋️', name:'First Lift',
+    desc:'Complete your first strength workout.',
+    quote: "The bar was heavy. You lifted it anyway. That's the whole point.",
+    condition: s => s.byCat.strength >= 1,
+    progress:  s => ({ current:s.byCat.strength, target:1,  unit:'strength' }) },
+  { id:'iron_will',       cat:'strength', shape:'diamond', icon:'💪', name:'Iron Will',
+    desc:'Complete 3 strength workouts.',
+    quote: "Strength isn't given. It's earned one rep at a time.",
+    condition: s => s.byCat.strength >= 3,
+    progress:  s => ({ current:s.byCat.strength, target:3,  unit:'strength' }) },
+  { id:'power_house',     cat:'strength', shape:'diamond', icon:'⚙️', name:'Power House',
+    desc:'Complete 6 strength workouts.',
+    quote: "Six sessions of iron. Your body is becoming the machine.",
+    condition: s => s.byCat.strength >= 6,
+    progress:  s => ({ current:s.byCat.strength, target:6,  unit:'strength' }) },
+  { id:'strength_legend', cat:'strength', shape:'diamond', icon:'👑', name:'Strength Legend',
+    desc:'Complete 10 strength workouts.',
+    quote: "10 strength sessions. Legends are made of exactly this.",
+    condition: s => s.byCat.strength >= 10,
+    progress:  s => ({ current:s.byCat.strength, target:10, unit:'strength' }) },
+  { id:'titan',           cat:'strength', shape:'diamond', icon:'🗿', name:'Titan',
+    desc:'Complete 20 strength workouts.',
+    quote: "20 lifts deep. You are immovable. You are a Titan.",
+    condition: s => s.byCat.strength >= 20,
+    progress:  s => ({ current:s.byCat.strength, target:20, unit:'strength' }) },
+
+  // ── CARDIO — Cardio Workouts · circle · 5 badges ──
+  { id:'cardio_starter', cat:'cardio', shape:'circle', icon:'🏃', name:'Cardio Starter',
+    desc:'Complete your first cardio workout.',
+    quote: "Your first run, ride, or swim. The lungs remember everything.",
+    condition: s => s.byCat.cardio >= 1,
+    progress:  s => ({ current:s.byCat.cardio, target:1,  unit:'cardio' }) },
+  { id:'cardio_king',    cat:'cardio', shape:'circle', icon:'🚴', name:'Cardio King',
+    desc:'Complete 3 cardio workouts.',
+    quote: "Your heart is getting stronger with every session.",
+    condition: s => s.byCat.cardio >= 3,
+    progress:  s => ({ current:s.byCat.cardio, target:3,  unit:'cardio' }) },
+  { id:'pacer',          cat:'cardio', shape:'circle', icon:'🎽', name:'Pacer',
+    desc:'Complete 5 cardio workouts.',
+    quote: "Five cardio sessions. You set the pace — nobody else.",
+    condition: s => s.byCat.cardio >= 5,
+    progress:  s => ({ current:s.byCat.cardio, target:5,  unit:'cardio' }) },
+  { id:'cardio_legend',  cat:'cardio', shape:'circle', icon:'🏆', name:'Cardio Legend',
+    desc:'Complete 10 cardio workouts.',
+    quote: "10 cardio sessions. Your endurance is now undeniable.",
+    condition: s => s.byCat.cardio >= 10,
+    progress:  s => ({ current:s.byCat.cardio, target:10, unit:'cardio' }) },
+  { id:'endurance_elite',cat:'cardio', shape:'circle', icon:'🌊', name:'Endurance Elite',
+    desc:'Complete 20 cardio workouts.',
+    quote: "20 cardio sessions. You move like water — relentless and fluid.",
+    condition: s => s.byCat.cardio >= 20,
+    progress:  s => ({ current:s.byCat.cardio, target:20, unit:'cardio' }) },
+
+  // ── VARIETY — Mixed Training · star · 5 badges ──
+  { id:'flex_start',   cat:'variety', shape:'star', icon:'🤸', name:'Flex Start',
+    desc:'Complete your first yoga or stretch session.',
+    quote: "Flexibility is strength in disguise. Well done.",
+    condition: s => s.byCat.yoga >= 1,
+    progress:  s => ({ current:s.byCat.yoga, target:1, unit:'yoga' }) },
+  { id:'on_fire',      cat:'variety', shape:'star', icon:'🔥', name:'On Fire',
+    desc:'Complete 2 HIIT workouts.',
+    quote: "You didn't just sweat — you burned. Keep that fire going.",
+    condition: s => s.byCat.hiit >= 2,
+    progress:  s => ({ current:s.byCat.hiit, target:2, unit:'HIIT' }) },
+  { id:'hiit_beast',   cat:'variety', shape:'star', icon:'💥', name:'HIIT Beast',
+    desc:'Complete 5 HIIT workouts.',
+    quote: "Five HIIT sessions. You don't just train — you explode.",
+    condition: s => s.byCat.hiit >= 5,
+    progress:  s => ({ current:s.byCat.hiit, target:5, unit:'HIIT' }) },
+  { id:'sport_lover',  cat:'variety', shape:'star', icon:'⚽', name:'Sport Lover',
+    desc:'Complete 3 sports or other workouts.',
+    quote: "Sport is joy in motion. You found yours.",
+    condition: s => s.byCat.other >= 3,
+    progress:  s => ({ current:s.byCat.other, target:3, unit:'sports' }) },
+  { id:'all_rounder',  cat:'variety', shape:'star', icon:'🌟', name:'All-Rounder',
+    desc:'Complete at least 1 workout in every category.',
+    quote: "Strength, cardio, HIIT, yoga, sport — you do it all. Incredible.",
+    condition: s => Object.values(s.byCat).every(v => v >= 1),
+    progress:  s => ({ current:Object.values(s.byCat).filter(v=>v>=1).length, target:5, unit:'categories' }) },
+];
+
+// ─────────────────────────────────────────
+// DEMO WORKOUTS — replace with real data
+// ─────────────────────────────────────────
+const DEMO_WORKOUTS = [
+  { name:'Running',          cat:'cardio',   duration:30, done:true,  dayIndex:0 },
+  { name:'Squats',           cat:'strength', duration:45, done:true,  dayIndex:1 },
+  { name:'Burpees',          cat:'hiit',     duration:20, done:true,  dayIndex:2 },
+  { name:'Stretching',       cat:'yoga',     duration:25, done:true,  dayIndex:3 },
+  { name:'Cycling',          cat:'cardio',   duration:40, done:true,  dayIndex:4 },
+  { name:'Deadlift',         cat:'strength', duration:50, done:false, dayIndex:5 },
+  { name:'Boxing',           cat:'other',    duration:35, done:true,  dayIndex:6 },
+  { name:'Vinyasa Flow',     cat:'yoga',     duration:30, done:false, dayIndex:0 },
+  { name:'Sprint Intervals', cat:'hiit',     duration:25, done:false, dayIndex:1 },
+];
+
+// ─────────────────────────────────────────
+// COMPUTE STATS
+// ─────────────────────────────────────────
+function computeStats(workouts) {
+  const stats = {
+    totalDone:0, totalMins:0, activeDays:0,
+    byCat:{ strength:0, cardio:0, hiit:0, yoga:0, other:0 },
+  };
+  const daysWithDone = new Set();
+  workouts.forEach((w,i) => {
+    if (w.done) {
+      stats.totalDone++;
+      stats.totalMins += (w.duration||0);
+      stats.byCat[w.cat] = (stats.byCat[w.cat]||0)+1;
+      daysWithDone.add(w.dayIndex??i);
+    }
+  });
+  stats.activeDays = daysWithDone.size;
+  return stats;
+}
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let activeFilter    = 'all';
+const currentStats  = computeStats(DEMO_WORKOUTS);
+const prevUnlocked  = JSON.parse(sessionStorage.getItem('ach_v2_unlocked')||'[]');
+const unlockedDates = JSON.parse(sessionStorage.getItem('ach_v2_dates')||'{}');
+
+// ─────────────────────────────────────────
+// BUILD BADGE CARD
+// ─────────────────────────────────────────
+function buildCard(badge, stats, newlyUnlocked) {
+  const unlocked = badge.condition(stats);
+  const isNew    = newlyUnlocked.includes(badge.id);
+  const prog     = badge.progress(stats);
+  const pct      = Math.min(100, Math.round((prog.current / prog.target) * 100));
+
+  const card = document.createElement('div');
+  card.className = 'badge-card ' + (unlocked ? 'unlocked' : 'locked');
+
+  const ringHTML = (!unlocked && pct > 0) ? buildProgressRing(pct) : '';
+
+  card.innerHTML = `
+    ${isNew ? '<div class="badge-new-tag">New!</div>' : ''}
+    <div class="badge-logo-wrap">
+      ${buildBadgeSVG(badge.shape, unlocked)}
+      ${ringHTML}
+      <div class="badge-emoji">${badge.icon}</div>
+    </div>
+    <div class="badge-name">${badge.name}</div>
+    <div class="badge-desc">${badge.desc}</div>
+    ${unlocked
+      ? `<div class="badge-unlocked-tag">✓ Unlocked</div>`
+      : `<div class="badge-progress-wrap">
+           <div class="badge-progress-top">
+             <span class="badge-progress-count">${prog.current} / ${prog.target} ${prog.unit}</span>
+             <span class="badge-progress-pct">${pct}%</span>
+           </div>
+           <div class="badge-progress-bg">
+             <div class="badge-progress-fill" style="width:${pct}%"></div>
+           </div>
+         </div>`
+    }
+  `;
+
+  card.addEventListener('click', () => openDetail(badge, stats, unlocked));
+  return card;
+}
+
+// ─────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────
+function render() {
+  const stats = currentStats;
+  const wrap  = document.getElementById('categories-wrap');
+  wrap.innerHTML = '';
+
+  const nowUnlocked   = BADGES.filter(b => b.condition(stats)).map(b => b.id);
+  const newlyUnlocked = nowUnlocked.filter(id => !prevUnlocked.includes(id));
+  newlyUnlocked.forEach(id => {
+    unlockedDates[id] = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  });
+
+  // Overall bar
+  const pctOverall = Math.round((nowUnlocked.length / BADGES.length) * 100);
+  document.getElementById('overall-fill').style.width = pctOverall + '%';
+  document.getElementById('overall-sub').textContent  = `${nowUnlocked.length} of ${BADGES.length} badges unlocked`;
+  document.getElementById('s-done').textContent = stats.totalDone;
+  document.getElementById('s-mins').textContent = stats.totalMins;
+  document.getElementById('s-days').textContent = stats.activeDays;
+
+  // Filter
+  let visibleBadges = BADGES;
+  if (activeFilter === 'unlocked')    visibleBadges = BADGES.filter(b =>  b.condition(stats));
+  if (activeFilter === 'in-progress') visibleBadges = BADGES.filter(b => !b.condition(stats));
+
+  if (!visibleBadges.length) {
+    wrap.innerHTML = '<div class="empty-state">No badges match this filter.</div>';
+    return;
+  }
+
+  // Render per category
+  Object.entries(CATEGORIES).forEach(([catKey, catMeta]) => {
+    const catBadges = visibleBadges.filter(b => b.cat === catKey);
+    if (!catBadges.length) return;
+
+    const sorted = [
+      ...catBadges.filter(b =>  b.condition(stats)),
+      ...catBadges.filter(b => !b.condition(stats)),
+    ];
+
+    const unlockedCount = catBadges.filter(b => b.condition(stats)).length;
+
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.innerHTML = `
+      <div class="category-header">
+        <span class="category-icon">${catMeta.icon}</span>
+        <div>
+          <div class="category-title">${catMeta.label}</div>
+          <div class="category-desc">${catMeta.desc}</div>
+        </div>
+        <span class="category-count">${unlockedCount} / ${catBadges.length}</span>
+      </div>
+      <div class="badge-grid"></div>
+    `;
+
+    const grid = section.querySelector('.badge-grid');
+    sorted.forEach(b => grid.appendChild(buildCard(b, stats, newlyUnlocked)));
+    wrap.appendChild(section);
+  });
+
+  sessionStorage.setItem('ach_v2_unlocked', JSON.stringify(nowUnlocked));
+  sessionStorage.setItem('ach_v2_dates',    JSON.stringify(unlockedDates));
+
+  if (newlyUnlocked.length) {
+    const names = newlyUnlocked.map(id => BADGES.find(b=>b.id===id)?.name).join(', ');
+    showToast(`🏅 Unlocked: ${names}!`);
+  }
+}
+
+// ─────────────────────────────────────────
+// DETAIL MODAL
+// ─────────────────────────────────────────
+function openDetail(badge, stats, unlocked) {
+  const prog = badge.progress(stats);
+  const pct  = Math.min(100, Math.round((prog.current / prog.target) * 100));
+  const cat  = CATEGORIES[badge.cat];
+
+  const wrap = document.getElementById('dm-badge-wrap');
+  wrap.innerHTML = buildBadgeSVG(badge.shape, unlocked, 90)
+    + `<div class="dm-badge-emoji">${badge.icon}</div>`;
+
+  document.getElementById('dm-cat-label').textContent = cat?.label || '';
+  document.getElementById('dm-name').textContent      = badge.name;
+  document.getElementById('dm-desc').textContent      = badge.desc;
+  document.getElementById('dm-quote').textContent     = `"${badge.quote}"`;
+
+  const progWrap = document.getElementById('dm-progress-wrap');
+  const banner   = document.getElementById('dm-unlocked-banner');
+
+  if (unlocked) {
+    progWrap.style.display = 'none';
+    banner.style.display   = 'flex';
+    document.getElementById('dm-unlocked-text').textContent =
+      `Unlocked ${unlockedDates[badge.id] || 'this session'} · Keep it up!`;
+  } else {
+    progWrap.style.display = 'block';
+    banner.style.display   = 'none';
+    document.getElementById('dm-prog-label').textContent = `${prog.current} / ${prog.target} ${prog.unit}`;
+    document.getElementById('dm-prog-pct').textContent   = pct + '%';
+    document.getElementById('dm-prog-fill').style.width  = pct + '%';
+  }
+
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+document.getElementById('dm-close').addEventListener('click', () =>
+  document.getElementById('modal-backdrop').classList.remove('open'));
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-backdrop'))
+    document.getElementById('modal-backdrop').classList.remove('open');
+});
+
+// ─────────────────────────────────────────
+// FILTER
+// ─────────────────────────────────────────
+document.getElementById('filter-row').addEventListener('click', e => {
+  const pill = e.target.closest('.filter-pill');
+  if (!pill) return;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  activeFilter = pill.dataset.filter;
+  render();
+});
+
+// ─────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+render();
+</script>
+</body>
+</html>
