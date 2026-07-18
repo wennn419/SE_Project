@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -838,6 +839,93 @@
 
     .ach-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
 
+    /* ── Level colors (adapted for dark theme) ── */
+    :root {
+      --bronze: #CD7F32; --bronze-bg: rgba(205,127,50,0.15); --bronze-ring: rgba(205,127,50,0.4);
+      --silver: #a0a0b0; --silver-bg: rgba(160,160,176,0.12); --silver-ring: rgba(160,160,176,0.35);
+      --gold:   #C8960C; --gold-bg:   rgba(200,150,12,0.15);  --gold-ring:   rgba(200,150,12,0.4);
+    }
+    :root.light {
+      --bronze-bg: #FBF2E8; --bronze-ring: #EDD5A8;
+      --silver-bg: #F4F4F4; --silver-ring: #D0D0D0;
+      --gold-bg:   #FEF9E7; --gold-ring:   #F4D97A;
+    }
+
+    /* Level ribbon (top-left of card) */
+    .level-ribbon {
+      position: absolute; top: 9px; left: 10px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 999px; border: 1px solid;
+    }
+    .level-ribbon.bronze { color: var(--bronze); background: var(--bronze-bg); border-color: var(--bronze-ring); }
+    .level-ribbon.silver { color: var(--silver); background: var(--silver-bg); border-color: var(--silver-ring); }
+    .level-ribbon.gold   { color: var(--gold);   background: var(--gold-bg);   border-color: var(--gold-ring); }
+    .level-ribbon.locked { color: var(--text3);  background: var(--surface2);  border-color: var(--border);    opacity: 0.5; }
+
+    /* Level dots row */
+    .level-dots { display: flex; gap: 5px; align-items: center; }
+    .level-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface2); }
+    .level-dot.bronze { background: var(--bronze); border-color: var(--bronze); }
+    .level-dot.silver { background: var(--silver); border-color: var(--silver); }
+    .level-dot.gold   { background: var(--gold);   border-color: var(--gold); }
+
+    /* Unlocked tag level variants */
+    .badge-unlocked-tag.gold   { color: var(--gold);   background: var(--gold-bg); }
+    .badge-unlocked-tag.silver { color: var(--silver); background: var(--silver-bg); }
+    .badge-unlocked-tag.bronze { color: var(--bronze); background: var(--bronze-bg); }
+
+    /* Level-colored top bar on unlocked cards */
+    .badge-card.unlocked.lv-bronze::before { background: var(--bronze) !important; }
+    .badge-card.unlocked.lv-silver::before { background: var(--silver) !important; }
+    .badge-card.unlocked.lv-gold::before   { background: var(--gold)   !important; }
+
+    /* Border tint for unlocked levels */
+    .badge-card.unlocked.lv-bronze { border-color: var(--bronze-ring); }
+    .badge-card.unlocked.lv-silver { border-color: var(--silver-ring); }
+    .badge-card.unlocked.lv-gold   { border-color: var(--gold-ring); }
+
+    /* Progress fill level variants */
+    .badge-progress-fill.bronze { background: var(--bronze) !important; }
+    .badge-progress-fill.silver { background: var(--silver) !important; }
+    .badge-progress-fill.gold   { background: var(--gold)   !important; }
+    .badge-progress-fill.locked-fill { background: var(--border2) !important; }
+
+    /* ── Level pill in detail modal ── */
+    .ach-dm-level-pill {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 2px 10px; border-radius: 999px; border: 1px solid;
+    }
+    .ach-dm-level-pill.bronze { color: var(--bronze); background: var(--bronze-bg); border-color: var(--bronze-ring); }
+    .ach-dm-level-pill.silver { color: var(--silver); background: var(--silver-bg); border-color: var(--silver-ring); }
+    .ach-dm-level-pill.gold   { color: var(--gold);   background: var(--gold-bg);   border-color: var(--gold-ring); }
+    .ach-dm-level-pill.locked { color: var(--text3);  background: var(--surface2);  border-color: var(--border); }
+
+    /* ── Level steps in modal ── */
+    .ach-dm-level-steps { display: flex; gap: 6px; }
+    .ach-dm-level-step {
+      flex: 1; border-radius: 8px; padding: 8px 6px; text-align: center;
+      border: 1px solid var(--border); background: var(--surface2);
+    }
+    .ach-dm-level-step.reached.bronze { background: var(--bronze-bg); border-color: var(--bronze-ring); }
+    .ach-dm-level-step.reached.silver { background: var(--silver-bg); border-color: var(--silver-ring); }
+    .ach-dm-level-step.reached.gold   { background: var(--gold-bg);   border-color: var(--gold-ring); }
+    .ach-dm-level-step-icon { font-size: 16px; }
+    .ach-dm-level-step-lbl  { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; color: var(--text3); }
+    .ach-dm-level-step.reached.bronze .ach-dm-level-step-lbl { color: var(--bronze); }
+    .ach-dm-level-step.reached.silver .ach-dm-level-step-lbl { color: var(--silver); }
+    .ach-dm-level-step.reached.gold   .ach-dm-level-step-lbl { color: var(--gold); }
+    .ach-dm-level-step-val  { font-size: 10px; color: var(--text3); margin-top: 1px; }
+    .ach-dm-level-step.reached .ach-dm-level-step-val { color: var(--text2); }
+
+    /* BMI sync panel in achievements */
+    .ach-bmi-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 16px; margin-bottom: 14px;
+      display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--text2);
+    }
+    .ach-bmi-panel-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+    .ach-bmi-panel strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 12px; }
+
     @media (max-width: 768px) {
       .badge-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
       .ach-overall-bar-bg { width: 100%; }
@@ -1273,6 +1361,7 @@
           <div class="ach-filter-pill active" data-filter="all">All</div>
           <div class="ach-filter-pill" data-filter="unlocked">✓ Unlocked</div>
           <div class="ach-filter-pill" data-filter="in-progress">⏳ In Progress</div>
+          <div class="ach-filter-pill" data-filter="gold">🥇 Gold</div>
         </div>
 
         <!-- Badge categories rendered by JS -->
@@ -1285,11 +1374,13 @@
           <div class="ach-dm-header">
             <button class="ach-dm-close" id="ach-dm-close">✕</button>
             <div class="ach-dm-badge-wrap" id="ach-dm-badge-wrap"></div>
+            <div class="ach-dm-level-pill" id="ach-dm-level-pill"></div>
             <div class="ach-dm-cat-label" id="ach-dm-cat-label"></div>
             <div class="ach-dm-name" id="ach-dm-name"></div>
             <div class="ach-dm-desc" id="ach-dm-desc"></div>
           </div>
           <div class="ach-dm-body">
+            <div class="ach-dm-level-steps" id="ach-dm-level-steps"></div>
             <div class="ach-dm-quote" id="ach-dm-quote"></div>
             <div id="ach-dm-progress-wrap">
               <div class="ach-dm-progress-label">
@@ -2508,153 +2599,200 @@
     placeholder.style.display = 'none';
   }
 
-  // ===== ACHIEVEMENTS =====
-  const ACHIEVEMENTS = {
-    milestones: [
-      { id:'first_workout',  icon:'🎯', name:'First Step',       desc:'Complete your first workout',               check: (s) => s.totalDone >= 1,   max:1,  val:(s)=>Math.min(s.totalDone,1) },
-      { id:'ten_workouts',   icon:'💫', name:'On a Roll',        desc:'Complete 10 workouts total',                check: (s) => s.totalDone >= 10,  max:10, val:(s)=>Math.min(s.totalDone,10) },
-      { id:'fifty_workouts', icon:'🌟', name:'Fitness Fanatic',  desc:'Complete 50 workouts total',                check: (s) => s.totalDone >= 50,  max:50, val:(s)=>Math.min(s.totalDone,50) },
-      { id:'hundred',        icon:'💯', name:'Century Club',     desc:'Complete 100 workouts total',               check: (s) => s.totalDone >= 100, max:100,val:(s)=>Math.min(s.totalDone,100) },
-    ],
-    streaks: [
-      { id:'streak3',  icon:'🔥', name:'Warming Up',    desc:'Maintain a 3-day streak',   check:(s)=>s.streak>=3,   max:3,  val:(s)=>Math.min(s.streak,3) },
-      { id:'streak7',  icon:'⚡', name:'One Week',      desc:'Maintain a 7-day streak',   check:(s)=>s.streak>=7,   max:7,  val:(s)=>Math.min(s.streak,7) },
-      { id:'streak14', icon:'🚀', name:'Two Weeks',     desc:'Maintain a 14-day streak',  check:(s)=>s.streak>=14,  max:14, val:(s)=>Math.min(s.streak,14) },
-      { id:'streak30', icon:'👑', name:'Unstoppable',   desc:'Maintain a 30-day streak',  check:(s)=>s.streak>=30,  max:30, val:(s)=>Math.min(s.streak,30) },
-    ],
-    fitness: [
-      { id:'mins100',  icon:'⏱️', name:'Time Invested',  desc:'Log 100 total minutes',     check:(s)=>s.totalMins>=100,  max:100,  val:(s)=>Math.min(s.totalMins,100) },
-      { id:'mins500',  icon:'🏃', name:'Half-Marathon',  desc:'Log 500 total minutes',     check:(s)=>s.totalMins>=500,  max:500,  val:(s)=>Math.min(s.totalMins,500) },
-      { id:'allcats',  icon:'🎨', name:'Cross-Trainer',  desc:'Complete all 5 categories', check:(s)=>s.catsUsed>=5,     max:5,    val:(s)=>Math.min(s.catsUsed,5) },
-      { id:'pct80',    icon:'📈', name:'High Achiever',  desc:'Reach 80% completion rate', check:(s)=>s.completionPct>=80, max:100, val:(s)=>Math.min(s.completionPct,100) },
-    ],
-  };
+  // ===== ACHIEVEMENTS — Bronze / Silver / Gold level system =====
 
-  // ===== ACHIEVEMENTS — new badge system =====
+  const ACH_LEVELS = {
+    bronze: { label:'Bronze', icon:'🥉', color:'var(--bronze)' },
+    silver: { label:'Silver', icon:'🥈', color:'var(--silver)' },
+    gold:   { label:'Gold',   icon:'🥇', color:'var(--gold)' },
+  };
 
   const ACH_CATEGORIES = {
-    milestones:  { label: 'Total Workouts',    icon: '🎯', desc: 'Based on total workouts completed' },
-    consistency: { label: 'Days Active',       icon: '📅', desc: 'Based on how many days you showed up' },
-    endurance:   { label: 'Time & Endurance',  icon: '⏱️', desc: 'Based on total minutes logged' },
-    strength:    { label: 'Strength Training', icon: '🏋️', desc: 'Based on strength workouts done' },
-    cardio:      { label: 'Cardio',            icon: '🏃', desc: 'Based on cardio workouts done' },
-    variety:     { label: 'Variety',           icon: '🌟', desc: 'Mixing different workout types' },
+    milestones:  { label:'Total Workouts',    icon:'🎯', desc:'Based on total workouts completed' },
+    consistency: { label:'Days Active',       icon:'📅', desc:'Based on how many days you showed up' },
+    endurance:   { label:'Time & Endurance',  icon:'⏱️', desc:'Based on total minutes logged' },
+    strength:    { label:'Strength Training', icon:'🏋️', desc:'Based on strength workouts done' },
+    cardio:      { label:'Cardio',            icon:'🏃', desc:'Based on cardio workouts done' },
+    variety:     { label:'Variety',           icon:'🌟', desc:'Mixing different workout types' },
+    bmi:         { label:'BMI & Health',      icon:'⚖️', desc:'Based on BMI from your Health page · syncs automatically' },
   };
 
-  const ACH_BADGES = [
-    { id:'first_step',     cat:'milestones', shape:'shield',   icon:'👟', name:'First Step',       desc:'Complete your very first workout.',        quote:"Every expert was once a beginner. You just took yours.",           condition:s=>s.totalDone>=1,            progress:s=>({current:s.totalDone,target:1,unit:'workouts'}) },
-    { id:'hat_trick',      cat:'milestones', shape:'shield',   icon:'🎩', name:'Hat Trick',        desc:'Complete 3 workouts total.',               quote:"Three down. The habit has already started forming.",               condition:s=>s.totalDone>=3,            progress:s=>({current:s.totalDone,target:3,unit:'workouts'}) },
-    { id:'weekly_warrior', cat:'milestones', shape:'shield',   icon:'⚔️', name:'Weekly Warrior',   desc:'Complete 5 workouts.',                     quote:"Five sessions in. You're not just trying anymore — you're doing.", condition:s=>s.totalDone>=5,            progress:s=>({current:s.totalDone,target:5,unit:'workouts'}) },
-    { id:'ten_club',       cat:'milestones', shape:'shield',   icon:'🔟', name:'Ten Club',         desc:'Complete 10 workouts total.',              quote:"10 workouts. That's not luck — that's discipline.",               condition:s=>s.totalDone>=10,           progress:s=>({current:s.totalDone,target:10,unit:'workouts'}) },
-    { id:'score_twenty',   cat:'milestones', shape:'shield',   icon:'💪', name:'Score Twenty',     desc:'Complete 20 workouts total.',              quote:"Twenty sessions strong. Your future self is already thanking you.",condition:s=>s.totalDone>=20,           progress:s=>({current:s.totalDone,target:20,unit:'workouts'}) },
-    { id:'elite_thirty',   cat:'milestones', shape:'shield',   icon:'🥇', name:'Elite Thirty',     desc:'Complete 30 workouts total.',              quote:"30 workouts. Most people never get here. You did.",               condition:s=>s.totalDone>=30,           progress:s=>({current:s.totalDone,target:30,unit:'workouts'}) },
-    { id:'unstoppable',    cat:'milestones', shape:'shield',   icon:'🚀', name:'Unstoppable',      desc:'Complete 50 workouts total.',              quote:"50 workouts. At this point, nothing can stop you.",               condition:s=>s.totalDone>=50,           progress:s=>({current:s.totalDone,target:50,unit:'workouts'}) },
+  const BADGE_GROUPS = [
+    // ── MILESTONES · shield ──
+    { id:'warrior',   cat:'milestones', shape:'shield', icon:'⚔️', name:'Warrior',
+      levels:{
+        bronze:{ desc:'Complete 5 workouts.',   quote:"Five down. The habit has already started forming.",              condition:s=>s.totalDone>=5,  progress:s=>({current:s.totalDone,target:5,  unit:'workouts'}) },
+        silver:{ desc:'Complete 20 workouts.',  quote:"20 workouts. That's not luck — that's discipline.",             condition:s=>s.totalDone>=20, progress:s=>({current:s.totalDone,target:20, unit:'workouts'}) },
+        gold:  { desc:'Complete 50 workouts.',  quote:"50 workouts. Most people never get here. You did.",             condition:s=>s.totalDone>=50, progress:s=>({current:s.totalDone,target:50, unit:'workouts'}) },
+    }},
+    { id:'centurion', cat:'milestones', shape:'shield', icon:'🛡️', name:'Centurion',
+      levels:{
+        bronze:{ desc:'Complete 10 workouts.',  quote:"Ten sessions in. You are building something real.",             condition:s=>s.totalDone>=10,  progress:s=>({current:s.totalDone,target:10,  unit:'workouts'}) },
+        silver:{ desc:'Complete 30 workouts.',  quote:"Thirty sessions. That's a month of consistency.",              condition:s=>s.totalDone>=30,  progress:s=>({current:s.totalDone,target:30,  unit:'workouts'}) },
+        gold:  { desc:'Complete 100 workouts.', quote:"100 workouts. You are in a category most people only dream of.",condition:s=>s.totalDone>=100, progress:s=>({current:s.totalDone,target:100, unit:'workouts'}) },
+    }},
+    { id:'legend',    cat:'milestones', shape:'shield', icon:'🏆', name:'Legend',
+      levels:{
+        bronze:{ desc:'Complete workouts across 3 weeks.',  quote:"Three weeks of effort. Your body is adapting.",     condition:s=>s.weekSpan>=3,  progress:s=>({current:s.weekSpan,target:3,  unit:'weeks'}) },
+        silver:{ desc:'Complete workouts across 8 weeks.',  quote:"Two months of showing up. That's legendary.",       condition:s=>s.weekSpan>=8,  progress:s=>({current:s.weekSpan,target:8,  unit:'weeks'}) },
+        gold:  { desc:'Complete workouts across 12 weeks.', quote:"Twelve weeks. A full quarter of the year. Remarkable.", condition:s=>s.weekSpan>=12, progress:s=>({current:s.weekSpan,target:12, unit:'weeks'}) },
+    }},
 
-    { id:'first_day',    cat:'consistency', shape:'pentagon', icon:'🌅', name:'Day One',          desc:'Work out on your very first day.',          quote:"Day one is the hardest. You showed up anyway.",                   condition:s=>s.activeDays>=1,           progress:s=>({current:s.activeDays,target:1,unit:'days'}) },
-    { id:'showing_up',   cat:'consistency', shape:'pentagon', icon:'📆', name:'Showing Up',       desc:'Be active on 3 different days.',            quote:"Showing up is 80% of success. You've already won.",               condition:s=>s.activeDays>=3,           progress:s=>({current:s.activeDays,target:3,unit:'days'}) },
-    { id:'five_days',    cat:'consistency', shape:'pentagon', icon:'🗓️', name:'Five Days Strong', desc:'Be active on 5 different days.',            quote:"Five days of movement. Consistency is your superpower.",           condition:s=>s.activeDays>=5,           progress:s=>({current:s.activeDays,target:5,unit:'days'}) },
-    { id:'perfect_week', cat:'consistency', shape:'pentagon', icon:'🏆', name:'Perfect Week',     desc:'Complete workouts on all 7 days.',          quote:"A full week, zero days skipped. Absolutely flawless.",             condition:s=>s.activeDays>=7,           progress:s=>({current:s.activeDays,target:7,unit:'days'}) },
-    { id:'daily_grind',  cat:'consistency', shape:'pentagon', icon:'⚡', name:'Daily Grind',      desc:'Stay active across 14 different days.',     quote:"14 days of grinding. You've built something real here.",           condition:s=>s.activeDays>=14,          progress:s=>({current:s.activeDays,target:14,unit:'days'}) },
+    // ── CONSISTENCY · pentagon ──
+    { id:'showup',    cat:'consistency', shape:'pentagon', icon:'📅', name:'Show Up',
+      levels:{
+        bronze:{ desc:'Be active on 5 different days.',  quote:"Showing up is 80% of success. You've already won.",     condition:s=>s.activeDays>=5,  progress:s=>({current:s.activeDays,target:5,  unit:'days'}) },
+        silver:{ desc:'Be active on 10 different days.', quote:"Ten days of movement. Consistency is your superpower.", condition:s=>s.activeDays>=10, progress:s=>({current:s.activeDays,target:10, unit:'days'}) },
+        gold:  { desc:'Be active on 20 different days.', quote:"Twenty active days. You are the definition of committed.", condition:s=>s.activeDays>=20, progress:s=>({current:s.activeDays,target:20, unit:'days'}) },
+    }},
+    { id:'grind',     cat:'consistency', shape:'pentagon', icon:'⚡', name:'Daily Grind',
+      levels:{
+        bronze:{ desc:'Work out on 7 different days.',  quote:"Seven days in. Your routine is taking shape.",            condition:s=>s.activeDays>=7,  progress:s=>({current:s.activeDays,target:7,  unit:'days'}) },
+        silver:{ desc:'Work out on 14 different days.', quote:"Fourteen days of grinding. You've built something real.", condition:s=>s.activeDays>=14, progress:s=>({current:s.activeDays,target:14, unit:'days'}) },
+        gold:  { desc:'Work out on 30 different days.', quote:"Thirty days. That's a full month of pure dedication.",    condition:s=>s.activeDays>=30, progress:s=>({current:s.activeDays,target:30, unit:'days'}) },
+    }},
+    { id:'perfect',   cat:'consistency', shape:'pentagon', icon:'🗓️', name:'Perfect Week',
+      levels:{
+        bronze:{ desc:'Complete workouts on 5 days in one week.', quote:"Five days in a single week. Near perfect.",          condition:s=>s.bestWeek>=5, progress:s=>({current:s.bestWeek,target:5,unit:'days/week'}) },
+        silver:{ desc:'Complete workouts on 6 days in one week.', quote:"Six days straight. You're pushing limits.",          condition:s=>s.bestWeek>=6, progress:s=>({current:s.bestWeek,target:6,unit:'days/week'}) },
+        gold:  { desc:'Complete workouts every day of a week.',   quote:"All 7 days. A flawless week. Absolutely legendary.", condition:s=>s.bestWeek>=7, progress:s=>({current:s.bestWeek,target:7,unit:'days/week'}) },
+    }},
 
-    { id:'warm_up',    cat:'endurance', shape:'hexagon', icon:'🔥', name:'Warm Up',       desc:'Log your first 30 minutes.',          quote:"30 minutes in. The hardest part is always starting.",         condition:s=>s.totalMins>=30,           progress:s=>({current:s.totalMins,target:30,unit:'mins'}) },
-    { id:'time_lord',  cat:'endurance', shape:'hexagon', icon:'⏱️', name:'Time Lord',     desc:'Log 120 total minutes.',              quote:"Two hours of effort invested in yourself. Time well spent.",  condition:s=>s.totalMins>=120,          progress:s=>({current:s.totalMins,target:120,unit:'mins'}) },
-    { id:'half_day',   cat:'endurance', shape:'hexagon', icon:'🕛', name:'Half Day',      desc:'Log 200 total minutes.',              quote:"200 minutes of pure dedication. You're built different.",     condition:s=>s.totalMins>=200,          progress:s=>({current:s.totalMins,target:200,unit:'mins'}) },
-    { id:'marathon',   cat:'endurance', shape:'hexagon', icon:'🏅', name:'Marathon',      desc:'Log 300 total minutes.',              quote:"300 minutes. That's five hours of choosing yourself.",        condition:s=>s.totalMins>=300,          progress:s=>({current:s.totalMins,target:300,unit:'mins'}) },
-    { id:'iron_month', cat:'endurance', shape:'hexagon', icon:'🛡️', name:'Iron Month',    desc:'Log 600 total minutes.',              quote:"600 minutes. Iron discipline forges an iron body.",           condition:s=>s.totalMins>=600,          progress:s=>({current:s.totalMins,target:600,unit:'mins'}) },
+    // ── ENDURANCE · hexagon ──
+    { id:'timelord',  cat:'endurance', shape:'hexagon', icon:'⏱️', name:'Time Lord',
+      levels:{
+        bronze:{ desc:'Log 120 minutes total.',  quote:"Two hours invested in yourself. Time well spent.",             condition:s=>s.totalMins>=120, progress:s=>({current:s.totalMins,target:120, unit:'mins'}) },
+        silver:{ desc:'Log 300 minutes total.',  quote:"300 minutes. That's five hours of choosing yourself.",         condition:s=>s.totalMins>=300, progress:s=>({current:s.totalMins,target:300, unit:'mins'}) },
+        gold:  { desc:'Log 600 minutes total.',  quote:"600 minutes. Iron discipline forges an iron body.",            condition:s=>s.totalMins>=600, progress:s=>({current:s.totalMins,target:600, unit:'mins'}) },
+    }},
+    { id:'marathon',  cat:'endurance', shape:'hexagon', icon:'🏅', name:'Marathon',
+      levels:{
+        bronze:{ desc:'Log 200 minutes total.',  quote:"200 minutes of pure dedication. You're built different.",      condition:s=>s.totalMins>=200,  progress:s=>({current:s.totalMins,target:200,  unit:'mins'}) },
+        silver:{ desc:'Log 500 minutes total.',  quote:"500 minutes in. You run on willpower.",                        condition:s=>s.totalMins>=500,  progress:s=>({current:s.totalMins,target:500,  unit:'mins'}) },
+        gold:  { desc:'Log 1000 minutes total.', quote:"1000 minutes. That's over 16 hours of sweat and grit.",        condition:s=>s.totalMins>=1000, progress:s=>({current:s.totalMins,target:1000, unit:'mins'}) },
+    }},
+    { id:'longhaul',  cat:'endurance', shape:'hexagon', icon:'🔋', name:'Long Haul',
+      levels:{
+        bronze:{ desc:'Complete a single workout of 45+ mins.',  quote:"Staying power. You didn't stop when it got hard.",  condition:s=>s.longestSession>=45,  progress:s=>({current:s.longestSession,target:45,  unit:'mins'}) },
+        silver:{ desc:'Complete a single workout of 60+ mins.',  quote:"An hour straight. That's a real training session.", condition:s=>s.longestSession>=60,  progress:s=>({current:s.longestSession,target:60,  unit:'mins'}) },
+        gold:  { desc:'Complete a single workout of 90+ mins.',  quote:"Ninety minutes. You are operating on another level.",condition:s=>s.longestSession>=90,  progress:s=>({current:s.longestSession,target:90,  unit:'mins'}) },
+    }},
 
-    { id:'first_lift',      cat:'strength', shape:'diamond', icon:'🏋️', name:'First Lift',       desc:'Complete your first strength workout.', quote:"The bar was heavy. You lifted it anyway. That's the whole point.", condition:s=>s.byCat.strength>=1,       progress:s=>({current:s.byCat.strength,target:1,unit:'strength'}) },
-    { id:'iron_will',       cat:'strength', shape:'diamond', icon:'💪', name:'Iron Will',         desc:'Complete 3 strength workouts.',         quote:"Strength isn't given. It's earned one rep at a time.",             condition:s=>s.byCat.strength>=3,       progress:s=>({current:s.byCat.strength,target:3,unit:'strength'}) },
-    { id:'power_house',     cat:'strength', shape:'diamond', icon:'⚙️', name:'Power House',       desc:'Complete 6 strength workouts.',         quote:"Six sessions of iron. Your body is becoming the machine.",         condition:s=>s.byCat.strength>=6,       progress:s=>({current:s.byCat.strength,target:6,unit:'strength'}) },
-    { id:'strength_legend', cat:'strength', shape:'diamond', icon:'👑', name:'Strength Legend',   desc:'Complete 10 strength workouts.',        quote:"10 strength sessions. Legends are made of exactly this.",          condition:s=>s.byCat.strength>=10,      progress:s=>({current:s.byCat.strength,target:10,unit:'strength'}) },
-    { id:'titan',           cat:'strength', shape:'diamond', icon:'🗿', name:'Titan',             desc:'Complete 20 strength workouts.',        quote:"20 lifts deep. You are immovable. You are a Titan.",              condition:s=>s.byCat.strength>=20,      progress:s=>({current:s.byCat.strength,target:20,unit:'strength'}) },
+    // ── STRENGTH · diamond ──
+    { id:'lifter',    cat:'strength', shape:'diamond', icon:'🏋️', name:'Lifter',
+      levels:{
+        bronze:{ desc:'Complete 5 strength workouts.',  quote:"Five lifts in. The foundation is set.",                  condition:s=>s.byCat.strength>=5,  progress:s=>({current:s.byCat.strength,target:5,  unit:'sessions'}) },
+        silver:{ desc:'Complete 15 strength workouts.', quote:"Strength isn't given. It's earned rep by rep.",          condition:s=>s.byCat.strength>=15, progress:s=>({current:s.byCat.strength,target:15, unit:'sessions'}) },
+        gold:  { desc:'Complete 30 strength workouts.', quote:"30 strength sessions. Legends are made of exactly this.",condition:s=>s.byCat.strength>=30, progress:s=>({current:s.byCat.strength,target:30, unit:'sessions'}) },
+    }},
+    { id:'titan',     cat:'strength', shape:'diamond', icon:'👑', name:'Titan',
+      levels:{
+        bronze:{ desc:'Complete 8 strength workouts.',  quote:"Eight sessions of iron. Your body is becoming the machine.", condition:s=>s.byCat.strength>=8,  progress:s=>({current:s.byCat.strength,target:8,  unit:'sessions'}) },
+        silver:{ desc:'Complete 20 strength workouts.', quote:"Twenty lifts deep. You are immovable.",                     condition:s=>s.byCat.strength>=20, progress:s=>({current:s.byCat.strength,target:20, unit:'sessions'}) },
+        gold:  { desc:'Complete 40 strength workouts.', quote:"40 strength sessions. You are built differently — literally.", condition:s=>s.byCat.strength>=40, progress:s=>({current:s.byCat.strength,target:40, unit:'sessions'}) },
+    }},
+    { id:'powerblock',cat:'strength', shape:'diamond', icon:'⚙️', name:'Power Block',
+      levels:{
+        bronze:{ desc:'Log 60+ mins of strength training total.',   quote:"An hour under the bar. Foundations take time.",           condition:s=>s.minsByCat.strength>=60,  progress:s=>({current:s.minsByCat.strength,target:60,  unit:'mins'}) },
+        silver:{ desc:'Log 180+ mins of strength training total.',  quote:"Three hours of iron. Your muscles remember every minute.",condition:s=>s.minsByCat.strength>=180, progress:s=>({current:s.minsByCat.strength,target:180, unit:'mins'}) },
+        gold:  { desc:'Log 400+ mins of strength training total.',  quote:"400 minutes of strength training. You are forged.",       condition:s=>s.minsByCat.strength>=400, progress:s=>({current:s.minsByCat.strength,target:400, unit:'mins'}) },
+    }},
 
-    { id:'cardio_starter',  cat:'cardio', shape:'circle',  icon:'🏃', name:'Cardio Starter', desc:'Complete your first cardio workout.', quote:"Your first run, ride, or swim. The lungs remember everything.", condition:s=>s.byCat.cardio>=1,  progress:s=>({current:s.byCat.cardio,target:1,unit:'cardio'}) },
-    { id:'cardio_king',     cat:'cardio', shape:'circle',  icon:'🚴', name:'Cardio King',    desc:'Complete 3 cardio workouts.',        quote:"Your heart is getting stronger with every session.",           condition:s=>s.byCat.cardio>=3,  progress:s=>({current:s.byCat.cardio,target:3,unit:'cardio'}) },
-    { id:'pacer',           cat:'cardio', shape:'circle',  icon:'🎽', name:'Pacer',          desc:'Complete 5 cardio workouts.',        quote:"Five cardio sessions. You set the pace — nobody else.",         condition:s=>s.byCat.cardio>=5,  progress:s=>({current:s.byCat.cardio,target:5,unit:'cardio'}) },
-    { id:'cardio_legend',   cat:'cardio', shape:'circle',  icon:'🏆', name:'Cardio Legend',  desc:'Complete 10 cardio workouts.',       quote:"10 cardio sessions. Your endurance is now undeniable.",        condition:s=>s.byCat.cardio>=10, progress:s=>({current:s.byCat.cardio,target:10,unit:'cardio'}) },
-    { id:'endurance_elite', cat:'cardio', shape:'circle',  icon:'🌊', name:'Endurance Elite',desc:'Complete 20 cardio workouts.',       quote:"20 cardio sessions. You move like water — relentless and fluid.",condition:s=>s.byCat.cardio>=20, progress:s=>({current:s.byCat.cardio,target:20,unit:'cardio'}) },
+    // ── CARDIO · circle ──
+    { id:'runner',    cat:'cardio', shape:'circle', icon:'🏃', name:'Runner',
+      levels:{
+        bronze:{ desc:'Complete 5 cardio workouts.',  quote:"Your lungs are getting stronger with every session.",      condition:s=>s.byCat.cardio>=5,  progress:s=>({current:s.byCat.cardio,target:5,  unit:'sessions'}) },
+        silver:{ desc:'Complete 15 cardio workouts.', quote:"Fifteen cardio sessions. You set the pace — nobody else.",condition:s=>s.byCat.cardio>=15, progress:s=>({current:s.byCat.cardio,target:15, unit:'sessions'}) },
+        gold:  { desc:'Complete 30 cardio workouts.', quote:"30 cardio sessions. Your endurance is now undeniable.",    condition:s=>s.byCat.cardio>=30, progress:s=>({current:s.byCat.cardio,target:30, unit:'sessions'}) },
+    }},
+    { id:'pacer',     cat:'cardio', shape:'circle', icon:'🚴', name:'Pacer',
+      levels:{
+        bronze:{ desc:'Log 60+ mins of cardio total.',  quote:"An hour of cardio banked. Your heart is thanking you.",  condition:s=>s.minsByCat.cardio>=60,  progress:s=>({current:s.minsByCat.cardio,target:60,  unit:'mins'}) },
+        silver:{ desc:'Log 200+ mins of cardio total.', quote:"200 minutes of cardio. You move like water — relentless.",condition:s=>s.minsByCat.cardio>=200, progress:s=>({current:s.minsByCat.cardio,target:200, unit:'mins'}) },
+        gold:  { desc:'Log 500+ mins of cardio total.', quote:"500 cardio minutes. That's elite endurance territory.",  condition:s=>s.minsByCat.cardio>=500, progress:s=>({current:s.minsByCat.cardio,target:500, unit:'mins'}) },
+    }},
+    { id:'zonesix',   cat:'cardio', shape:'circle', icon:'🌊', name:'Zone Six',
+      levels:{
+        bronze:{ desc:'Complete 8 cardio workouts.',  quote:"Eight sessions deep. Your cardiovascular base is building.", condition:s=>s.byCat.cardio>=8,  progress:s=>({current:s.byCat.cardio,target:8,  unit:'sessions'}) },
+        silver:{ desc:'Complete 20 cardio workouts.', quote:"Twenty sessions. You've crossed into consistent athlete territory.", condition:s=>s.byCat.cardio>=20, progress:s=>({current:s.byCat.cardio,target:20, unit:'sessions'}) },
+        gold:  { desc:'Complete 50 cardio workouts.', quote:"50 cardio sessions. You run on pure determination.",               condition:s=>s.byCat.cardio>=50, progress:s=>({current:s.byCat.cardio,target:50, unit:'sessions'}) },
+    }},
 
-    { id:'flex_start',  cat:'variety', shape:'star', icon:'🤸', name:'Flex Start',  desc:'Complete your first yoga or stretch session.', quote:"Flexibility is strength in disguise. Well done.",               condition:s=>s.byCat.yoga>=1,                                   progress:s=>({current:s.byCat.yoga,target:1,unit:'yoga'}) },
-    { id:'on_fire',     cat:'variety', shape:'star', icon:'🔥', name:'On Fire',     desc:'Complete 2 HIIT workouts.',                    quote:"You didn't just sweat — you burned. Keep that fire going.",    condition:s=>s.byCat.hiit>=2,                                   progress:s=>({current:s.byCat.hiit,target:2,unit:'HIIT'}) },
-    { id:'hiit_beast',  cat:'variety', shape:'star', icon:'💥', name:'HIIT Beast',  desc:'Complete 5 HIIT workouts.',                    quote:"Five HIIT sessions. You don't just train — you explode.",      condition:s=>s.byCat.hiit>=5,                                   progress:s=>({current:s.byCat.hiit,target:5,unit:'HIIT'}) },
-    { id:'sport_lover', cat:'variety', shape:'star', icon:'⚽', name:'Sport Lover', desc:'Complete 3 sports or other workouts.',          quote:"Sport is joy in motion. You found yours.",                     condition:s=>s.byCat.other>=3,                                  progress:s=>({current:s.byCat.other,target:3,unit:'sports'}) },
-    { id:'all_rounder', cat:'variety', shape:'star', icon:'🌟', name:'All-Rounder', desc:'Complete at least 1 workout in every category.',quote:"Strength, cardio, HIIT, yoga, sport — you do it all. Incredible.",condition:s=>Object.values(s.byCat).every(v=>v>=1),         progress:s=>({current:Object.values(s.byCat).filter(v=>v>=1).length,target:5,unit:'categories'}) },
+    // ── VARIETY · star ──
+    { id:'allrounder',cat:'variety', shape:'star', icon:'🌟', name:'All-Rounder',
+      levels:{
+        bronze:{ desc:'Complete 3 workouts in 3 different categories.',  quote:"Variety is the spice of fitness. Keep exploring.",          condition:s=>Object.entries(s.byCat).filter(([,v])=>v>=3).length>=3, progress:s=>({current:Object.entries(s.byCat).filter(([,v])=>v>=3).length,target:3,unit:'categories'}) },
+        silver:{ desc:'Complete 5 workouts in 4 different categories.',  quote:"Four categories with real volume. Impressively versatile.", condition:s=>Object.entries(s.byCat).filter(([,v])=>v>=5).length>=4, progress:s=>({current:Object.entries(s.byCat).filter(([,v])=>v>=5).length,target:4,unit:'categories'}) },
+        gold:  { desc:'Complete 5 workouts in all 5 categories.',        quote:"All five categories at real volume. You are the complete athlete.", condition:s=>Object.values(s.byCat).every(v=>v>=5), progress:s=>({current:Object.values(s.byCat).filter(v=>v>=5).length,target:5,unit:'categories'}) },
+    }},
+    { id:'fire',      cat:'variety', shape:'star', icon:'🔥', name:'On Fire',
+      levels:{
+        bronze:{ desc:'Complete 5 HIIT workouts.',  quote:"Five HIIT sessions. You didn't just sweat — you burned.",    condition:s=>s.byCat.hiit>=5,  progress:s=>({current:s.byCat.hiit,target:5, unit:'sessions'}) },
+        silver:{ desc:'Complete 12 HIIT workouts.', quote:"Twelve HIIT sessions. You don't just train — you explode.", condition:s=>s.byCat.hiit>=12, progress:s=>({current:s.byCat.hiit,target:12,unit:'sessions'}) },
+        gold:  { desc:'Complete 25 HIIT workouts.', quote:"25 HIIT sessions. You've mastered intensity. Pure fire.",    condition:s=>s.byCat.hiit>=25, progress:s=>({current:s.byCat.hiit,target:25,unit:'sessions'}) },
+    }},
+    { id:'zenmaster', cat:'variety', shape:'star', icon:'🧘', name:'Zen Master',
+      levels:{
+        bronze:{ desc:'Complete 5 yoga or stretch sessions.',  quote:"Flexibility is strength in disguise. Well done.",            condition:s=>s.byCat.yoga>=5,  progress:s=>({current:s.byCat.yoga,target:5, unit:'sessions'}) },
+        silver:{ desc:'Complete 12 yoga or stretch sessions.', quote:"Twelve sessions of mindful movement. Your body is grateful.", condition:s=>s.byCat.yoga>=12, progress:s=>({current:s.byCat.yoga,target:12,unit:'sessions'}) },
+        gold:  { desc:'Complete 25 yoga or stretch sessions.', quote:"25 sessions. Stillness and strength, perfectly balanced.",    condition:s=>s.byCat.yoga>=25, progress:s=>({current:s.byCat.yoga,target:25,unit:'sessions'}) },
+    }},
+    { id:'sportlover',cat:'variety', shape:'star', icon:'⚽', name:'Sport Lover',
+      levels:{
+        bronze:{ desc:'Complete 5 sports or other workouts.',  quote:"Sport is joy in motion. You found yours.",                  condition:s=>s.byCat.other>=5,  progress:s=>({current:s.byCat.other,target:5, unit:'sessions'}) },
+        silver:{ desc:'Complete 12 sports or other workouts.', quote:"Twelve sport sessions. You play hard and train harder.",     condition:s=>s.byCat.other>=12, progress:s=>({current:s.byCat.other,target:12,unit:'sessions'}) },
+        gold:  { desc:'Complete 25 sports or other workouts.', quote:"25 sessions of sport. You were made to compete.",           condition:s=>s.byCat.other>=25, progress:s=>({current:s.byCat.other,target:25,unit:'sessions'}) },
+    }},
+
+    // ── BMI · octagon ──
+    { id:'bmi_aware',    cat:'bmi', shape:'octagon', icon:'⚖️', name:'Body Aware',
+      levels:{
+        bronze:{ desc:'Have your BMI recorded.',             quote:"Knowing where you stand is the first step to moving forward.",      condition:s=>s.bmi!==null,                            progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'check-in'}) },
+        silver:{ desc:'Reach a normal BMI (18.5–24.9).',    quote:"A healthy BMI means your body is in good balance. Well done.",     condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25,    progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'normal BMI'}) },
+        gold:  { desc:'Reach an optimal BMI (18.5–22.9).',  quote:"You are operating in the optimal zone. Your body thanks you.",     condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<23,    progress:s=>({current:s.bmi!==null?1:0,target:1,unit:'optimal BMI'}) },
+    }},
+    { id:'bmi_maintain', cat:'bmi', shape:'octagon', icon:'📊', name:'Steady State',
+      levels:{
+        bronze:{ desc:'Maintain normal BMI for 2 check-ins.',  quote:"Two healthy check-ins. Consistency is everything.",              condition:s=>s.bmiMonths>=2, progress:s=>({current:s.bmiMonths,target:2,unit:'check-ins'}) },
+        silver:{ desc:'Maintain normal BMI for 4 check-ins.',  quote:"Four check-ins in the healthy zone. Your lifestyle is shifting.",condition:s=>s.bmiMonths>=4, progress:s=>({current:s.bmiMonths,target:4,unit:'check-ins'}) },
+        gold:  { desc:'Maintain normal BMI for 8 check-ins.',  quote:"Eight check-ins. Half a year of discipline. Remarkable.",       condition:s=>s.bmiMonths>=8, progress:s=>({current:s.bmiMonths,target:8,unit:'check-ins'}) },
+    }},
+    { id:'bmi_streak',   cat:'bmi', shape:'octagon', icon:'🔥', name:'BMI Streak',
+      levels:{
+        bronze:{ desc:'Stay in normal BMI range 2 times in a row.', quote:"Your first streak. Keep the momentum going.",             condition:s=>s.bmiStreak>=2, progress:s=>({current:s.bmiStreak,target:2,unit:'in a row'}) },
+        silver:{ desc:'Stay in normal BMI range 4 times in a row.', quote:"Four consecutive check-ins. Your body is locked in.",     condition:s=>s.bmiStreak>=4, progress:s=>({current:s.bmiStreak,target:4,unit:'in a row'}) },
+        gold:  { desc:'Stay in normal BMI range 8 times in a row.', quote:"Eight straight check-ins. That's not willpower — that's a lifestyle.", condition:s=>s.bmiStreak>=8, progress:s=>({current:s.bmiStreak,target:8,unit:'in a row'}) },
+    }},
+    { id:'bmi_active',   cat:'bmi', shape:'octagon', icon:'💪', name:'Fit & Active',
+      levels:{
+        bronze:{ desc:'Normal BMI + 10 workouts done.',  quote:"A healthy body in motion. You've got both sides covered.",              condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=10, progress:s=>({current:Math.min(s.totalDone,10),target:10,unit:'workouts'}) },
+        silver:{ desc:'Normal BMI + 25 workouts done.',  quote:"Fitness and health working together. That's the winning combination.",  condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=25, progress:s=>({current:Math.min(s.totalDone,25),target:25,unit:'workouts'}) },
+        gold:  { desc:'Normal BMI + 50 workouts done.',  quote:"50 workouts at a healthy BMI. You are the definition of fit.",          condition:s=>s.bmi!==null&&s.bmi>=18.5&&s.bmi<25&&s.totalDone>=50, progress:s=>({current:Math.min(s.totalDone,50),target:50,unit:'workouts'}) },
+    }},
   ];
 
-  // ── SVG shape builders (adapted colors to Sprint2 palette) ──
-  function achShieldSVG(unlocked, w=80) {
-    const f  = unlocked ? 'var(--accent)'  : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? 'var(--accent2)' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <path d="M40 4 L74 18 L74 48 Q74 72 40 83 Q6 72 6 48 L6 18 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M40 11 L67 23 L67 47 Q67 67 40 76 Q13 67 13 47 L13 23 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
-      <line x1="24" y1="44" x2="56" y2="44" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
-    </svg>`;
-  }
-  function achHexagonSVG(unlocked, w=80) {
-    const cx=40,cy=43,r=34,ri=26;
-    const pts  = achHexPts(cx,cy,r);
-    const ptsi = achHexPts(cx,cy,ri);
-    const f  = unlocked ? 'var(--green)'   : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? '#00a35e' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <polygon points="${pts}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
-      <polygon points="${ptsi}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>`;
-  }
-  function achPentagonSVG(unlocked, w=80) {
-    const cx=40,cy=45,r=34,ri=25;
-    const pts  = achPolyPts(cx,cy,r,5,-90);
-    const ptsi = achPolyPts(cx,cy,ri,5,-90);
-    const f  = unlocked ? 'var(--amber)'  : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? '#b07800' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <polygon points="${pts}"  fill="${f}"    stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
-      <polygon points="${ptsi}" fill="none"   stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>`;
-  }
-  function achDiamondSVG(unlocked, w=80) {
-    const f  = unlocked ? '#a78bfa'  : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? 'var(--accent)' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <path d="M40 5 L75 43 L40 81 L5 43 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M40 15 L65 43 L40 71 L15 43 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
-      <line x1="25" y1="43" x2="55" y2="43" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
-      <line x1="40" y1="28" x2="40" y2="58" stroke="${hi}" stroke-width="1" stroke-linecap="round"/>
-    </svg>`;
-  }
-  function achStarSVG(unlocked, w=80) {
-    const pts  = achStarPts(40,43,34,14,8);
-    const ptsi = achStarPts(40,43,26,10,8);
-    const f  = unlocked ? 'var(--red)'   : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? '#c03030' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <polygon points="${pts}"  fill="${f}"  stroke="${bd}" stroke-width="2" stroke-linejoin="round"/>
-      <polygon points="${ptsi}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>`;
-  }
-  function achCircleSVG(unlocked, w=80) {
-    const f  = unlocked ? '#06b6d4' : 'var(--surface2)';
-    const hi = unlocked ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.08)';
-    const bd = unlocked ? '#0891b2' : 'var(--border2)';
-    return `<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${Math.round(w*86/80)}">
-      <circle cx="40" cy="43" r="34" fill="${f}" stroke="${bd}" stroke-width="2.5"/>
-      <circle cx="40" cy="43" r="26" fill="none" stroke="${hi}" stroke-width="1.5"/>
-      <circle cx="40" cy="43" r="4"  fill="${hi}"/>
-    </svg>`;
-  }
+  // ── SVG shape builders (level-aware, adapted to dark theme palette) ──
+  const ACH_LEVEL_FILLS = {
+    bronze: { f:'#CD7F32', hi:'rgba(255,235,180,0.35)', bd:'#A0622A' },
+    silver: { f:'#909090', hi:'rgba(255,255,255,0.22)', bd:'#666' },
+    gold:   { f:'#C8960C', hi:'rgba(255,240,150,0.35)', bd:'#9A7008' },
+    locked: { f:'var(--surface2)', hi:'rgba(255,255,255,0.06)', bd:'var(--border2)' },
+  };
   function achHexPts(cx,cy,r){return Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-90);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ');}
   function achPolyPts(cx,cy,r,n,s){return Array.from({length:n},(_,i)=>{const a=Math.PI/180*(360/n*i+s);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ');}
   function achStarPts(cx,cy,r1,r2,p){return Array.from({length:p*2},(_,i)=>{const r=i%2===0?r1:r2;const a=Math.PI/180*(360/(p*2)*i-90);return`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)}`}).join(' ');}
-  const ACH_SHAPE_BUILDERS={shield:achShieldSVG,hexagon:achHexagonSVG,pentagon:achPentagonSVG,diamond:achDiamondSVG,star:achStarSVG,circle:achCircleSVG};
-  function buildAchBadgeSVG(shape,unlocked,w=80){return(ACH_SHAPE_BUILDERS[shape]||achShieldSVG)(unlocked,w);}
 
-  function buildAchProgressRing(pct,w=80){
+  function achShieldSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><path d="M40 4 L74 18 L74 48 Q74 72 40 83 Q6 72 6 48 L6 18 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 11 L67 23 L67 47 Q67 67 40 76 Q13 67 13 47 L13 23 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/><line x1="24" y1="44" x2="56" y2="44" stroke="${hi}" stroke-width="1" stroke-linecap="round"/></svg>`}
+  function achHexagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=43,r=34,ri=26;return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${achHexPts(cx,cy,r)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${achHexPts(cx,cy,ri)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+  function achPentagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=45,r=34,ri=25;return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${achPolyPts(cx,cy,r,5,-90)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${achPolyPts(cx,cy,ri,5,-90)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+  function achDiamondSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><path d="M40 5 L75 43 L40 81 L5 43 Z" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 15 L65 43 L40 71 L15 43 Z" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/><line x1="25" y1="43" x2="55" y2="43" stroke="${hi}" stroke-width="1" stroke-linecap="round"/><line x1="40" y1="28" x2="40" y2="58" stroke="${hi}" stroke-width="1" stroke-linecap="round"/></svg>`}
+  function achCircleSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><circle cx="40" cy="43" r="34" fill="${f}" stroke="${bd}" stroke-width="2.5"/><circle cx="40" cy="43" r="26" fill="none" stroke="${hi}" stroke-width="1.5"/><circle cx="40" cy="43" r="4" fill="${hi}"/></svg>`}
+  function achStarSVG({f,hi,bd},w=80){const h=Math.round(w*86/80);return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${achStarPts(40,43,34,14,8)}" fill="${f}" stroke="${bd}" stroke-width="2" stroke-linejoin="round"/><polygon points="${achStarPts(40,43,26,10,8)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+  function achOctagonSVG({f,hi,bd},w=80){const h=Math.round(w*86/80),cx=40,cy=43,outer=34,inner=26;return`<svg class="badge-shape" viewBox="0 0 80 86" width="${w}" height="${h}"><polygon points="${achPolyPts(cx,cy,outer,8,-22.5)}" fill="${f}" stroke="${bd}" stroke-width="2.5" stroke-linejoin="round"/><polygon points="${achPolyPts(cx,cy,inner,8,-22.5)}" fill="none" stroke="${hi}" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+  const ACH_SHAPE_FNS = { shield:achShieldSVG, hexagon:achHexagonSVG, pentagon:achPentagonSVG, diamond:achDiamondSVG, circle:achCircleSVG, star:achStarSVG, octagon:achOctagonSVG };
+  function buildAchBadgeSVG(shape, levelKey, w=80){ return (ACH_SHAPE_FNS[shape]||achShieldSVG)(ACH_LEVEL_FILLS[levelKey]||ACH_LEVEL_FILLS.locked, w); }
+
+  function buildAchProgressRing(pct, w=80){
     const h=Math.round(w*86/80),cx=w/2,cy=h/2,r=(w/2)-4,c=2*Math.PI*r,offset=c-(pct/100)*c;
     return `<svg class="badge-ring-svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="transform:rotate(-90deg)">
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="3.5"/>
@@ -2663,217 +2801,270 @@
     </svg>`;
   }
 
+  // ── Level helpers ──
+  function getAchCurrentLevel(group, stats) {
+    if (group.levels.gold.condition(stats))   return 'gold';
+    if (group.levels.silver.condition(stats)) return 'silver';
+    if (group.levels.bronze.condition(stats)) return 'bronze';
+    return null;
+  }
+  function getAchNextLevel(lvl) {
+    if (!lvl)           return 'bronze';
+    if (lvl==='bronze') return 'silver';
+    if (lvl==='silver') return 'gold';
+    return null;
+  }
+
+  // ── BMI data from localStorage ──
+  function readAchBMIData() {
+    try {
+      const raw = localStorage.getItem('bmiHistory');
+      if (!raw) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+      const history = JSON.parse(raw);
+      if (!history.length) return { bmi: null, bmiMonths: 0, bmiStreak: 0 };
+      const bmi = parseFloat(history[history.length - 1].bmi);
+      const bmiMonths = history.filter(e => e.category === 'Normal' || e.category === 'Healthy weight').length;
+      let bmiStreak = 0;
+      for (let i = history.length - 1; i >= 0; i--) {
+        if (history[i].category === 'Normal' || history[i].category === 'Healthy weight') bmiStreak++;
+        else break;
+      }
+      return { bmi, bmiMonths, bmiStreak };
+    } catch(e) { return { bmi: null, bmiMonths: 0, bmiStreak: 0 }; }
+  }
+
   function getAchStats() {
     const done = workouts.filter(w => w.done);
     const daysSet = new Set(done.map(w => w.date));
     const byCat = { strength:0, cardio:0, hiit:0, yoga:0, other:0 };
-    done.forEach(w => { byCat[w.cat] = (byCat[w.cat]||0)+1; });
+    const minsByCat = { strength:0, cardio:0, hiit:0, yoga:0, other:0 };
+    let longestSession = 0;
+    const weekSet = new Set();
+    const weekDayMap = {};
+    done.forEach((w,i) => {
+      const cat = w.cat || 'other';
+      byCat[cat] = (byCat[cat]||0) + 1;
+      minsByCat[cat] = (minsByCat[cat]||0) + (w.duration||0);
+      if ((w.duration||0) > longestSession) longestSession = w.duration||0;
+      const dateKey = w.date || String(i);
+      const d = new Date(dateKey.replace(/-/g,'/'));
+      const weekNum = Math.floor((d - new Date(2024,0,1)) / (7*24*3600*1000));
+      weekSet.add(weekNum);
+      if (!weekDayMap[weekNum]) weekDayMap[weekNum] = new Set();
+      weekDayMap[weekNum].add(dateKey);
+    });
+    const { bmi, bmiMonths, bmiStreak } = readAchBMIData();
     return {
       totalDone: done.length,
       totalMins: done.reduce((s,w) => s+w.duration, 0),
       activeDays: daysSet.size,
-      byCat,
+      byCat, minsByCat, longestSession,
+      weekSpan: weekSet.size,
+      bestWeek: Math.max(0, ...Object.values(weekDayMap).map(s=>s.size)),
+      bmi, bmiMonths, bmiStreak,
     };
   }
 
   let achActiveFilter = 'all';
-  const achUnlockedDates = JSON.parse(sessionStorage.getItem('ft_ach_dates')||'{}');
+  const achPrevLevels = JSON.parse(sessionStorage.getItem('ft_ach_v3_levels') || '{}');
+  const achUnlockedDates = JSON.parse(sessionStorage.getItem('ft_ach_dates') || '{}');
 
-  function buildAchCard(badge, stats) {
-    const unlocked = badge.condition(stats);
-    const prog = badge.progress(stats);
-    const pct  = Math.min(100, Math.round((prog.current / prog.target) * 100));
+  function buildAchCard(group, stats, newlyUpgraded) {
+    const lvl    = getAchCurrentLevel(group, stats);
+    const nextLv = getAchNextLevel(lvl);
+    const isNew  = newlyUpgraded.includes(group.id);
+    const unlocked = lvl !== null;
+
+    const displayLvl = nextLv || 'gold';
+    const levelData  = group.levels[displayLvl];
+    const prog       = levelData.progress(stats);
+    const pct        = Math.min(100, Math.round((prog.current/prog.target)*100));
+
     const card = document.createElement('div');
-    card.className = 'badge-card ' + (unlocked ? 'unlocked' : 'locked');
-    const ringHTML = (!unlocked && pct > 0) ? buildAchProgressRing(pct) : '';
+    card.className = `badge-card ${unlocked ? 'unlocked lv-'+lvl : 'locked'}`;
+
+    // Level dots
+    const dotHTML = ['bronze','silver','gold'].map(l => {
+      const earned = lvl==='gold' || (lvl==='silver'&&(l==='bronze'||l==='silver')) || (lvl==='bronze'&&l==='bronze');
+      return `<div class="level-dot ${earned ? l : ''}"></div>`;
+    }).join('');
+
     card.innerHTML = `
+      ${unlocked ? `<div class="level-ribbon ${lvl}">${ACH_LEVELS[lvl].icon} ${ACH_LEVELS[lvl].label}</div>` : '<div class="level-ribbon locked">🔒 Locked</div>'}
+      ${isNew ? '<div class="badge-new-tag">New!</div>' : ''}
       <div class="badge-logo-wrap">
-        ${buildAchBadgeSVG(badge.shape, unlocked)}
-        ${ringHTML}
-        <div class="badge-emoji">${badge.icon}</div>
+        ${buildAchBadgeSVG(group.shape, unlocked ? lvl : 'locked')}
+        ${(!unlocked && pct > 0) ? buildAchProgressRing(pct) : ''}
+        <div class="badge-emoji">${group.icon}</div>
       </div>
-      <div class="badge-name">${badge.name}</div>
-      <div class="badge-desc">${badge.desc}</div>
-      ${unlocked
-        ? `<div class="badge-unlocked-tag">✓ Unlocked</div>`
+      <div class="badge-name">${group.name}</div>
+      <div class="badge-desc">${unlocked ? group.levels[lvl].desc : group.levels.bronze.desc}</div>
+      <div class="level-dots">${dotHTML}</div>
+      ${unlocked && !nextLv
+        ? `<div class="badge-unlocked-tag gold">🥇 Max Level</div>`
         : `<div class="badge-progress-wrap">
              <div class="badge-progress-top">
                <span class="badge-progress-count">${prog.current} / ${prog.target} ${prog.unit}</span>
                <span class="badge-progress-pct">${pct}%</span>
              </div>
-             <div class="badge-progress-bg"><div class="badge-progress-fill" style="width:${pct}%"></div></div>
+             <div class="badge-progress-bg">
+               <div class="badge-progress-fill ${unlocked ? displayLvl : 'locked-fill'}" style="width:${pct}%"></div>
+             </div>
            </div>`
       }
     `;
-    if (unlocked) card.addEventListener('click', () => openAchDetail(badge, stats, true));
-    else          card.addEventListener('click', () => openAchDetail(badge, stats, false));
+    card.addEventListener('click', () => openAchDetail(group, stats, lvl));
     return card;
   }
 
   function renderAchievements() {
-  const stats = getAchStats();
-
-  const nowUnlocked = ACH_BADGES
-    .filter(b => b.condition(stats))
-    .map(b => b.id);
-
-  const prevStr = sessionStorage.getItem('ft_ach_unlocked') || '[]';
-  const prevUnlocked = JSON.parse(prevStr);
-
-  const newlyUnlocked = nowUnlocked.filter(
-    id => !prevUnlocked.includes(id)
-  );
-
-  newlyUnlocked.forEach(id => {
-    achUnlockedDates[id] = new Date().toLocaleDateString(
-      'en-GB',
-      {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      }
-    );
-  });
-
-  // ===== Achievement Summary =====
-  const unlocked = nowUnlocked.length;
-  const total = ACH_BADGES.length;
-
-  document.getElementById('ach-summary').innerHTML = `
-    <div class="ach-sum-card">
-      <div class="ach-sum-num" style="color:var(--accent)">
-        ${unlocked}
-      </div>
-      <div class="ach-sum-label">Unlocked</div>
-    </div>
-
-    <div class="ach-sum-card">
-      <div class="ach-sum-num" style="color:var(--text2)">
-        ${total - unlocked}
-      </div>
-      <div class="ach-sum-label">Locked</div>
-    </div>
-
-    <div class="ach-sum-card">
-      <div class="ach-sum-num" style="color:var(--green)">
-        ${Math.round((unlocked / total) * 100)}%
-      </div>
-      <div class="ach-sum-label">Complete</div>
-    </div>
-  `;
-
-  let visible = ACH_BADGES;
-
-  if (achActiveFilter === 'unlocked') {
-    visible = ACH_BADGES.filter(b => b.condition(stats));
-  }
-
-  if (achActiveFilter === 'in-progress') {
-    visible = ACH_BADGES.filter(b => !b.condition(stats));
-  }
-
-  const wrap = document.getElementById('ach-categories-wrap');
-
-  wrap.innerHTML = '';
-
-  if (!visible.length) {
-    wrap.innerHTML =
-      '<div class="ach-empty-state">No badges match this filter.</div>';
-    return;
-  }
-
-  Object.entries(ACH_CATEGORIES).forEach(([catKey, catMeta]) => {
-
-    const catBadges = visible.filter(
-      b => b.cat === catKey
-    );
-
-    if (!catBadges.length) return;
-
-    const sorted = [
-      ...catBadges.filter(b => b.condition(stats)),
-      ...catBadges.filter(b => !b.condition(stats))
-    ];
-
-    const unlockedCount =
-      catBadges.filter(b => b.condition(stats)).length;
-
-    const section = document.createElement('div');
-
-    section.className = 'ach-category-section';
-
-    section.innerHTML = `
-      <div class="ach-category-header">
-        <span class="ach-cat-icon">${catMeta.icon}</span>
-
-        <div>
-          <div class="ach-cat-title">
-            ${catMeta.label}
-          </div>
-
-          <div class="ach-cat-desc">
-            ${catMeta.desc}
-          </div>
-        </div>
-
-        <span class="ach-cat-count">
-          ${unlockedCount} / ${catBadges.length}
-        </span>
-      </div>
-
-      <div class="badge-grid"></div>
-    `;
-
-    const grid = section.querySelector('.badge-grid');
-
-    sorted.forEach(b => {
-      grid.appendChild(buildAchCard(b, stats));
+    const stats = getAchStats();
+    const newlyUpgraded = [];
+    BADGE_GROUPS.forEach(g => {
+      const lvl = getAchCurrentLevel(g, stats);
+      if (lvl && lvl !== achPrevLevels[g.id]) newlyUpgraded.push(g.id);
     });
 
-    wrap.appendChild(section);
-  });
+    // Summary cards
+    const goldCount     = BADGE_GROUPS.filter(g => getAchCurrentLevel(g,stats)==='gold').length;
+    const unlockedCount = BADGE_GROUPS.filter(g => getAchCurrentLevel(g,stats)!==null).length;
+    document.getElementById('ach-summary').innerHTML = `
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--accent)">${unlockedCount}</div>
+        <div class="ach-sum-label">Unlocked</div>
+      </div>
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--gold)">${goldCount}</div>
+        <div class="ach-sum-label">Gold</div>
+      </div>
+      <div class="ach-sum-card">
+        <div class="ach-sum-num" style="color:var(--green)">${Math.round((unlockedCount/BADGE_GROUPS.length)*100)}%</div>
+        <div class="ach-sum-label">Complete</div>
+      </div>
+    `;
 
-  sessionStorage.setItem(
-    'ft_ach_unlocked',
-    JSON.stringify(nowUnlocked)
-  );
+    // Filter
+    let visible = BADGE_GROUPS;
+    if (achActiveFilter === 'unlocked')    visible = BADGE_GROUPS.filter(g => getAchCurrentLevel(g,stats) !== null);
+    if (achActiveFilter === 'in-progress') visible = BADGE_GROUPS.filter(g => getAchCurrentLevel(g,stats) !== 'gold');
+    if (achActiveFilter === 'gold')        visible = BADGE_GROUPS.filter(g => getAchCurrentLevel(g,stats) === 'gold');
 
-  sessionStorage.setItem(
-    'ft_ach_dates',
-    JSON.stringify(achUnlockedDates)
-  );
+    const wrap = document.getElementById('ach-categories-wrap');
+    wrap.innerHTML = '';
+    if (!visible.length) { wrap.innerHTML = '<div class="ach-empty-state">No badges match this filter.</div>'; return; }
 
-  if (newlyUnlocked.length) {
-    const names = newlyUnlocked
-      .map(id => ACH_BADGES.find(b => b.id === id)?.name)
-      .join(', ');
+    Object.entries(ACH_CATEGORIES).forEach(([catKey, catMeta]) => {
+      const catGroups = visible.filter(g => g.cat === catKey);
+      if (!catGroups.length) return;
 
-    showAchToast('🏅 Unlocked: ' + names + '!');
+      const sorted = [
+        ...catGroups.filter(g => getAchCurrentLevel(g,stats) !== null),
+        ...catGroups.filter(g => getAchCurrentLevel(g,stats) === null),
+      ];
+      const unlockedInCat = catGroups.filter(g => getAchCurrentLevel(g,stats) !== null).length;
+
+      const section = document.createElement('div');
+      section.className = 'ach-category-section';
+
+      // BMI sync panel
+      let bmiPanelHTML = '';
+      if (catKey === 'bmi') {
+        const { bmi, bmiMonths, bmiStreak } = readAchBMIData();
+        if (bmi !== null) {
+          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><div><strong>Synced from BMI Calculator</strong>Current BMI: <strong style="color:var(--text)">${parseFloat(bmi).toFixed(1)}</strong> &nbsp;·&nbsp; Normal check-ins: <strong style="color:var(--text)">${bmiMonths}</strong> &nbsp;·&nbsp; Current streak: <strong style="color:var(--text)">${bmiStreak}</strong></div></div>`;
+        } else {
+          bmiPanelHTML = `<div class="ach-bmi-panel"><span class="ach-bmi-panel-icon">⚖️</span><div><strong>Synced from BMI Calculator</strong>No BMI data yet — calculate your BMI on the Report page to unlock these badges.</div></div>`;
+        }
+      }
+
+      section.innerHTML = `
+        <div class="ach-category-header">
+          <span class="ach-cat-icon">${catMeta.icon}</span>
+          <div>
+            <div class="ach-cat-title">${catMeta.label}</div>
+            <div class="ach-cat-desc">${catMeta.desc}</div>
+          </div>
+          <span class="ach-cat-count">${unlockedInCat} / ${catGroups.length}</span>
+        </div>
+        ${bmiPanelHTML}
+        <div class="badge-grid"></div>
+      `;
+      const grid = section.querySelector('.badge-grid');
+      sorted.forEach(g => grid.appendChild(buildAchCard(g, stats, newlyUpgraded)));
+      wrap.appendChild(section);
+    });
+
+    // Persist
+    const nowLevels = {};
+    BADGE_GROUPS.forEach(g => { nowLevels[g.id] = getAchCurrentLevel(g, stats); });
+    newlyUpgraded.forEach(id => {
+      const lvl = nowLevels[id];
+      achUnlockedDates[id+'_'+lvl] = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    });
+    sessionStorage.setItem('ft_ach_v3_levels', JSON.stringify(nowLevels));
+    sessionStorage.setItem('ft_ach_dates', JSON.stringify(achUnlockedDates));
+
+    if (newlyUpgraded.length) {
+      const msg = newlyUpgraded.map(id => {
+        const g = BADGE_GROUPS.find(b => b.id===id);
+        const l = nowLevels[id];
+        return `${g.name} → ${ACH_LEVELS[l].icon}${ACH_LEVELS[l].label}`;
+      }).join(', ');
+      showAchToast('🏅 ' + msg);
+    }
   }
-}
 
-  function openAchDetail(badge, stats, unlocked) {
-    const prog = badge.progress(stats);
-    const pct  = Math.min(100, Math.round((prog.current / prog.target) * 100));
-    const cat  = ACH_CATEGORIES[badge.cat];
-    const wrap = document.getElementById('ach-dm-badge-wrap');
-    wrap.innerHTML = buildAchBadgeSVG(badge.shape, unlocked, 90) + `<div class="ach-dm-badge-emoji">${badge.icon}</div>`;
+  function openAchDetail(group, stats, lvl) {
+    const nextLv    = getAchNextLevel(lvl);
+    const showLv    = lvl || 'bronze';
+    const levelData = group.levels[showLv];
+    const cat       = ACH_CATEGORIES[group.cat];
+
+    // Badge SVG
+    document.getElementById('ach-dm-badge-wrap').innerHTML =
+      buildAchBadgeSVG(group.shape, lvl || 'locked', 90) +
+      `<div class="ach-dm-badge-emoji">${group.icon}</div>`;
+
+    // Level pill
+    const pill = document.getElementById('ach-dm-level-pill');
+    if (lvl) { pill.textContent = ACH_LEVELS[lvl].icon+' '+ACH_LEVELS[lvl].label; pill.className = 'ach-dm-level-pill '+lvl; }
+    else      { pill.textContent = 'Locked'; pill.className = 'ach-dm-level-pill locked'; }
+
     document.getElementById('ach-dm-cat-label').textContent = cat?.label || '';
-    document.getElementById('ach-dm-name').textContent      = badge.name;
-    document.getElementById('ach-dm-desc').textContent      = badge.desc;
-    document.getElementById('ach-dm-quote').textContent     = '"' + badge.quote + '"';
+    document.getElementById('ach-dm-name').textContent      = group.name;
+    document.getElementById('ach-dm-desc').textContent      = levelData.desc;
+    document.getElementById('ach-dm-quote').textContent     = '"' + levelData.quote + '"';
+
+    // Level steps
+    const steps = document.getElementById('ach-dm-level-steps');
+    steps.innerHTML = ['bronze','silver','gold'].map(l => {
+      const reached = lvl==='gold' || (lvl==='silver'&&(l==='bronze'||l==='silver')) || (lvl==='bronze'&&l==='bronze');
+      const ld = group.levels[l];
+      const p  = ld.progress(stats);
+      return `<div class="ach-dm-level-step ${reached ? 'reached '+l : ''}">
+        <div class="ach-dm-level-step-icon">${ACH_LEVELS[l].icon}</div>
+        <div class="ach-dm-level-step-lbl">${ACH_LEVELS[l].label}</div>
+        <div class="ach-dm-level-step-val">${p.target} ${p.unit}</div>
+      </div>`;
+    }).join('');
+
     const progWrap = document.getElementById('ach-dm-progress-wrap');
     const banner   = document.getElementById('ach-dm-unlocked-banner');
-    if (unlocked) {
+    if (lvl === 'gold') {
       progWrap.style.display = 'none';
       banner.style.display   = 'flex';
-      document.getElementById('ach-dm-unlocked-text').textContent = 'Unlocked ' + (achUnlockedDates[badge.id] || 'this session') + ' · Keep it up!';
+      document.getElementById('ach-dm-unlocked-text').textContent =
+        'Gold unlocked ' + (achUnlockedDates[group.id+'_gold'] || 'this session') + ' · Max level reached!';
     } else {
+      const targetLv = nextLv || 'bronze';
       progWrap.style.display = 'block';
       banner.style.display   = 'none';
-      document.getElementById('ach-dm-prog-label').textContent = `${prog.current} / ${prog.target} ${prog.unit}`;
-      document.getElementById('ach-dm-prog-pct').textContent   = pct + '%';
-      document.getElementById('ach-dm-prog-fill').style.width  = pct + '%';
+      const tp  = group.levels[targetLv].progress(stats);
+      const tpct = Math.min(100, Math.round((tp.current/tp.target)*100));
+      document.getElementById('ach-dm-prog-label').textContent = `${tp.current} / ${tp.target} ${tp.unit} to ${ACH_LEVELS[targetLv].label}`;
+      document.getElementById('ach-dm-prog-pct').textContent   = tpct + '%';
+      const fill = document.getElementById('ach-dm-prog-fill');
+      fill.style.width = tpct + '%';
     }
     document.getElementById('ach-modal-backdrop').classList.add('open');
   }
