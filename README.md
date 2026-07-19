@@ -31,10 +31,10 @@ Project Structure: This repository contains both the Software Engineering assign
 ## Team Members and Roles
 | Name | Role | Responsibilities |
 |------|------|------------|
-| **Abbie** | Product Owner | 1. Defined project requirements and prioritized system features<br>2. Managed authentication and user system including login, registration and user data handling<br>3. Maintained project documentation and coordinated sprint planning |
-| **TseThing** | Scrum Master | 1. Coordinated sprint workflow and team progress<br> 2. Managed UI design<br>3. Responsive layout<br>4. Filtering features and system integration testing |
-| **ShuWen** | Developer | 1. Developed workout tracking and reporting system including workout completion tracking, history records, summary reports<br>2. Weight tracking features |
-| **Fion** | Developer | 1. Developed workout scheduling system including add, edit, delete workout functions<br>2. Weekly schedule display |
+| **Abbie** | Product Owner | 1. Defined project requirements and prioritized system features<br>2. Authentication, BMI Calculator & Recommendation<br>3. Maintained project documentation and coordinated sprint planning |
+| **TseThing** | Scrum Master | 1. Coordinated sprint workflow and team progress<br> 2. UI/UX & Front-End Integration<br>3. Responsive layout<br>4. Filtering features and system integration testing |
+| **ShuWen** | Developer | 1. Developed workout tracking and reporting system including workout completion tracking, history records, summary reports<br>2. Weight tracking features<br>3. Calendar Feature |
+| **Fion** | Developer | 1. Developed workout scheduling system including add, edit, delete workout functions<br>2. Weekly schedule display<br>3. Achievement Badge System |
 
 ---
 
@@ -225,20 +225,22 @@ Overall, the system aims to provide users with a structured and convenient way t
 5. Register a new account or log in to access the system
 
 ### Testing the Features
+The completed Fitness Workout Tracker system underwent functional and integration testing throughout all five iterations. Each module was tested individually before being integrated into the final application.
 
-**Authentication System**
-- Register a new account
-- Attempt to register using an existing email address
-- Test login with valid and invalid credentials
+The testing covered the following system functionalities:
+- Authentication (Registration and Login)
+- Workout Schedule Management
+- Workout Completion Tracking
+- Workout History and Weekly Reports
+- Weight Tracking
+- BMI Calculator and BMI History
+- Workout Recommendation
+- Target BMI and BMI Progress Tracking
+- Calendar Management
+- Achievement Badge System
+- Responsive User Interface
 
-**Workout Scheduling**
-- Add a workout using the Add Workout button
-- Select a workout type, day and duration
-- Verify that the workout appears in the weekly schedule
-
-**Data Persistence**
-- Add workouts and refresh the browser
-- Verify that user accounts and workout data remain available through LocalStorage
+The testing process confirmed that all implemented features met the intended functional requirements and operated correctly within the integrated system.
 
 ---
 
