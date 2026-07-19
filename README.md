@@ -111,22 +111,22 @@ Overall, the system aims to provide users with a structured and convenient way t
 | US02 | As a busy university student, I want to schedule my workouts for the week so that I can balance exercise with my classes and avoid skipping sessions. | Must Have |
 | US03 | As a person trying to build a healthy habit, I want to see my weekly workout plan clearly so that I know what exercise to do each day without thinking too much. | Must Have |
 | US04 | As a user who loses motivation easily, I want to mark completed workouts so that I can feel a sense of achievement and stay consistent. | Must Have |
-| US05 | As a health-conscious user, I want to calculate my BMI so that I can understand my current fitness condition. | Must Have |
-| US06 | As a fitness user, I want to manage my workout schedule using an interactive calendar so that I can organise my exercise plan more effectively. | Must Have |
-| US07 | As a motivated user, I want to earn achievement badges after completing workouts so that I stay encouraged to maintain a consistent exercise routine. | Must Have |
-| US08 | As a user with fitness goals, I want to set a target BMI so that I have a clear objective to achieve. | Must Have |
-| US09 | As a user improving my health, I want to monitor my BMI progress so that I can see whether I am getting closer to my target. | Must Have |
-| US10 | As a user who often changes plans, I want to edit or remove scheduled workouts so that my fitness routine stays flexible and realistic. | Should Have |
-| US11 | As a user who wants visible results, I want weekly progress reports so that I can know whether my workout effort is actually helping me improve. | Should Have |
-| US12 | As a user managing body fitness, I want to record my weight regularly so that I can compare changes and stay motivated. | Should Have |
-| US13 | As a user tracking my fitness, I want to save my BMI history so that I can monitor my body changes over time. | Should Have |
-| US14 | As a beginner, I want workout recommendations based on my BMI so that I can choose exercises suitable for my fitness level. | Should Have |
-| US15 | As a motivated user, I want to track my badge progress so that I know how close I am to unlocking new achievements. | Should Have |
-| US16 | As a user who works and studies in different places, I want the system to work on both mobile and desktop so that I can update workouts anytime. | Could Have |
-| US17 | As a user with many workout records, I want filtering features so that I can quickly find specific schedules or past activities. | Could Have |
-| US18 | As a committed user, I want to unlock advanced achievement badges so that I feel rewarded for maintaining long-term fitness habits. | Could Have |
-| US19 | As a smartwatch user, I want to connect fitness devices so that my workout data updates automatically without manual input. | Won’t Have |
-| US20 | As a social user, I want to share my workout achievements online so that I can stay motivated with friends. | Won’t Have |
+| US05 | As a user who often changes plans, I want to edit or remove scheduled workouts so that my fitness routine stays flexible and realistic. | Must Have |
+| US06 | As a user who wants visible results, I want weekly progress reports so that I can know whether my workout effort is actually helping me improve. | Should Have |
+| US07 | As a user managing body fitness, I want to record my weight regularly so that I can compare changes and stay motivated. | Should Have |
+| US08 | As a user who works and studies in different places, I want the system to work on both mobile and desktop so that I can update workouts anytime. | Could Have |
+| US09 | As a user with many workout records, I want filtering features so that I can quickly find specific schedules or past activities. | Could Have |
+| US10 | As a smartwatch user, I want to connect fitness devices so that my workout data updates automatically without manual input. | Won't Have |
+| US11 | As a social user, I want to share my workout achievements online so that I can stay motivated with friends. | Won't Have |
+| US12 | As a user, I want to calculate my BMI so that I can understand my current health status. | Must Have |
+| US13 | As a user, I want to schedule workouts using a calendar so that I can organise my exercise plan effectively. | Must Have |
+| US14 | As a user, I want to earn achievement badges so that I stay motivated to complete my workouts. | Must Have |
+| US15 | As a user, I want to save my BMI history so that I can monitor my fitness progress over time. | Should Have |
+| US16 | As a user, I want exercise recommendations based on my BMI so that I can follow a suitable workout plan. | Should Have |
+| US17 | As a user, I want to track badge progress so that I know how close I am to unlocking achievements. | Should Have |
+| US18 | As a user, I want to set a target BMI so that I can achieve my fitness goals. | Should Have |
+| US19 | As a user, I want to monitor my progress toward my target BMI so that I remain motivated. | Should Have |
+| US20 | As a user, I want advanced achievement badges so that I am rewarded for long-term commitment. | Could Have |
 
 ---
 ## Features Implemented
