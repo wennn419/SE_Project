@@ -9,7 +9,7 @@ This is a web-based Fitness Workout Tracking System designed to help users manag
 - Cheng Shu Wen (BIT_A2201F-2509001)
 - Fion Yap Qian Wen (BAI_A2009F-2605009)
 
-## Table of Content
+## Table of Contents
 - Team Members and Roles
 - Problem Statement
 - Product Vision and Scope
@@ -23,6 +23,8 @@ This is a web-based Fitness Workout Tracking System designed to help users manag
 - GitHub Usage
 - Release Information
 - Individual Contributions
+
+Project Structure: This repository contains both the Software Engineering assignment and the final project. Iteration 1 and Iteration 2 were completed as the assignment phase, while Iteration 3, Iteration 4 and Iteration 5 were developed as the project phase.
 
 ---
 
@@ -72,6 +74,13 @@ Users need a digital fitness workout tracking system that allows them to:
 - Workout history records
 - Weekly progress reports
 - Weight tracking
+- BMI calculator
+- BMI history tracking
+- Personalized workout recommendations
+- Target BMI setting
+- BMI progress tracking
+- Calendar management
+- Achievement badge system
 - Responsive design for mobile and desktop
 
 ---
@@ -84,6 +93,11 @@ The system includes the following main functions:
 - Workout Completion Tracking to record completed exercises and maintain consistency.
 - Workout History and Weekly Reports to review past activities and evaluate progress.
 - Weight Tracking to monitor physical changes over time.
+- BMI Calculator to calculate Body Mass Index (BMI) and display the user's fitness category.
+- BMI History and Progress Tracking to monitor BMI changes and progress towards a target BMI.
+- Personalized Workout Recommendations based on the user's BMI category.
+- Calendar Management to organise and display scheduled workouts using an interactive calendar.
+- Achievement Badge System to reward users for completing workouts and reaching fitness milestones.
 - Responsive Design to support access from both desktop and mobile devices.
 
 Overall, the system aims to provide users with a structured and convenient way to plan workouts, track fitness activities and maintain a healthier lifestyle.
@@ -97,16 +111,26 @@ Overall, the system aims to provide users with a structured and convenient way t
 | US02 | As a busy university student, I want to schedule my workouts for the week so that I can balance exercise with my classes and avoid skipping sessions. | Must Have |
 | US03 | As a person trying to build a healthy habit, I want to see my weekly workout plan clearly so that I know what exercise to do each day without thinking too much. | Must Have |
 | US04 | As a user who loses motivation easily, I want to mark completed workouts so that I can feel a sense of achievement and stay consistent. | Must Have |
-| US05 | As a user who often changes plans, I want to edit or remove scheduled workouts so that my fitness routine stays flexible and realistic. | Should Have |
-| US06 | As a user who wants visible results, I want weekly progress reports so that I can know whether my workout effort is actually helping me improve. | Should Have |
-| US07 | As a user managing body fitness, I want to record my weight regularly so that I can compare changes and stay motivated. | Should Have |
-| US08 | As a user who works and studies in different places, I want the system to work on both mobile and desktop so that I can update workouts anytime. | Could Have |
-| US09 | As a user with many workout records, I want filtering features so that I can quickly find specific schedules or past activities. | Could Have |
-| US10 | As a smartwatch user, I want to connect fitness devices so that my workout data updates automatically without manual input. | Won’t Have |
-| US11 | As a social user, I want to share my workout achievements online so that I can stay motivated with friends. | Won’t Have |
+| US05 | As a health-conscious user, I want to calculate my BMI so that I can understand my current fitness condition. | Must Have |
+| US06 | As a fitness user, I want to manage my workout schedule using an interactive calendar so that I can organise my exercise plan more effectively. | Must Have |
+| US07 | As a motivated user, I want to earn achievement badges after completing workouts so that I stay encouraged to maintain a consistent exercise routine. | Must Have |
+| US08 | As a user with fitness goals, I want to set a target BMI so that I have a clear objective to achieve. | Must Have |
+| US09 | As a user improving my health, I want to monitor my BMI progress so that I can see whether I am getting closer to my target. | Must Have |
+| US10 | As a user who often changes plans, I want to edit or remove scheduled workouts so that my fitness routine stays flexible and realistic. | Should Have |
+| US11 | As a user who wants visible results, I want weekly progress reports so that I can know whether my workout effort is actually helping me improve. | Should Have |
+| US12 | As a user managing body fitness, I want to record my weight regularly so that I can compare changes and stay motivated. | Should Have |
+| US13 | As a user tracking my fitness, I want to save my BMI history so that I can monitor my body changes over time. | Should Have |
+| US14 | As a beginner, I want workout recommendations based on my BMI so that I can choose exercises suitable for my fitness level. | Should Have |
+| US15 | As a motivated user, I want to track my badge progress so that I know how close I am to unlocking new achievements. | Should Have |
+| US16 | As a user who works and studies in different places, I want the system to work on both mobile and desktop so that I can update workouts anytime. | Could Have |
+| US17 | As a user with many workout records, I want filtering features so that I can quickly find specific schedules or past activities. | Could Have |
+| US18 | As a committed user, I want to unlock advanced achievement badges so that I feel rewarded for maintaining long-term fitness habits. | Could Have |
+| US19 | As a smartwatch user, I want to connect fitness devices so that my workout data updates automatically without manual input. | Won’t Have |
+| US20 | As a social user, I want to share my workout achievements online so that I can stay motivated with friends. | Won’t Have |
 
 ---
 ## Features Implemented
+## Assignment features (Iteration 1 & 2)
 ### Iteration 1 features
 
 ✅ User Authentication system
@@ -160,6 +184,31 @@ Overall, the system aims to provide users with a structured and convenient way t
 - Better visual feedback for completed workouts
 - Responsive layout improvements
 
+## Project features (Iteration 3, 4 & 5)
+### Iteration 3 Features
+✅ BMI Calculator
+- Create BMI Calculator page
+- Implement BMI Formula
+- Display BMI Result
+- Display BMI Category
+
+✅ Basic Calendar
+- Monthly calendar
+- Display scheduled workouts
+- Enable workout details on date selection
+
+✅ Basic Achievement Badge System
+- Create achievement page
+- Implement badge unlocking
+- Display badge status
+- Connect completed workouts to badges
+
+✅ UI/UX Design & Front-End Integration
+- Design responsive calendar interface
+- Improve achievement page layout
+- Standardize navigation and styling
+- Optimize responsive design
+
 ---
 
 ## How to Run the System?
@@ -171,7 +220,7 @@ Overall, the system aims to provide users with a structured and convenient way t
 ### Steps to Run
 1. Download or clone the GitHub repository
 2. Open the project folder
-3. Navigate to the `SE_Assignment` folder
+3. Navigate to the `SE_Project` folder
 4. Open `index.html` in a web browser
 5. Register a new account or log in to access the system
 
@@ -224,6 +273,7 @@ Our team used the Scrum framework to support iterative and incremental developme
 ---
 
 ## Iteration Overview
+## Assignment Phase (Iteration 1 & 2)
 ### Iteration 1
 **Goal**: Develop the minimum viable version of the Fitness Workout Tracking System.
 
@@ -247,10 +297,11 @@ Key Deliverables:
 
 Completed User Stories:
 - US04
-- US05
-- US06
-- US07
-- US08
+- US10
+- US11
+- US12
+- US16
+- US17
 
 Key Deliverables:
 - Workout tracking system
@@ -263,6 +314,69 @@ Key Deliverables:
 **Outcomes**: The system was extended with tracking and reporting capabilities which provide a more complete fitness management experience.
 
 ---
+## Project Phase (Iteration 3, 4 & 5)
+
+### Iteration 3
+**Goal**: Extend the existing Fitness Workout Tracking System by introducing personalised fitness management features.
+
+Completed User Stories:
+- US05
+- US06
+- US07
+
+Key Deliverables:
+- BMI Calculator
+- Basic Calendar
+- Basic Achievement Badge
+- UI/UX Design & Front-End Integration
+
+**Outcomes**: Successfully added the first set of personalised fitness features to the existing workout tracking system.
+
+---
+
+### Iteration 4
+**Goal**: Enhance the personalised fitness management features by improving usability, functionality and user experience.
+
+Completed User Stories:
+- US13
+- US14
+- US15
+
+Key Deliverables:
+- BMI History
+- Workout Recommendation
+- Badge Progress
+- Calendar Enhancement
+- UI Enhancement & Responsive Improvements
+
+**Outcomes**: Enhanced the BMI, Calendar and Achievement modules with additional functionality and improved user experience.
+
+---
+
+### Iteration 5
+**Goal**: Integrate all developed modules into a complete Fitness Workout Tracking System and prepare the application for final release.
+
+Completed User Stories:
+- US08
+- US09
+- US18
+
+Key Deliverables:
+- Target BMI
+- BMI Progress
+- Advanced Achievement Badge
+- Final Integration
+
+**Outcomes**: Successfully integrated all modules into a complete Fitness Workout Tracking System with personalised fitness management features.
+
+---
+
+### Not Implemented (MoSCoW - Won't Have)
+The following user stories were intentionally excluded from the project scope based on the MoSCoW prioritization:
+- US19: Connect fitness devices for automatic workout synchronization.
+- US20: Share workout achievements on social media.
+
+---
 
 ## GitHub Usage
 **Version Control Practices**<br>
@@ -272,14 +386,14 @@ Our team used Git and GitHub to manage source code, track development progress a
 - `main`: Integrated and stable version of the project.
 - Individual feature branches were created by team members for feature development and testing before merging changes into the main branch.
 
-**Github Issues**
+**GitHub Issues**
 - User stories and development tasks were tracked using GitHub Issues.
 - Issues were assigned according to each member's responsibilities.
 - Progress was monitored throughout both iterations.
 
 **Pull Requests**
 - Changes were merged into the main branch through Pull Requests.
-- Team members will review and comments before merging.
+- Team members reviewed and commented before merging.
 - Pull Requests provided evidence of collaboration and feature integration.
 
 **Collaboration Evidence**
@@ -314,6 +428,34 @@ Our team used Git and GitHub to manage source code, track development progress a
 - User interface improvements
 - Responsive design enhancements
 
+### Iteration 3 Release
+**Tag**: v1.0-iteration1
+
+**Release Features**:
+- BMI Calculator
+- Basic Calendar
+- Basic Achievement Badge
+
+### Iteration 4 Release
+**Tag**: v1.1-iteration2
+
+**Release Features**:
+- Enhanced Calendar interaction
+- Designed BMI recommendation interface
+- Improved Achievement page interface
+- Added badge progress display
+- Optimized responsive components
+
+### Iteration 5 Release
+**Tag**: v1.2-iteration3
+
+**Release Features**:
+- Target BMI setting
+- BMI progress tracking
+- Advanced achievement badge system
+- Final system integration
+- Overall performance improvements
+
 ---
 
 ## Individual Contributions
@@ -329,6 +471,9 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Iteration Contributions**
 - Iteration 1: Developed the login and registration system
 - Iteration 2: Improved input validation and authentication reliability
+- Iteration 3: Developed the BMI calculator and basic BMI assessment functionality
+- Iteration 4: Implemented BMI history tracking and personalized workout recommendations
+- Iteration 5: Developed target BMI setting, BMI progress tracking and completed final module integration
 
 **GitHub Contributions**
 - Created and managed GitHub Issues
@@ -347,6 +492,9 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Iteration Contributions**
 - Iteration 1: Developed the basic user interface structure
 - Iteration 2: Improved user interface design, responsiveness and filtering functionality
+- Iteration 3: Developed the user interface for the BMI, Calendar and Achievement modules
+- Iteration 4: Enhanced the user interface with improved responsiveness and usability
+- Iteration 5: Completed final interface polishing and integrated all modules into a consistent user experience
 
 **GitHub Contributions**
 - Created and managed GitHub Issues
@@ -364,6 +512,9 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Iteration Contributions**
 - Iteration 1: Developed the basic workout tracking system
 - Iteration 2: Enhanced reporting features and implemented weight tracking
+- Iteration 3: Developed the basic calendar feature for workout scheduling
+- Iteration 4: Enhanced the calendar with improved navigation and workout management
+- Iteration 5: Integrated the calendar module with the overall fitness tracking system
 
 **GitHub Contributions**
 - Created and managed GitHub Issues
@@ -380,6 +531,9 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Iteration Contributions**
 - Iteration 1: Developed the basic workout scheduling system
 - Iteration 2: Enhanced scheduling functionality with edit and delete features and improved user interface design
+- Iteration 3: Developed the basic achievement badge system
+- Iteration 4: Implemented badge progress tracking and additional achievement features
+- Iteration 5: Developed advanced achievement badges and completed final system integration
 
 **GitHub Contributions**
 - Created and managed GitHub Issues
