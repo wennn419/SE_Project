@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMI Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #140F1F;
+    --panel: #20172F;
+    --panel-raised: #2A1F3D;
+    --line: #46345F;
+    --chalk: #F8F6FF;
+    --muted: #B7A9D4;
+
+    /* BMI Gauge */
+    --zone-under: #B388FF;
+    --zone-normal: #9C6BFF;
+    --zone-over: #7E57C2;
+    --zone-obese: #5E35B1;
+
+    /* Main Accent */
+    --accent: #9C6BFF;
+
+    --radius: 18px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: var(--bg);
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+  }
+
+  .card{
+    width: 100%;
+    max-width: 460px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px 28px 32px;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.55);
+  }
+
+  h1{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    margin: 0 0 20px;
+  }
+
+  h2{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    margin: 0 0 10px;
+    color: var(--chalk);
+  }
+
+  /* Gauge */
+  .gauge-wrap{
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 8px;
+  }
+
+  .gauge-value{
+    text-align:center;
+    width: 100%;
+    margin: -20px 0 20px;
+  }
+
+  .gauge-value .num{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--chalk);
+  }
+
+  .gauge-value .num .unit{
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  .gauge-value .category{
+    margin-top: 6px;
+    display:inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    transition: color 0.3s ease, background 0.3s ease;
+  }
+
+  .needle{
+    transform-origin: 160px 160px;
+    transition: transform 0.6s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .zone-labels{
+    display:flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    padding: 0 6px;
+    margin-top: -6px;
+  }
+
+  /* Form */
+  .fields{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 22px 0 8px;
+  }
+
+  .field{ display:flex; flex-direction:column; gap:6px; }
+
+  .field label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .field .input-row{
+    display:flex;
+    align-items:center;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0 10px;
+    transition: border-color 0.2s ease;
+  }
+
+  .field .input-row:focus-within{
+    border-color: var(--accent);
+  }
+
+  .field input{
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--chalk);
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    padding: 10px 4px;
+  }
+
+  .field .suffix{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .calc-btn{
+    width: 100%;
+    margin-top: 14px;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #1C1030;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .calc-btn:hover{ filter: brightness(1.08); }
+  .calc-btn:active{ transform: scale(0.98); }
+
+  .hint{
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align:center;
+    min-height: 16px;
+  }
+
+  .hint.error{ color: var(--zone-obese); }
+
+  /* Section wrapper */
+  .section{
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Recommendation */
+  .reco-card{ display:none; }
+  .reco-card.show{ display:block; }
+
+  .reco-desc{
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+
+  .reco-exercises{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+
+  .exercise-row{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .exercise-emoji{
+    font-size: 20px;
+    width: 30px;
+    text-align:center;
+    flex-shrink:0;
+  }
+
+  .exercise-info{
+    flex:1;
+    min-width:0;
+  }
+
+  .exercise-name{
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--chalk);
+  }
+
+  .exercise-cat{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  .exercise-stats{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap: 4px;
+    flex-shrink:0;
+  }
+
+  .exercise-duration{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(156,107,255,0.14);
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .reco-placeholder{
+    font-size: 13px;
+    color: var(--muted);
+    text-align:center;
+    padding: 8px 0;
+  }
+
+  /* History */
+  .history-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 10px;
+  }
+
+  .clear-btn{
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .clear-btn:hover{ color: var(--chalk); }
+
+  .history-list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y:auto;
+  }
+
+  .history-empty{
+    font-size: 13px;
+    color: var(--muted);
+    text-align:center;
+    padding: 14px 0;
+  }
+
+  .history-note{
+    display:none;
+    margin: 10px 0 0;
+    font-size: 11px;
+    color: var(--muted);
+    text-align:center;
+    line-height: 1.4;
+  }
+
+  .history-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .history-meta{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+
+  .history-date{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .history-body{
+    font-size: 12.5px;
+    color: var(--chalk);
+  }
+
+  .history-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+  }
+
+  .history-bmi{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .history-badge{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* Goal / Target BMI */
+  .goal-input-row{
+    display:flex;
+    gap: 10px;
+    align-items:flex-end;
+  }
+
+  .goal-input-row .field{ flex:1; }
+
+  .goal-btn{
+    height: 42px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #1C1030;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+
+  .goal-btn:hover{ filter: brightness(1.08); }
+  .goal-btn:active{ transform: scale(0.98); }
+
+  .goal-hint{
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--zone-obese);
+    text-align:center;
+    min-height: 14px;
+  }
+
+  .goal-card{ display:none; margin-top: 18px; }
+  .goal-card.show{ display:block; }
+
+  .goal-stats{
+    display:flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .goal-stat{
+    flex:1;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display:flex;
+    flex-direction:column;
+    gap: 4px;
+  }
+
+  .goal-stat-label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .goal-stat-value{
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--chalk);
+  }
+
+  .progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-head .progress-pct{
+    color: var(--chalk);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .progress-track{
+    width: 100%;
+    height: 10px;
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill{
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--zone-under), var(--accent));
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(.34,1.56,.64,1);
+  }
+
+  .goal-note{
+    margin: 12px 0 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align:center;
+  }
+
+  .goal-clear-btn{
+    display:block;
+    margin: 0 auto;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .goal-clear-btn:hover{ color: var(--chalk); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>BMI Calculator</h1>
+
+  <div class="gauge-wrap">
+    <svg viewBox="0 0 320 190" width="100%" height="auto">
+      <!-- background track -->
+      <path id="trackArc" fill="none" stroke="#2C333B" stroke-width="18" stroke-linecap="round"/>
+      <!-- zone arcs: underweight, normal, overweight, obese (drawn by JS so every segment sits on the exact same circle) -->
+      <g id="zoneArcs"></g>
+
+      <g class="needle" id="needle">
+        <line x1="160" y1="160" x2="160" y2="42" stroke="var(--chalk)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="160" cy="160" r="8" fill="var(--chalk)"/>
+      </g>
+    </svg>
+
+    <div class="gauge-value">
+      <div class="num" id="bmiNum">--<span class="unit">kg/m²</span></div>
+      <div class="category" id="bmiCategory">Enter your details</div>
+    </div>
+  </div>
+  <div class="zone-labels">
+    <span>Under</span><span>Normal</span><span>Over</span><span>Obese</span>
+  </div>
+
+  <div class="fields">
+    <div class="field" id="heightCmField">
+      <label for="heightCm">Height</label>
+      <div class="input-row">
+        <input type="number" id="heightCm" placeholder="170" min="0">
+        <span class="suffix">cm</span>
+      </div>
+    </div>
+
+    <div class="field" id="weightKgField">
+      <label for="weightKg">Weight</label>
+      <div class="input-row">
+        <input type="number" id="weightKg" placeholder="65" min="0">
+        <span class="suffix">kg</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calcBtn">Calculate BMI</button>
+  <p class="hint" id="hint"></p>
+
+  <!-- Exercise Recommendation -->
+  <div class="section">
+    <h2>Exercise Recommendation</h2>
+    <div class="reco-card" id="recoCard">
+      <p class="reco-desc" id="recoDesc"></p>
+      <div class="reco-exercises" id="recoExercises"></div>
+    </div>
+    <p class="reco-placeholder" id="recoPlaceholder">Calculate your BMI to see a suggested exercise plan.</p>
+  </div>
+
+  <!-- BMI Goal -->
+  <div class="section">
+    <h2>BMI Goal</h2>
+    <div class="goal-input-row">
+      <div class="field">
+        <label for="targetBmi">Target BMI</label>
+        <div class="input-row">
+          <input type="number" id="targetBmi" placeholder="24.9" min="0" step="0.1">
+          <span class="suffix">kg/m²</span>
+        </div>
+      </div>
+      <button class="goal-btn" id="setGoalBtn">Set Goal</button>
+    </div>
+    <p class="goal-hint" id="goalHint"></p>
+
+    <div class="goal-card" id="goalCard">
+      <div class="goal-stats">
+        <div class="goal-stat">
+          <span class="goal-stat-label">Current BMI</span>
+          <span class="goal-stat-value" id="goalCurrentBmi">--</span>
+        </div>
+        <div class="goal-stat">
+          <span class="goal-stat-label">Target BMI</span>
+          <span class="goal-stat-value" id="goalTargetBmi">--</span>
+        </div>
+      </div>
+
+      <div class="progress-head">
+        <span>Progress</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="goal-note" id="goalNote"></p>
+
+      <button class="goal-clear-btn" id="clearGoalBtn">Clear Goal</button>
+    </div>
+    <p class="reco-placeholder" id="goalPlaceholder">Set a target BMI to start tracking your progress.</p>
+  </div>
+
+  <!-- BMI History -->
+  <div class="section">
+    <div class="history-head">
+      <h2 style="margin:0;">BMI History</h2>
+      <button class="clear-btn" id="clearHistoryBtn">Clear</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <p class="history-empty" id="historyEmpty">No entries yet — calculate your BMI to start tracking.</p>
+    </div>
+    <p class="history-note" id="historyNote"></p>
+  </div>
+</div>
+
+<script>
+  const needle = document.getElementById('needle');
+  const bmiNum = document.getElementById('bmiNum');
+  const bmiCategory = document.getElementById('bmiCategory');
+  const hint = document.getElementById('hint');
+
+  // --- Gauge geometry -------------------------------------------------
+  // All arcs share this exact center/radius, so segments always meet
+  // cleanly with no gaps or misaligned bulges.
+  const GAUGE_CX = 160, GAUGE_CY = 160, GAUGE_R = 140;
+  const BMI_MIN = 15, BMI_MAX = 40; // gauge spans this BMI range, left to right
+
+  // angle convention: 180deg = far left (BMI_MIN), 0deg = far right (BMI_MAX)
+  function bmiToGaugeAngle(bmi){
+    const clamped = Math.min(BMI_MAX, Math.max(BMI_MIN, bmi));
+    const pct = (clamped - BMI_MIN) / (BMI_MAX - BMI_MIN);
+    return 180 - pct * 180;
+  }
+
+  function polarPoint(angleDeg){
+    const rad = angleDeg * Math.PI / 180;
+    return {
+      x: GAUGE_CX + GAUGE_R * Math.cos(rad),
+      y: GAUGE_CY - GAUGE_R * Math.sin(rad)
+    };
+  }
+
+  function arcPath(startAngle, endAngle){
+    const start = polarPoint(startAngle);
+    const end = polarPoint(endAngle);
+    const largeArc = Math.abs(startAngle - endAngle) > 180 ? 1 : 0;
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${GAUGE_R} ${GAUGE_R} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+
+  function drawGauge(){
+    document.getElementById('trackArc').setAttribute('d', arcPath(180, 0));
+
+    const zones = [
+      { from: BMI_MIN, to: 18.5, color: 'var(--zone-under)' },
+      { from: 18.5,    to: 25,   color: 'var(--zone-normal)' },
+      { from: 25,      to: 30,   color: 'var(--zone-over)' },
+      { from: 30,      to: BMI_MAX, color: 'var(--zone-obese)' }
+    ];
+
+    const g = document.getElementById('zoneArcs');
+    g.innerHTML = '';
+    zones.forEach(z => {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', arcPath(bmiToGaugeAngle(z.from), bmiToGaugeAngle(z.to)));
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', z.color);
+      path.setAttribute('stroke-width', '18');
+      path.setAttribute('stroke-linecap', 'round');
+      g.appendChild(path);
+    });
+  }
+  drawGauge();
+
+  // BMI category thresholds (WHO standard)
+  function getCategory(bmi){
+    if (bmi < 18.5) return { label: 'Underweight', color: 'var(--zone-under)' };
+    if (bmi < 25)   return { label: 'Normal', color: 'var(--zone-normal)' };
+    if (bmi < 30)   return { label: 'Overweight', color: 'var(--zone-over)' };
+    return { label: 'Obese', color: 'var(--zone-obese)' };
+  }
+
+  // Map bmi (clamped 15-40) to needle rotation (-90 to 90 deg)
+  function bmiToAngle(bmi){
+    const clamped = Math.min(BMI_MAX, Math.max(BMI_MIN, bmi));
+    const pct = (clamped - BMI_MIN) / (BMI_MAX - BMI_MIN);
+    return -90 + pct * 180;
+  }
+
+  // --- System exercise catalog -------------------------------------------
+  // Mirrors the categories/exercises already in the workout tracker
+  // (emoji + category only — duration is set per BMI category below).
+  const EXERCISE_CATALOG = {
+    'Bench Press':        { emoji: '🏋️', category: 'Strength' },
+    'Deadlift':           { emoji: '💪', category: 'Strength' },
+    'Squats':             { emoji: '🦵', category: 'Strength' },
+    'Pull-ups':           { emoji: '🙌', category: 'Strength' },
+    'Shoulder Press':     { emoji: '🔝', category: 'Strength' },
+    'Dumbbell Row':       { emoji: '🧎', category: 'Strength' },
+
+    'Running':            { emoji: '🏃', category: 'Cardio' },
+    'Cycling':            { emoji: '🚴', category: 'Cardio' },
+    'Swimming':           { emoji: '🏊', category: 'Cardio' },
+    'Jump Rope':          { emoji: '🏅', category: 'Cardio' },
+    'Elliptical':         { emoji: '🔄', category: 'Cardio' },
+    'Rowing':             { emoji: '🚣', category: 'Cardio' },
+
+    'Burpees':            { emoji: '🔥', category: 'HIIT' },
+    'Box Jumps':          { emoji: '📦', category: 'HIIT' },
+    'Kettlebell':         { emoji: '🔔', category: 'HIIT' },
+    'Battle Ropes':       { emoji: '🪢', category: 'HIIT' },
+    'Mountain Climbers':  { emoji: '⛰️', category: 'HIIT' },
+    'Sprint Intervals':   { emoji: '⚡', category: 'HIIT' },
+
+    'Vinyasa Flow':       { emoji: '🧘', category: 'Yoga & Stretch' },
+    'Yin Yoga':           { emoji: '☯️', category: 'Yoga & Stretch' },
+    'Power Yoga':         { emoji: '✨', category: 'Yoga & Stretch' },
+    'Stretching':         { emoji: '🤸', category: 'Yoga & Stretch' },
+    'Meditation':         { emoji: '🌿', category: 'Yoga & Stretch' },
+    'Pilates':            { emoji: '🩰', category: 'Yoga & Stretch' },
+
+    'Basketball':         { emoji: '🏀', category: 'Sports & Others' },
+    'Football':           { emoji: '⚽', category: 'Sports & Others' },
+    'Tennis':             { emoji: '🎾', category: 'Sports & Others' },
+    'Hiking':             { emoji: '🥾', category: 'Sports & Others' },
+    'Dance':              { emoji: '💃', category: 'Sports & Others' },
+    'Boxing':             { emoji: '🥊', category: 'Sports & Others' }
+  };
+
+  // Which catalog exercises to suggest per BMI category, with frequency
+  // (times per week) and per-session duration tuned to that category's
+  // goal (e.g. shorter, more frequent low-impact sessions for Obese to
+  // build consistency; longer strength sessions for Underweight to
+  // support mass gain).
+  const RECOMMENDATIONS = {
+    Underweight: {
+      desc: 'Focus on resistance training to build muscle, with light cardio for heart health.',
+      picks: [
+        { name: 'Squats',      frequency: '3x / week', duration: '25 min' },
+        { name: 'Deadlift',    frequency: '2x / week', duration: '20 min' },
+        { name: 'Bench Press', frequency: '2x / week', duration: '20 min' },
+        { name: 'Stretching',  frequency: '5x / week', duration: '10 min' }
+      ]
+    },
+    Normal: {
+      desc: 'A balanced mix of cardio and strength keeps you at a healthy, sustainable level.',
+      picks: [
+        { name: 'Running',      frequency: '3x / week', duration: '30 min' },
+        { name: 'Dumbbell Row', frequency: '2x / week', duration: '20 min' },
+        { name: 'Squats',       frequency: '2x / week', duration: '20 min' },
+        { name: 'Stretching',   frequency: '3x / week', duration: '10 min' }
+      ]
+    },
+    Overweight: {
+      desc: 'Combine more frequent cardio with moderate strength work for gradual, sustainable progress.',
+      picks: [
+        { name: 'Running',    frequency: '4x / week', duration: '35 min' },
+        { name: 'Cycling',    frequency: '3x / week', duration: '30 min' },
+        { name: 'Squats',     frequency: '2x / week', duration: '15 min' },
+        { name: 'Stretching', frequency: '3x / week', duration: '10 min' }
+      ]
+    },
+    Obese: {
+      desc: 'Start with short, frequent, joint-friendly sessions and build up duration before intensity.',
+      picks: [
+        { name: 'Swimming',   frequency: '3x / week', duration: '15 min' },
+        { name: 'Elliptical', frequency: '3x / week', duration: '15 min' },
+        { name: 'Cycling',    frequency: '2x / week', duration: '15 min' },
+        { name: 'Yin Yoga',   frequency: '2x / week', duration: '20 min' }
+      ]
+    }
+  };
+
+  const recoCard = document.getElementById('recoCard');
+  const recoPlaceholder = document.getElementById('recoPlaceholder');
+  const recoDesc = document.getElementById('recoDesc');
+  const recoExercises = document.getElementById('recoExercises');
+
+  function showRecommendation(categoryLabel){
+    const reco = RECOMMENDATIONS[categoryLabel];
+    if (!reco) return;
+
+    recoDesc.textContent = reco.desc;
+    recoExercises.innerHTML = '';
+
+    reco.picks.forEach(pick => {
+      const ex = EXERCISE_CATALOG[pick.name];
+      if (!ex) return;
+
+      const row = document.createElement('div');
+      row.className = 'exercise-row';
+      row.innerHTML = `
+        <span class="exercise-emoji">${ex.emoji}</span>
+        <div class="exercise-info">
+          <div class="exercise-name">${pick.name}</div>
+          <div class="exercise-cat">${ex.category}</div>
+        </div>
+        <div class="exercise-stats">
+          <span class="exercise-duration">${pick.frequency}</span>
+          <span class="exercise-duration">${pick.duration}</span>
+        </div>
+      `;
+      recoExercises.appendChild(row);
+    });
+
+    recoCard.classList.add('show');
+    recoPlaceholder.style.display = 'none';
+  }
+
+  // --- BMI history (persisted via localStorage, with in-memory fallback) --
+  // localStorage is blocked inside Claude.ai's sandboxed artifact preview,
+  // so writes/reads are wrapped in try/catch. Once this file runs in a
+  // normal browser (your actual site), localStorage works and history
+  // persists across page reloads.
+  const STORAGE_KEY = 'bmiHistory';
+  let storageAvailable = true;
+
+  function loadHistory(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      storageAvailable = false;
+      return [];
+    }
+  }
+
+  function persistHistory(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    } catch (e) {
+      storageAvailable = false;
+    }
+  }
+
+  const history = loadHistory();
+
+  const historyList = document.getElementById('historyList');
+  const historyEmpty = document.getElementById('historyEmpty');
+  const historyNote = document.getElementById('historyNote');
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+  function renderHistory(){
+    historyList.innerHTML = '';
+
+    if (!storageAvailable) {
+      historyNote.textContent = 'Preview sandbox: history won\'t persist after reload here — it will on your real site.';
+      historyNote.style.display = 'block';
+    } else {
+      historyNote.style.display = 'none';
+    }
+
+    if (history.length === 0) {
+      historyList.appendChild(historyEmpty);
+      return;
+    }
+
+    // newest first
+    [...history].reverse().forEach(entry => {
+      const row = document.createElement('div');
+      row.className = 'history-row';
+      row.innerHTML = `
+        <div class="history-meta">
+          <span class="history-date">${entry.date}</span>
+          <span class="history-body">${entry.height} cm · ${entry.weight} kg</span>
+        </div>
+        <div class="history-right">
+          <span class="history-bmi">${entry.bmi}</span>
+          <span class="history-badge" style="color:${entry.color}; background:color-mix(in srgb, ${entry.color} 18%, transparent);">${entry.category}</span>
+        </div>
+      `;
+      historyList.appendChild(row);
+    });
+  }
+
+  function addHistoryEntry(height, weight, bmi, cat){
+    history.push({
+      date: new Date().toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }),
+      height,
+      weight,
+      bmi: bmi.toFixed(1),
+      category: cat.label,
+      color: cat.color
+    });
+    persistHistory();
+    renderHistory();
+  }
+
+  clearHistoryBtn.addEventListener('click', () => {
+    history.length = 0;
+    persistHistory();
+    renderHistory();
+  });
+
+  renderHistory(); // show any history restored from localStorage on load
+
+  // --- BMI Goal (Target BMI, persisted via localStorage) ------------------
+  const GOAL_KEY = 'bmiGoal';
+  let goalStorageAvailable = true;
+
+  function loadGoal(){
+    try {
+      const raw = localStorage.getItem(GOAL_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      goalStorageAvailable = false;
+      return null;
+    }
+  }
+
+  function persistGoal(g){
+    try {
+      if (g) localStorage.setItem(GOAL_KEY, JSON.stringify(g));
+      else localStorage.removeItem(GOAL_KEY);
+    } catch (e) {
+      goalStorageAvailable = false;
+    }
+  }
+
+  let goal = loadGoal(); // { targetBmi } | null
+
+  const targetBmiInput = document.getElementById('targetBmi');
+  const setGoalBtn = document.getElementById('setGoalBtn');
+  const clearGoalBtn = document.getElementById('clearGoalBtn');
+  const goalHint = document.getElementById('goalHint');
+  const goalCard = document.getElementById('goalCard');
+  const goalPlaceholder = document.getElementById('goalPlaceholder');
+  const goalCurrentBmi = document.getElementById('goalCurrentBmi');
+  const goalTargetBmi = document.getElementById('goalTargetBmi');
+  const progressFill = document.getElementById('progressFill');
+  const progressPct = document.getElementById('progressPct');
+  const goalNote = document.getElementById('goalNote');
+
+  if (goal) targetBmiInput.value = goal.targetBmi;
+
+  // Progress = how far the latest BMI has moved from the *starting* BMI
+  // (the first history entry) toward the target BMI. Works whether the
+  // goal is to lose or gain, and is clamped to 0-100%.
+  function updateGoalUI() {
+
+    if (!goal) {
+      goalCard.classList.remove('show');
+      goalPlaceholder.textContent = 'Set a target BMI to start tracking your progress.';
+      goalPlaceholder.style.display = 'block';
+      return;
+    }
+
+    if (history.length === 0) {
+      goalCard.classList.remove('show');
+      goalPlaceholder.textContent = 'Calculate your BMI to start tracking progress toward your goal.';
+      goalPlaceholder.style.display = 'block';
+      return;
+    }
+
+    const latest = history[history.length - 1];
+
+    const currentBmi = parseFloat(latest.bmi);
+    const startBmi = goal.startBmi;
+    const targetBmi = goal.targetBmi;
+
+    goalCurrentBmi.textContent = currentBmi.toFixed(1);
+    goalTargetBmi.textContent = targetBmi.toFixed(1);
+
+    let pct = 0;
+
+    const totalDistance = Math.abs(startBmi - targetBmi);
+    const travelled = Math.abs(startBmi - currentBmi);
+
+    if (totalDistance === 0) {
+      pct = 100;
+    } else {
+      pct = (travelled / totalDistance) * 100;
+    }
+
+    // 防止往反方向走也增加Progress
+    if (
+      (targetBmi < startBmi && currentBmi > startBmi) ||
+      (targetBmi > startBmi && currentBmi < startBmi)
+    ) {
+      pct = 0;
+    }
+
+    pct = Math.max(0, Math.min(100, pct));
+
+    progressFill.style.width = pct.toFixed(0) + '%';
+    progressPct.textContent = pct.toFixed(0) + '%';
+
+    const bmiToGo = Math.abs(currentBmi - targetBmi);
+
+    if (bmiToGo < 0.1) {
+      goalNote.textContent = "🎉 You've reached your target BMI!";
+    } else {
+
+      const heightM = parseFloat(latest.height) / 100;
+      const targetWeight = targetBmi * heightM * heightM;
+      const weightDiff = Math.abs(parseFloat(latest.weight) - targetWeight);
+
+      goalNote.textContent =
+        bmiToGo.toFixed(1) +
+        " BMI to go (≈ " +
+        weightDiff.toFixed(1) +
+        " kg)";
+    }
+
+    goalCard.classList.add('show');
+    goalPlaceholder.style.display = 'none';
+  }
+
+  setGoalBtn.addEventListener('click', () => {
+    const tb = parseFloat(targetBmiInput.value);
+
+    goalHint.textContent = '';
+
+    if (!tb || tb <= 0) {
+      goalHint.textContent = 'Please enter a valid target BMI.';
+      return;
+    }
+
+    if (history.length === 0) {
+      goalHint.textContent = 'Please calculate your BMI first.';
+      return;
+    }
+
+    const latest = history[history.length - 1];
+
+    goal = {
+      targetBmi: tb,
+      startBmi: parseFloat(latest.bmi)
+    };
+
+    persistGoal(goal);
+    updateGoalUI();
+  });
+
+  clearGoalBtn.addEventListener('click', () => {
+    goal = null;
+    persistGoal(null);
+    targetBmiInput.value = '';
+    goalHint.textContent = '';
+    updateGoalUI();
+  });
+
+  updateGoalUI(); // show restored goal/progress (if any) on load
+
+  // --- Calculate ----------------------------------------------------------
+  function calculate(){
+    const cm = parseFloat(document.getElementById('heightCm').value);
+    const kg = parseFloat(document.getElementById('weightKg').value);
+
+    if (!cm || !kg || cm <= 0 || kg <= 0) {
+      hint.textContent = 'Please enter a valid height and weight.';
+      hint.classList.add('error');
+      return;
+    }
+
+    hint.classList.remove('error');
+    hint.textContent = '';
+
+    const heightM = cm / 100;
+    const bmi = kg / (heightM * heightM);
+    const cat = getCategory(bmi);
+
+    bmiNum.innerHTML = bmi.toFixed(1) + '<span class="unit">kg/m²</span>';
+    bmiCategory.textContent = cat.label;
+    bmiCategory.style.color = cat.color;
+    bmiCategory.style.background = 'color-mix(in srgb, ' + cat.color + ' 18%, transparent)';
+
+    needle.style.transform = 'rotate(' + bmiToAngle(bmi) + 'deg)';
+
+    showRecommendation(cat.label);
+    addHistoryEntry(cm, kg, bmi, cat);
+    updateGoalUI();
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', calculate);
+  document.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') calculate(); });
+  });
+</script>
+
+</body>
+</html>
