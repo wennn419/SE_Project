@@ -68,9 +68,9 @@ The Product Owner prioritised the product backlog according to project requireme
 
 | ID | User Story | Priority | Status |
 |----|------------|----------|--------|
-| US-01 | As a user, I want to calculate my BMI so that I can understand my current health status. | High | Planned |
-| US-02 | As a user, I want to schedule workouts using a calendar so that I can organise my exercise plan effectively. | High | Planned |
-| US-03 | As a user, I want to earn achievement badges so that I stay motivated to complete my workouts. | High | Planned |
+| US-12 | As a user, I want to calculate my BMI so that I can understand my current health status. | High | Planned |
+| US-13 | As a user, I want to schedule workouts using a calendar so that I can organise my exercise plan effectively. | High | Planned |
+| US-14 | As a user, I want to earn achievement badges so that I stay motivated to complete my workouts. | High | Planned |
 
 ---
 
@@ -194,9 +194,9 @@ Based on the prioritised product backlog, the following user stories were select
 
 | ID | User Story | Priority | Status |
 |----|------------|----------|--------|
-| US-04 | As a user, I want to save my BMI history so that I can monitor my fitness progress over time. | High | Planned |
-| US-05 | As a user, I want exercise recommendations based on my BMI so that I can follow a suitable workout plan. | High | Planned |
-| US-06 | As a user, I want to track badge progress so that I know how close I am to unlocking achievements. | High | Planned |
+| US-15 | As a user, I want to save my BMI history so that I can monitor my fitness progress over time. | High | Planned |
+| US-16 | As a user, I want exercise recommendations based on my BMI so that I can follow a suitable workout plan. | High | Planned |
+| US-17 | As a user, I want to track badge progress so that I know how close I am to unlocking achievements. | High | Planned |
 
 ---
 
@@ -324,9 +324,9 @@ Based on the prioritised product backlog and remaining project requirements, the
 
 | ID | User Story | Priority | Status |
 |----|------------|----------|--------|
-| US-07 | As a user, I want to set a target BMI so that I can achieve my personal fitness goals. | High | Planned |
-| US-08 | As a user, I want to monitor my progress towards my target BMI so that I remain motivated during my fitness journey. | High | Planned |
-| US-09 | As a user, I want advanced achievement badges so that my long-term workout consistency is recognised and rewarded. | High | Planned |
+| US-18 | As a user, I want to set a target BMI so that I can achieve my personal fitness goals. | High | Planned |
+| US-19 | As a user, I want to monitor my progress towards my target BMI so that I remain motivated during my fitness journey. | High | Planned |
+| US-20 | As a user, I want advanced achievement badges so that my long-term workout consistency is recognised and rewarded. | High | Planned |
 
 ---
 

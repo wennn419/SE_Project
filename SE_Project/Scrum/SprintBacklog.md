@@ -16,9 +16,9 @@ The following user stories were selected from the Product Backlog for Sprint 1.
 
 | ID | User Story | Priority | Story Points |
 |----|------------|----------|-------------:|
-| US-01 | As a user, I want to calculate my BMI so that I can understand my current health status. | High | 5 |
-| US-02 | As a user, I want to schedule workouts using a calendar so that I can organise my exercise plan effectively. | High | 5 |
-| US-03 | As a user, I want to earn achievement badges so that I stay motivated to complete my workouts. | High | 3 |
+| US-12 | As a user, I want to calculate my BMI so that I can understand my current health status. | High | 5 |
+| US-13 | As a user, I want to schedule workouts using a calendar so that I can organise my exercise plan effectively. | High | 5 |
+| US-14 | As a user, I want to earn achievement badges so that I stay motivated to complete my workouts. | High | 3 |
 
 **Total Story Points:** **13**
 
@@ -89,9 +89,9 @@ The following user stories were selected from the Product Backlog for Sprint 2.
 
 | ID | User Story | Priority | Story Points |
 |----|------------|----------|-------------:|
-| US-04 | As a user, I want to save my BMI history so that I can monitor my fitness progress over time. | High | 5 |
-| US-05 | As a user, I want exercise recommendations based on my BMI so that I can follow a suitable workout plan. | High | 5 |
-| US-06 | As a user, I want to track badge progress so that I know how close I am to unlocking achievements. | High | 3 |
+| US-15 | As a user, I want to save my BMI history so that I can monitor my fitness progress over time. | High | 5 |
+| US-16 | As a user, I want exercise recommendations based on my BMI so that I can follow a suitable workout plan. | High | 5 |
+| US-17 | As a user, I want to track badge progress so that I know how close I am to unlocking achievements. | High | 3 |
 
 **Total Story Points:** **13**
 
@@ -165,9 +165,9 @@ The following user stories were selected from the Product Backlog for Sprint 3.
 
 | ID | User Story | Priority | Story Points |
 |----|------------|----------|-------------:|
-| US-07 | As a user, I want to set a target BMI so that I can achieve my fitness goals. | High | 5 |
-| US-08 | As a user, I want to monitor my progress toward my target BMI so that I remain motivated. | High | 5 |
-| US-09 | As a user, I want advanced achievement badges so that I am rewarded for long-term commitment. | High | 3 |
+| US-18 | As a user, I want to set a target BMI so that I can achieve my fitness goals. | High | 5 |
+| US-19 | As a user, I want to monitor my progress toward my target BMI so that I remain motivated. | High | 5 |
+| US-20 | As a user, I want advanced achievement badges so that I am rewarded for long-term commitment. | High | 3 |
 
 **Total Story Points:** **13**
 
