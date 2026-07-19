@@ -434,9 +434,9 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Tag**: v1.0-iteration1
 
 **Release Features**:
-- BMI Calculator
-- Basic Calendar
-- Basic Achievement Badge
+- Added Calendar page layout
+- Added Achievement page layout
+- Integrated Calendar and Achievement into the sidebar navigation
 
 ### Iteration 4 Release
 **Tag**: v1.1-iteration2
@@ -452,11 +452,11 @@ Our team used Git and GitHub to manage source code, track development progress a
 **Tag**: v1.2-iteration3
 
 **Release Features**:
-- Target BMI setting
-- BMI progress tracking
-- Advanced achievement badge system
-- Final system integration
-- Overall performance improvements
+- Integrated Calendar module into the user interface
+- Integrated BMI module into the user interface
+- Integrated Achievement module into the user interface
+- Completed dashboard integration
+- Standardized shared UI components
 
 ---
 
