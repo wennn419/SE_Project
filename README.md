@@ -209,6 +209,51 @@ Overall, the system aims to provide users with a structured and convenient way t
 - Standardize navigation and styling
 - Optimize responsive design
 
+
+### Iteration 4 Features
+✅ Enhanced BMI Recommendation System
+- Save BMI History
+- Exercise Recommendation
+- Recommendation Result
+
+✅ Calendar Enhancement
+- Implement weekly calendar view
+- Add workout filtering to calendar
+- Highlight completed workouts on calendar
+
+✅ Achievement Enhancement
+- Badge progress tracking
+- Add advanced badges
+- Improve badge interface
+
+✅ UI Enhancement & Responsive Improvements
+- Improve calendar usability
+- Design BMI recommendation interface
+- Improve badge progress display
+- Refine mobile responsiveness
+
+
+### Iteration 5 Features
+✅ Personalized BMI Tracking System
+- Target BMI
+- BMI Progress Tracking
+- Recommendation Integration
+
+✅ Calendar Integration
+- Monthly workout summary (graph)
+- Show recommended workouts from BMI
+- Optimize calendar performance
+
+✅ Achievement Integration
+- Badge levels
+- Connect and add BMI badge
+
+✅ UI Polish & Final Integration
+- Improve dashboard interface
+- Ensure UI consistency across all pages
+- Enhance accessibility features
+- Perform final responsive testing
+
 ---
 
 ## How to Run the System?
@@ -299,11 +344,10 @@ Key Deliverables:
 
 Completed User Stories:
 - US04
-- US10
-- US11
-- US12
-- US16
-- US17
+- US05
+- US06
+- US07
+- US08
 
 Key Deliverables:
 - Workout tracking system
@@ -322,9 +366,9 @@ Key Deliverables:
 **Goal**: Extend the existing Fitness Workout Tracking System by introducing personalised fitness management features.
 
 Completed User Stories:
-- US05
-- US06
-- US07
+- US12
+- US13
+- US14
 
 Key Deliverables:
 - BMI Calculator
@@ -340,9 +384,9 @@ Key Deliverables:
 **Goal**: Enhance the personalised fitness management features by improving usability, functionality and user experience.
 
 Completed User Stories:
-- US13
-- US14
 - US15
+- US16
+- US17
 
 Key Deliverables:
 - BMI History
@@ -359,9 +403,9 @@ Key Deliverables:
 **Goal**: Integrate all developed modules into a complete Fitness Workout Tracking System and prepare the application for final release.
 
 Completed User Stories:
-- US08
-- US09
 - US18
+- US19
+- US20
 
 Key Deliverables:
 - Target BMI
@@ -370,13 +414,6 @@ Key Deliverables:
 - Final Integration
 
 **Outcomes**: Successfully integrated all modules into a complete Fitness Workout Tracking System with personalised fitness management features.
-
----
-
-### Not Implemented (MoSCoW - Won't Have)
-The following user stories were intentionally excluded from the project scope based on the MoSCoW prioritization:
-- US19: Connect fitness devices for automatic workout synchronization.
-- US20: Share workout achievements on social media.
 
 ---
 
